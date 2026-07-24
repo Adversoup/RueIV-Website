@@ -1,0 +1,42 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "section-404",
+      "settings": {
+        "heading": "Page Not Found",
+        "body": "The page you're looking for may have moved or no longer exists. Try searching, or use the links below to get back on track.",
+        "show_search": true,
+        "search_placeholder": "Search products, collections…",
+        "link1_label": "Shop All",
+        "link2_label": "Contact Us",
+        "link3_label": "Home",
+        "hint": "If you believe this is an error, please contact us.",
+        "padding_top": 80,
+        "padding_bottom": 40
+      }
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "You might like these",
+        "heading_size": "h2",
+        "columns": 4,
+        "padding_top": 36,
+        "padding_bottom": 52
+      }
+    }
+  },
+  "order": [
+    "main",
+    "featured"
+  ]
+}

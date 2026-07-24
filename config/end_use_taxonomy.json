@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "end_uses": [
+    {
+      "name": "Upholstery",
+      "slug": "upholstery",
+      "aliases": ["upholstery", "decorative upholstery", "upholstered"],
+      "description": "Fabrics suitable for covering furniture — chairs, sofas, ottomans."
+    },
+    {
+      "name": "Drapery",
+      "slug": "drapery",
+      "aliases": ["drapery", "curtain", "curtains", "drapes", "window treatment"],
+      "description": "Fabrics designed for window coverings and curtains."
+    },
+    {
+      "name": "Multipurpose",
+      "slug": "multipurpose",
+      "aliases": ["multipurpose", "multi-purpose", "multi purpose", "multi"],
+      "description": "Versatile fabrics suitable for both upholstery and drapery."
+    },
+    {
+      "name": "Performance",
+      "slug": "performance",
+      "aliases": ["performance", "indoor / outdoor", "indoor/outdoor", "outdoor", "suitable for outdoor"],
+      "description": "High-durability fabrics with stain resistance and outdoor suitability."
+    },
+    {
+      "name": "Bedding",
+      "slug": "bedding",
+      "aliases": ["bedding", "bed linens", "sheeting"],
+      "description": "Fabrics intended for bedding, duvets, and bed textiles."
+    },
+    {
+      "name": "Decorative",
+      "slug": "decorative",
+      "aliases": ["decorative", "decorative fabric", "accent", "wall covering"],
+      "description": "Fabrics used for decorative applications, pillows, and accents."
+    },
+    {
+      "name": "Sheer",
+      "slug": "sheer",
+      "aliases": ["sheer", "voile", "room high", "room high | washable", "modern interiors and large windows", "room divider"],
+      "description": "Lightweight, translucent fabrics for layered window treatments."
+    }
+  ],
+  "mapping_rules": {
+    "Bedding, Drapery, Multipurpose": ["Bedding", "Drapery", "Multipurpose"],
+    "Upholstery": ["Upholstery"],
+    "Bedding, Drapery": ["Bedding", "Drapery"],
+    "Indoor / Outdoor": ["Performance"],
+    "Room high | washable": ["Sheer"],
+    "Modern interiors and large windows": ["Sheer"],
+    "decorative upholstery": ["Decorative", "Upholstery"],
+    "Suitable for outdoor": ["Performance"],
+    "Curtain": ["Drapery"],
+    "room divider": ["Sheer"],
+    "wall covering": ["Decorative"],
+    "Decorative fabric": ["Decorative"],
+    "Room high": ["Sheer"]
+  }
+}

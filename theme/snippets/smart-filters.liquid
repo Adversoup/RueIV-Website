@@ -1,0 +1,347 @@
+{%- comment -%}
+  ============================================================================
+  smart-filters.liquid — Category-Aware Horizontal Filter Bar
+  ============================================================================
+  Renders a horizontal filter bar that adapts filter groups based on the
+  product category. Detects category from collection title/handle and
+  shows only relevant filters.
+
+  Filter order by category:
+  - Fabric:    Material → Design → Color → Designer
+  - Wallpaper: Material → Design → Color → Designer
+  - Furniture: Room → Type → Material → Style → Lead Time → Designer
+  - Lighting:  Type → Style → Lead Time → Designer
+  - Rug:       Size → Material → Color → Designer
+  - Accessory: Type → Material → Designer
+
+  Designer filter is always LAST and uses searchable dropdown if >25 values.
+
+  Usage: {% render 'smart-filters', results: collection, section: section %}
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    ── Detect product category from collection context ──
+  endcomment
+
+  assign _cat = ''
+  assign _handle = collection.handle | downcase
+
+  if _handle contains 'textiles' or _handle contains 'fabric' or _handle contains 'upholstery' or _handle contains 'drapery' or _handle contains 'sheer' or _handle contains 'linen' or _handle contains 'cotton' or _handle contains 'silk' or _handle contains 'velvet'
+    assign _cat = 'fabric'
+  elsif _handle contains 'wallcovering' or _handle contains 'wallpaper' or _handle contains 'grasscloth' or _handle contains 'mural'
+    assign _cat = 'wallpaper'
+  elsif _handle contains 'furniture' or _handle contains 'sofa' or _handle contains 'chair' or _handle contains 'table' or _handle contains 'casegood'
+    assign _cat = 'furniture'
+  elsif _handle contains 'lighting' or _handle contains 'lamp' or _handle contains 'pendant' or _handle contains 'sconce'
+    assign _cat = 'lighting'
+  elsif _handle contains 'rug'
+    assign _cat = 'rugs'
+  elsif _handle contains 'accessor' or _handle contains 'decor' or _handle contains 'tabletop' or _handle contains 'sculpture' or _handle contains 'frame'
+    assign _cat = 'accessory'
+  endif
+
+  comment
+    ── Fallback: detect from first product's type ──
+  endcomment
+  if _cat == '' and collection.products.size > 0
+    assign _first_type = collection.products.first.type | downcase
+    if _first_type == 'fabric'
+      assign _cat = 'fabric'
+    elsif _first_type == 'wallpaper'
+      assign _cat = 'wallpaper'
+    elsif _first_type == 'furniture'
+      assign _cat = 'furniture'
+    elsif _first_type == 'lighting'
+      assign _cat = 'lighting'
+    elsif _first_type == 'rug'
+      assign _cat = 'rugs'
+    elsif _first_type == 'accessory'
+      assign _cat = 'accessory'
+    endif
+  endif
+
+  comment
+    ── Define filter order per category ──
+    We use label matching (case-insensitive) to control order and visibility.
+    Shopify filter labels come from metafield definitions or product options.
+  endcomment
+
+  assign _filter_order = ''
+  case _cat
+    when 'fabric'
+      assign _filter_order = 'material,pattern,color,designer'
+    when 'wallpaper'
+      assign _filter_order = 'material,pattern,color,designer'
+    when 'furniture'
+      assign _filter_order = 'room,type,material,color,style,designer'
+    when 'lighting'
+      assign _filter_order = 'type,style,color,designer'
+    when 'rugs'
+      assign _filter_order = 'size,material,color,designer'
+    when 'accessory'
+      assign _filter_order = 'type,material,color,designer'
+    else
+      assign _filter_order = 'material,color,designer'
+  endcase
+
+  assign _filter_order_arr = _filter_order | split: ','
+
+  comment
+    ── Keywords to match filter labels to categories ──
+  endcomment
+  assign _label_map_material = 'material'
+  assign _label_map_pattern = 'pattern,design'
+  assign _label_map_color = 'color'
+  assign _label_map_designer = 'designer,vendor,brand'
+  assign _label_map_room = 'room'
+  assign _label_map_type = 'type,subcategory,fixture'
+  assign _label_map_style = 'style'
+  assign _label_map_size = 'size'
+  assign _label_map_lead_time = 'lead time,lead_time'
+-%}
+
+{%- if results.filters != empty -%}
+<form
+  class="face-form facets-smart"
+  method="GET"
+  action="{{ request.path }}"
+  is="facet-form"
+  data-section-id="{{ section.id }}"
+  data-category="{{ _cat }}"
+  data-history
+  update-on-change
+>
+  <div data-filter data-index="smart-page" hidden>
+    <input type="hidden" name="page" value="">
+    {%- if results.current_type != blank or results.current_vendor != blank -%}
+      <input type="hidden" name="q" value="{{ results.current_vendor | default: results.current_type | escape }}">
+    {%- endif -%}
+    {%- if request.page_type == 'search' -%}
+      <input type="hidden" name="q" value="{{ results.terms | escape }}">
+    {%- endif -%}
+    {%- if results.sort_by != blank -%}
+      <input type="hidden" name="sort_by" value="{{ results.sort_by }}">
+    {%- endif -%}
+  </div>
+
+  <div class="facets-smart__bar">
+    {%- comment -%} Filter icon + result count {%- endcomment -%}
+    <div class="facets-smart__header">
+      {%- render 'icon-filters' -%}
+      <span class="facets-smart__title">{{ 'products.facets.filter_button' | t | default: 'Filter' }}</span>
+      <span class="facets-smart__count">
+        {%- liquid
+          if results.results_count
+            echo results.results_count | append: ' Results'
+          else
+            echo results.products_count | append: ' Results'
+          endif
+        -%}
+      </span>
+    </div>
+
+    {%- comment -%}
+      ── Render filters in category-specific order ──
+      Match each filter label against our category map to determine position.
+    {%- endcomment -%}
+
+    {%- for ordered_key in _filter_order_arr -%}
+      {%- assign ordered_key_trimmed = ordered_key | strip -%}
+      {%- assign _slot_filled = false -%}
+      {%- for filter in results.filters -%}
+        {%- unless _slot_filled -%}
+        {%- liquid
+          assign _dl = filter.label | downcase
+          if _dl == 'availability' or filter.type == 'price_range'
+            continue
+          endif
+
+          assign _matched = false
+          assign _match_keywords = ''
+
+          case ordered_key_trimmed
+            when 'material'
+              assign _match_keywords = _label_map_material
+            when 'pattern'
+              assign _match_keywords = _label_map_pattern
+            when 'color'
+              assign _match_keywords = _label_map_color
+            when 'designer'
+              assign _match_keywords = _label_map_designer
+            when 'room'
+              assign _match_keywords = _label_map_room
+            when 'type'
+              assign _match_keywords = _label_map_type
+            when 'style'
+              assign _match_keywords = _label_map_style
+            when 'size'
+              assign _match_keywords = _label_map_size
+            when 'lead time'
+              assign _match_keywords = _label_map_lead_time
+          endcase
+
+          assign _keywords_arr = _match_keywords | split: ','
+          for _kw in _keywords_arr
+            if _dl contains _kw
+              assign _matched = true
+              break
+            endif
+          endfor
+        -%}
+
+        {%- if _matched -%}
+          {%- assign _slot_filled = true -%}
+          {%- assign filter_id = 'smart-' | append: filter.param_name -%}
+          {%- liquid
+            assign sorted_values = filter.values
+            if filter.operator == 'AND'
+              assign active_filter_values = filter.values | where: 'active', true
+              assign inactive_filter_values = filter.values | where: 'active', false
+              assign sorted_values = active_filter_values | concat: inactive_filter_values
+            endif
+
+            assign active_count = 0
+            for fv in filter.active_values
+              assign active_count = active_count | plus: 1
+            endfor
+
+            assign is_designer = false
+            assign _designer_keys = _label_map_designer | split: ','
+            for _dk in _designer_keys
+              if _dl contains _dk
+                assign is_designer = true
+                break
+              endif
+            endfor
+          -%}
+
+          <details
+            class="facets-smart__dropdown{% if is_designer %} facets-smart__dropdown--designer{% endif %}"
+            data-filter
+            data-index="{{ filter_id }}"
+          >
+            <summary class="facets-smart__trigger{% if active_count > 0 %} facets-smart__trigger--active{% endif %}">
+              <span>{{ filter.label | escape }}</span>
+              {%- if active_count > 0 -%}
+                <span class="facets-smart__badge">{{ active_count }}</span>
+              {%- endif -%}
+              <svg class="facets-smart__chevron" width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.75 4.5L6 8.25L2.25 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </summary>
+
+            <div class="facets-smart__panel">
+              {%- comment -%} Designer: searchable if >25 values {%- endcomment -%}
+              {%- if is_designer and filter.values.size > 25 -%}
+                <div class="facets-smart__search-wrap">
+                  <input
+                    type="text"
+                    class="facets-smart__search"
+                    placeholder="Search designers…"
+                    data-filter-search="{{ filter_id }}"
+                    autocomplete="off"
+                  >
+                </div>
+              {%- endif -%}
+
+              <ul class="facets-smart__checklist{% if is_designer %} facets-smart__checklist--designer{% endif %}">
+                {%- for filter_value in sorted_values -%}
+                  {%- liquid
+                    assign filter_value_id = filter_id | append: '-' | append: forloop.index
+                    assign is_disabled = false
+                    if filter_value.count == 0 and filter_value.active == false
+                      assign is_disabled = true
+                    endif
+                  -%}
+                  <li class="facets-smart__item{% if is_disabled %} facets-smart__item--disabled{% endif %}" data-filter-value="{{ filter_value.label | downcase | escape }}">
+                    <input
+                      name="{{ filter_value.param_name }}"
+                      value="{{ filter_value.value | escape }}"
+                      class="checkbox"
+                      id="{{ filter_value_id | escape }}"
+                      type="checkbox"
+                      {% if filter_value.active %}checked{% endif %}
+                      {% if is_disabled %}disabled{% endif %}
+                    >
+                    <label for="{{ filter_value_id }}" class="facets-smart__label">
+                      <span class="facets-smart__label-text">{{ filter_value.label | escape }}</span>
+                      <span class="facets-smart__label-count">({{ filter_value.count }})</span>
+                    </label>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          </details>
+        {%- endif -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endfor -%}
+
+    {%- comment -%} Active filter tags {%- endcomment -%}
+    {%- assign has_active = false -%}
+    {%- for filter in results.filters -%}
+      {%- if filter.active_values.size > 0 -%}
+        {%- assign has_active = true -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if has_active -%}
+      <div class="facets-smart__active">
+        {%- for filter in results.filters -%}
+          {%- for active_value in filter.active_values -%}
+            <a href="{{ active_value.url_to_remove }}" class="facets-smart__tag">
+              {{ active_value.label | escape }}
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M7.5 2.5L2.5 7.5M2.5 2.5L7.5 7.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+              </svg>
+            </a>
+          {%- endfor -%}
+        {%- endfor -%}
+        <a href="{{ collection.url }}" class="facets-smart__clear">Clear all</a>
+      </div>
+    {%- endif -%}
+  </div>
+</form>
+{%- endif -%}
+
+<script>
+  /* Designer search — filter values client-side */
+  document.addEventListener('DOMContentLoaded', () => {
+    /* ── Accordion: close other filter dropdowns when one opens ── */
+    document.querySelectorAll('.facets-smart__dropdown').forEach(details => {
+      details.addEventListener('toggle', () => {
+        if (details.open) {
+          document.querySelectorAll('.facets-smart__dropdown[open]').forEach(other => {
+            if (other !== details) other.removeAttribute('open');
+          });
+        }
+      });
+    });
+
+    /* ── Close filter when clicking outside ── */
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.facets-smart__dropdown')) {
+        document.querySelectorAll('.facets-smart__dropdown[open]').forEach(d => {
+          d.removeAttribute('open');
+        });
+      }
+    });
+
+    document.querySelectorAll('[data-filter-search]').forEach(input => {
+      const listId = input.getAttribute('data-filter-search');
+      const panel = input.closest('.facets-smart__panel');
+      if (!panel) return;
+      const items = panel.querySelectorAll('[data-filter-value]');
+
+      input.addEventListener('input', () => {
+        const query = input.value.toLowerCase().trim();
+        items.forEach(li => {
+          const val = li.getAttribute('data-filter-value') || '';
+          li.style.display = (!query || val.includes(query)) ? '' : 'none';
+        });
+      });
+    });
+  });
+</script>

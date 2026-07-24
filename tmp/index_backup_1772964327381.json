@@ -1,0 +1,1186 @@
+{
+  "sections": {
+    "slideshow_zKPFFV": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_dheMCD": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "background": "shopify://shop_images/ZR_SP2023_LowRes_016.jpg",
+            "image_overlay_opacity": 10,
+            "show_content_in_container": false,
+            "content_position": "bottom-left",
+            "content_position_mobile": "middle-center",
+            "text_alignment": "left",
+            "title": "EMBRACE VISION",
+            "heading_size": "hd1",
+            "subheading": "",
+            "description": "<p>Clever products for every corner</p>",
+            "description_size": "text-lg",
+            "button_label": "explore now",
+            "button_link": "",
+            "button_style": "btn--underline"
+          }
+        },
+        "slide_8f8PHy": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "background": "shopify://shop_images/FAB_V_22_07_15373.jpg",
+            "image_overlay_opacity": 10,
+            "show_content_in_container": false,
+            "content_position": "bottom-left",
+            "content_position_mobile": "middle-center",
+            "text_alignment": "left",
+            "title": "EMBRACE VISION",
+            "heading_size": "hd1",
+            "subheading": "",
+            "description": "<p>Clever products for every corner</p>",
+            "description_size": "text-lg",
+            "button_label": "explore now",
+            "button_link": "",
+            "button_style": "btn--underline"
+          }
+        },
+        "slide_NnwXDL": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "background": "shopify://shop_images/Kharga_1_Roomshot_We-5VZL_tm.jpg",
+            "image_overlay_opacity": 10,
+            "show_content_in_container": false,
+            "content_position": "bottom-left",
+            "content_position_mobile": "middle-center",
+            "text_alignment": "left",
+            "title": "EMBRACE VISION",
+            "heading_size": "hd1",
+            "subheading": "",
+            "description": "<p>Clever products for every corner</p>",
+            "description_size": "text-lg",
+            "button_label": "explore now",
+            "button_link": "",
+            "button_style": "btn--underline"
+          }
+        }
+      },
+      "block_order": [
+        "slide_dheMCD",
+        "slide_8f8PHy",
+        "slide_NnwXDL"
+      ],
+      "custom_css": [
+        ".slideshow__text {max-width: 40rem;}"
+      ],
+      "name": "t:sections.slideshow.name",
+      "settings": {
+        "container": "full",
+        "layout": "standard",
+        "slide_height": "adapt",
+        "show_dots": true,
+        "autoplay": true,
+        "autoplay_delay": 6,
+        "controls_position": "bottom",
+        "show_text_below": false,
+        "text_alignment_mobile": "center",
+        "accessibility_info": "Slideshow about our brand",
+        "custom_class": ""
+      }
+    },
+    "rich_text_yAEBMr": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_ziBG3r": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Renovate your home"
+          }
+        },
+        "heading_NbVPmx": {
+          "type": "heading",
+          "settings": {
+            "heading": "The right dose of inspiration </br> JUST FOR YOU",
+            "heading_size": "h1",
+            "heading_highlight_style": "none"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_ziBG3r",
+        "heading_NbVPmx"
+      ],
+      "custom_css": [
+        ".rich-text {max-width: 550px; margin: 0 auto;}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "content_alignment": "center",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "custom_content_FQyrQN": {
+      "type": "custom-content",
+      "blocks": {
+        "collection_card_rKedQ6": {
+          "type": "collection_card",
+          "settings": {
+            "card_color_inherited": true,
+            "card_style": "",
+            "collection": "arte",
+            "image_ratio": "adapt",
+            "card_width": "narrow",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "collection_card_jJAhin": {
+          "type": "collection_card",
+          "settings": {
+            "card_color_inherited": true,
+            "card_style": "",
+            "collection": "porta-romana",
+            "image_ratio": "adapt",
+            "card_width": "full",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_card_rKedQ6",
+        "collection_card_jJAhin"
+      ],
+      "custom_css": [
+        ".rich-text {max-width: 500px; margin: 0 auto;}",
+        "@media (min-width: 1280px) {.card-width-narrow {max-width: 67%; margin: 0 auto; } .card-width-narrow .collection-card {width: 40rem; max-width: 100%; margin: 0; }}",
+        ".f-grid--gap-extra-small {--column-gap: 1rem; --column-gap-mobile: 2.4rem;}"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-3",
+        "enable_sticky_column": false,
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "column_gap": "extra-small",
+        "row_gap": "inherit",
+        "swipe_on_mobile": true,
+        "columns_mobile": "1",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "scrolling_promotion_bgVtNt": {
+      "type": "scrolling-promotion",
+      "blocks": {
+        "text_6DKPxC": {
+          "type": "text",
+          "settings": {
+            "text": "FIND INSPRATION",
+            "text_link": "",
+            "text_size": "hd1",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "image_4e7YGc": {
+          "type": "image",
+          "settings": {
+            "image_height": 32,
+            "image_rounded": false,
+            "image_link": "",
+            "image_height_mobile": 32
+          }
+        },
+        "text_K3GxCW": {
+          "type": "text",
+          "settings": {
+            "text": "DESIGN FOR LIVING",
+            "text_link": "",
+            "text_size": "hd1",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "image_qMffHG": {
+          "type": "image",
+          "settings": {
+            "image_height": 32,
+            "image_rounded": false,
+            "image_link": "",
+            "image_height_mobile": 32
+          }
+        },
+        "text_BVETJG": {
+          "type": "text",
+          "settings": {
+            "text": "UNIQUE FURNITURE",
+            "text_link": "",
+            "text_size": "hd1",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "image_WE93YY": {
+          "type": "image",
+          "settings": {
+            "image_height": 32,
+            "image_rounded": false,
+            "image_link": "",
+            "image_height_mobile": 32
+          }
+        }
+      },
+      "block_order": [
+        "text_6DKPxC",
+        "image_4e7YGc",
+        "text_K3GxCW",
+        "image_qMffHG",
+        "text_BVETJG",
+        "image_WE93YY"
+      ],
+      "custom_css": [
+        ".scrolling-promotion {opacity: 0.2;}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "vertical_alignment": "center",
+        "direction": "left",
+        "pause_on_hover": true,
+        "speed": 0.1,
+        "h_spacing": 48,
+        "v_spacing": 10,
+        "padding_top": 80,
+        "padding_bottom": 0,
+        "show_divider": false,
+        "divider_layout": "vertical",
+        "custom_class": ""
+      }
+    },
+    "custom_content_zRk47d": {
+      "type": "custom-content",
+      "blocks": {
+        "collection_card_yPYQWG": {
+          "type": "collection_card",
+          "settings": {
+            "card_color_inherited": true,
+            "card_style": "",
+            "collection": "fabric",
+            "image_ratio": "adapt",
+            "card_width": "full",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "collection_card_iQnt8g": {
+          "type": "collection_card",
+          "settings": {
+            "card_color_inherited": true,
+            "card_style": "",
+            "collection": "furniture",
+            "image_ratio": "adapt",
+            "card_width": "narrow",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_card_yPYQWG",
+        "collection_card_iQnt8g"
+      ],
+      "custom_css": [
+        "@media (min-width: 1280px) {.card-width-narrow {max-width: 67%; margin: 0 auto; } .card-width-narrow .collection-card {width: 40rem; max-width: 100%; margin: 0 0 0 auto; }}",
+        ".f-grid--gap-extra-small {--column-gap: 1rem; --column-gap-mobile: 2.4rem;}"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-3",
+        "enable_sticky_column": false,
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "column_gap": "extra-small",
+        "row_gap": "inherit",
+        "swipe_on_mobile": true,
+        "columns_mobile": "1",
+        "padding_top": 80,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "product_tabs_jhb9aJ": {
+      "type": "product-tabs",
+      "blocks": {
+        "tab_dzp3dT": {
+          "type": "tab",
+          "settings": {
+            "title": "Wallpapers",
+            "collection": "wallpaper"
+          }
+        },
+        "tab_d4xCmQ": {
+          "type": "tab",
+          "settings": {
+            "title": "Fabrics",
+            "collection": "fabric"
+          }
+        },
+        "tab_XDJLTi": {
+          "type": "tab",
+          "settings": {
+            "title": "furnitures",
+            "collection": "furniture"
+          }
+        },
+        "tab_jrYb6E": {
+          "type": "tab",
+          "settings": {
+            "title": "lightning",
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "tab_dzp3dT",
+        "tab_d4xCmQ",
+        "tab_XDJLTi",
+        "tab_jrYb6E"
+      ],
+      "custom_css": [
+        ".f-grid--row-gap-medium {--row-gap-mobile: 2.4rem;}",
+        "@media (min-width: 768px) {.tabs__header {--tab-spacing: 4rem; }}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "header_layout": "horizontal",
+        "heading": "Our picks for you",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "limit": 6,
+        "columns": 4,
+        "column_gap": "extra-small",
+        "row_gap": "medium",
+        "grid_layout": "metro",
+        "pcard_image_ratio": "1/1",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "show_all_button_on_top": false,
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--primary",
+        "tabs_nav_style": "design-1",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "lookbook_slider_cte8Fy": {
+      "type": "lookbook-slider",
+      "blocks": {
+        "product_U3jYqW": {
+          "type": "product",
+          "settings": {
+            "product": "abydos-23440",
+            "top": 52,
+            "left": 38
+          }
+        },
+        "product_9wYmkh": {
+          "type": "product",
+          "settings": {
+            "product": "bamboo-11043884",
+            "top": 36,
+            "left": 36
+          }
+        }
+      },
+      "block_order": [
+        "product_U3jYqW",
+        "product_9wYmkh"
+      ],
+      "custom_css": [
+        "@media (min-width: 1024px) and (max-width: 1279px) {.lookbook-slider {--item-width: 215px !important; }}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "use_color_scheme_in_container": true,
+        "heading": "Hot this week",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "Shop the room",
+        "description": "",
+        "description_size": "text-base",
+        "image": "shopify://shop_images/bedroom002.jpg",
+        "image_aspect_ratio": "adapt",
+        "image_position": "right",
+        "annotation_color": "light",
+        "product_image_ratio": "",
+        "product_per_slide": "1",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "collection_list_Jbx97m": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_g8EbUF": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "arte",
+            "title": "Arte",
+            "description": ""
+          }
+        },
+        "featured_collection_VRdbRe": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "fabricut",
+            "title": "Fabricut",
+            "description": ""
+          }
+        },
+        "featured_collection_CdV3dF": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "porta-romana",
+            "title": "Porto Romana",
+            "description": ""
+          }
+        },
+        "featured_collection_8EcRFr": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "verellen",
+            "title": "Verellen",
+            "description": ""
+          }
+        },
+        "featured_collection_BxkJbN": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "zr",
+            "title": "Zimmer + Rodhe",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_g8EbUF",
+        "featured_collection_VRdbRe",
+        "featured_collection_CdV3dF",
+        "featured_collection_8EcRFr",
+        "featured_collection_BxkJbN"
+      ],
+      "settings": {
+        "color_scheme": "scheme-6",
+        "layout": "split",
+        "subheading": "Our Brands",
+        "heading": "The creative minds behind our interior design studio",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "description": "",
+        "text_size": "text-base",
+        "card_color_inherited": true,
+        "show_product_count": true,
+        "show_icon": true,
+        "card_style": "",
+        "card_image_ratio": "adapt",
+        "content_alignment": "left",
+        "columns_desktop": 3,
+        "column_gap": "extra-large",
+        "row_gap": "medium",
+        "enable_slider": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 100,
+        "padding_bottom": 30,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "scrolling_promotion_eqXpH6": {
+      "type": "scrolling-promotion",
+      "blocks": {
+        "text_DcQXgF": {
+          "type": "text",
+          "settings": {
+            "text": "FIND INSPRATION",
+            "text_link": "",
+            "text_size": "hd1",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "image_UkJUxK": {
+          "type": "image",
+          "settings": {
+            "image_height": 32,
+            "image_rounded": false,
+            "image_link": "",
+            "image_height_mobile": 32
+          }
+        },
+        "text_zYULne": {
+          "type": "text",
+          "settings": {
+            "text": "DESIGN FOR LIVING",
+            "text_link": "",
+            "text_size": "hd1",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "image_C3F6qF": {
+          "type": "image",
+          "settings": {
+            "image_height": 32,
+            "image_rounded": false,
+            "image_link": "",
+            "image_height_mobile": 32
+          }
+        },
+        "text_KTrbmA": {
+          "type": "text",
+          "settings": {
+            "text": "UNIQUE FURNITURE",
+            "text_link": "",
+            "text_size": "hd1",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "image_n4aFjx": {
+          "type": "image",
+          "settings": {
+            "image_height": 32,
+            "image_rounded": false,
+            "image_link": "",
+            "image_height_mobile": 32
+          }
+        }
+      },
+      "block_order": [
+        "text_DcQXgF",
+        "image_UkJUxK",
+        "text_zYULne",
+        "image_C3F6qF",
+        "text_KTrbmA",
+        "image_n4aFjx"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "vertical_alignment": "center",
+        "direction": "left",
+        "pause_on_hover": true,
+        "speed": 0.1,
+        "h_spacing": 48,
+        "v_spacing": 10,
+        "padding_top": 90,
+        "padding_bottom": 0,
+        "show_divider": false,
+        "divider_layout": "vertical",
+        "custom_class": ""
+      }
+    },
+    "featured_collection_nTAnFG": {
+      "type": "featured-collection",
+      "settings": {
+        "color_scheme": "",
+        "header_layout": "vertical",
+        "heading": "Discover unique items",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "text_size": "text-base",
+        "show_collection_description": false,
+        "collection": "wallpaper",
+        "limit": 8,
+        "columns": 4,
+        "column_gap": "extra-small",
+        "row_gap": "medium",
+        "grid_layout": "standard",
+        "enable_slider": true,
+        "controls_position": "outside",
+        "pcard_image_ratio": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "show_all_button_on_top": false,
+        "button_label": "",
+        "button_style": "btn--primary",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "video_hero_kqkWdj": {
+      "type": "video-hero",
+      "blocks": {
+        "text_FaEYgN": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Discover the interior design of your dreams</p>",
+            "text_size": "text-lg"
+          }
+        },
+        "button_h4yyRt": {
+          "type": "button",
+          "settings": {
+            "button_label": "shop now",
+            "button_link": "",
+            "button_style": "btn--underline"
+          }
+        }
+      },
+      "block_order": [
+        "text_FaEYgN",
+        "button_h4yyRt"
+      ],
+      "custom_css": [
+        ".video-hero__content {--padding-y: 8rem;}"
+      ],
+      "settings": {
+        "container": "full",
+        "video_url": "https://www.youtube.com/watch?v=_bp7e3uOmhs",
+        "description": "Video banner",
+        "video_height": "extra-large",
+        "overlay_opacity": 20,
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "color_scheme": "",
+        "content_position": "bottom-center",
+        "content_alignment": "center",
+        "video_mobile_height": "extra-large",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "image_with_text_overlay_QaCmnT": {
+      "type": "image-with-text-overlay",
+      "blocks": {
+        "text_kF3A3D": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Discover the interior design of your dreams</p>",
+            "text_size": "text-lg"
+          }
+        },
+        "button_zDDqjc": {
+          "type": "button",
+          "settings": {
+            "button_label": "shop now",
+            "button_link": "",
+            "button_style": "btn--underline"
+          }
+        }
+      },
+      "block_order": [
+        "text_kF3A3D",
+        "button_zDDqjc"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".content-overlay {--padding-y: 4.5rem;}",
+        "@media (min-width: 1280px) {.content-overlay {--padding-y: 7.6rem; }}",
+        "@media (max-width: 767.98px) {.content-overlay {--padding-y: 5rem; }}"
+      ],
+      "name": "t:sections.image-with-text-overlay.name",
+      "settings": {
+        "container": "full",
+        "desktop_height": "extra-medium",
+        "overlay_opacity": 20,
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "color_scheme": "",
+        "content_position": "bottom-center",
+        "content_alignment": "center",
+        "mobile_height": "auto",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "custom_class": ""
+      }
+    },
+    "multicolumn_RFyHwL": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_HV3JHQ": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image_width": "large",
+            "title": "Free & fast delivery",
+            "heading_size": "h4",
+            "text": "<p>We offer free shipping with ground delivery to the lower 48 states.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "horizontal"
+          }
+        },
+        "column_rpRxAB": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image_width": "large",
+            "title": "Online support",
+            "heading_size": "h4",
+            "text": "<p>Online Support24 hours a day,<br/>7 days a week</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "horizontal"
+          }
+        },
+        "column_e7raAD": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image_width": "large",
+            "title": "30 Days return",
+            "heading_size": "h4",
+            "text": "<p>Exchange or return items free of charge within 30 days.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "horizontal"
+          }
+        },
+        "column_NxYagA": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image_width": "large",
+            "title": "Flexible payment",
+            "heading_size": "h4",
+            "text": "<p>Pay conveniently using multiple credit cards for added flexibility.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "horizontal"
+          }
+        }
+      },
+      "block_order": [
+        "column_HV3JHQ",
+        "column_rpRxAB",
+        "column_e7raAD",
+        "column_NxYagA"
+      ],
+      "custom_css": [
+        ".f-grid--gap-extra-large {--column-gap: 6rem; --row-gap-mobile: 2.4rem;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "text_size": "text-base",
+        "column_alignment": "left",
+        "columns_desktop": 4,
+        "column_gap": "extra-large",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "layered_images_with_text_zGqjLj": {
+      "type": "layered-images-with-text",
+      "blocks": {
+        "image_QbQjPc": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/627626522_18361240024161793_5584927531533481301_n.jpg",
+            "custom_classes": "media-mover-reverse"
+          }
+        },
+        "image_Xqm79B": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/610950080_18356124310161793_5948385250147526565_n.jpg",
+            "custom_classes": "media-mover-reverse"
+          }
+        },
+        "image_6C3Jwc": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/610517684_18356124319161793_4234947300250604952_n.jpg",
+            "custom_classes": "media-mover"
+          }
+        },
+        "image_VVbbWM": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/619748377_18357517837161793_2403354742789570322_n.jpg",
+            "custom_classes": "media-mover"
+          }
+        },
+        "image_MJY9pE": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/610896692_18356124301161793_4725930532954553063_n.jpg",
+            "custom_classes": "media-mover-reverse-slower"
+          }
+        }
+      },
+      "block_order": [
+        "image_QbQjPc",
+        "image_Xqm79B",
+        "image_6C3Jwc",
+        "image_VVbbWM",
+        "image_MJY9pE"
+      ],
+      "custom_css": [
+        ".section-layered-images-with-text .section__header .section__heading {max-width: 380px; margin: 0 auto;}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "heading": "WE’RE ON GRAM",
+        "heading_size": "hd1",
+        "heading_highlight_style": "none",
+        "subheading": "Renovate your home",
+        "description": "",
+        "description_size": "text-base",
+        "button_label": "@rue_four",
+        "button_link": "https://www.instagram.com/rue_four/",
+        "button_style": "btn--secondary",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "custom_class": ""
+      }
+    },
+    "showroom_categories": {
+      "type": "collection-list",
+      "blocks": {
+        "sc_textiles": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "fabric",
+            "title": "Textiles",
+            "description": ""
+          }
+        },
+        "sc_wallcovering": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "wallpaper",
+            "title": "Wallcovering",
+            "description": ""
+          }
+        },
+        "sc_furniture": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "furniture",
+            "title": "Furniture",
+            "description": ""
+          }
+        },
+        "sc_lighting": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "lighting",
+            "title": "Lighting",
+            "description": ""
+          }
+        },
+        "sc_rugs": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "rugs",
+            "title": "Rugs",
+            "description": ""
+          }
+        },
+        "sc_accessories": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "accessories",
+            "title": "Accessories",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "sc_textiles",
+        "sc_wallcovering",
+        "sc_furniture",
+        "sc_lighting",
+        "sc_rugs",
+        "sc_accessories"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "layout": "standard",
+        "heading": "Shop the Showroom",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "card_color_inherited": true,
+        "card_style": "",
+        "card_image_ratio": "square",
+        "content_alignment": "center",
+        "columns_desktop": 3,
+        "column_gap": "medium",
+        "row_gap": "medium",
+        "enable_slider": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "show_section_divider": false,
+        "custom_class": ""
+      }
+    },
+    "showroom_quickship": {
+      "type": "featured-collection",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "header_layout": "standard",
+        "heading": "Quick Ship",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "description": "<p>Ready to ship within 2 weeks. Curated selections available for immediate delivery.</p>",
+        "collection": "quick-ship",
+        "limit": 8,
+        "columns": 4,
+        "column_gap": "medium",
+        "row_gap": "medium",
+        "grid_layout": "standard",
+        "enable_slider": true,
+        "show_all_button_on_top": false,
+        "button_label": "View All Quick Ship",
+        "button_style": "btn--primary",
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "show_section_divider": false,
+        "custom_class": ""
+      }
+    },
+    "showroom_designers": {
+      "type": "collection-list",
+      "blocks": {
+        "sd_arte": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "arte",
+            "title": "Arte",
+            "description": ""
+          }
+        },
+        "sd_fabricut": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "fabricut",
+            "title": "Fabricut",
+            "description": ""
+          }
+        },
+        "sd_portaromana": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "porta-romana",
+            "title": "Porta Romana",
+            "description": ""
+          }
+        },
+        "sd_verellen": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "verellen",
+            "title": "Verellen",
+            "description": ""
+          }
+        },
+        "sd_zr": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "zr",
+            "title": "Zimmer + Rohde",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "sd_arte",
+        "sd_fabricut",
+        "sd_portaromana",
+        "sd_verellen",
+        "sd_zr"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "layout": "standard",
+        "heading": "Featured Designers",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "card_color_inherited": true,
+        "card_style": "",
+        "card_image_ratio": "square",
+        "content_alignment": "center",
+        "columns_desktop": 5,
+        "column_gap": "medium",
+        "row_gap": "medium",
+        "enable_slider": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "show_section_divider": false,
+        "custom_class": ""
+      }
+    },
+    "showroom_vibe": {
+      "type": "image-with-text-overlay",
+      "blocks": {
+        "sv_heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "The Vibe Studio",
+            "heading_size": "hd1",
+            "heading_highlight_style": "none"
+          }
+        },
+        "sv_text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Explore curated interiors, designer spotlights, and mood boards crafted for every aesthetic.</p>",
+            "text_size": "text-lg"
+          }
+        },
+        "sv_button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Explore Now",
+            "button_link": "/pages/vibe-studio",
+            "button_style": "btn--primary"
+          }
+        }
+      },
+      "block_order": [
+        "sv_heading",
+        "sv_text",
+        "sv_button"
+      ],
+      "settings": {
+        "container": "full",
+        "desktop_height": "medium",
+        "overlay_opacity": 30,
+        "color_scheme": "scheme-inverse",
+        "content_position": "middle-center",
+        "content_alignment": "center",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "custom_class": ""
+      }
+    },
+    "showroom_newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "color_scheme": "scheme-6",
+        "layout": "standard",
+        "heading": "The Vibe List",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "description": "<p>Subscribe for exclusive access to new collections, designer spotlights, and showroom events.</p>",
+        "alignment": "center",
+        "form_width": 465,
+        "button_style": "btn--primary",
+        "padding_top": 52,
+        "padding_bottom": 52,
+        "show_section_divider": false,
+        "custom_class": ""
+      }
+    }
+  },
+  "order": [
+    "slideshow_zKPFFV",
+    "showroom_categories",
+    "showroom_quickship",
+    "showroom_designers",
+    "showroom_vibe",
+    "showroom_newsletter",
+    "rich_text_yAEBMr",
+    "custom_content_FQyrQN",
+    "scrolling_promotion_bgVtNt",
+    "custom_content_zRk47d",
+    "product_tabs_jhb9aJ",
+    "lookbook_slider_cte8Fy",
+    "collection_list_Jbx97m",
+    "scrolling_promotion_eqXpH6",
+    "featured_collection_nTAnFG",
+    "video_hero_kqkWdj",
+    "image_with_text_overlay_QaCmnT",
+    "multicolumn_RFyHwL",
+    "layered_images_with_text_zGqjLj"
+  ]
+}

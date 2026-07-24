@@ -1,0 +1,216 @@
+{%- comment -%}
+  sections/pdp-related-products.liquid
+  ─────────────────────────────────────
+  Custom related-products section for RueIV.
+  Shows products from the same color_family × product_type collection,
+  excluding the current product.  Falls back to Shopify's native
+  product recommendations if no color-matched collection exists.
+
+  Renders a 4-column grid (2 mobile) with product cards.
+{%- endcomment -%}
+
+{%- liquid
+  assign _color   = product.metafields.taxonomy.color_family.value | handleize
+  assign _type    = product.type | handleize
+  assign _limit   = section.settings.limit | default: 8
+  assign _heading = section.settings.heading | default: 'You may also like'
+  assign _columns = section.settings.columns | default: 4
+  assign _columns_mobile = section.settings.columns_mobile | default: 2
+
+  comment
+    Try color×category collection first (e.g. "navy-fabric")
+  endcomment
+  assign _coll_handle = _color | append: '-' | append: _type
+  assign _coll        = collections[_coll_handle]
+  assign _has_coll     = false
+
+  if _coll != blank and _coll.products_count > 1
+    assign _has_coll = true
+  endif
+-%}
+
+{%- capture image_sizes -%}
+(max-width: 767px) calc((100vw - 30px) / {{ _columns_mobile }}),
+(max-width: 1023px) calc((100vw - 30px) / {{ _columns | minus: 1 | at_least: 2 }}),
+{{ settings.page_width | divided_by: _columns }}px
+{%- endcapture -%}
+
+<div
+  class="section section-{{ section.id }} section--padding section--related-products page-width"
+  style="--section-padding-top: {{ section.settings.padding_top | default: 60 }}px; --section-padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;"
+>
+  <div class="section__header text-{{ section.settings.text_alignment | default: 'center' }}">
+    <h2 class="section__heading h3">{{ _heading }}</h2>
+    {%- if section.settings.description != blank -%}
+      <div class="section__description rte">{{ section.settings.description }}</div>
+    {%- endif -%}
+  </div>
+
+  <div class="f-grid f-grid--{{ _columns }}-cols f-grid--{{ _columns_mobile }}-cols-mobile" style="--grid-gap: 20px;">
+    {%- if _has_coll -%}
+      {%- assign _shown = 0 -%}
+      {%- for p in _coll.products limit: _limit -%}
+        {%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
+        {%- if _shown >= _limit -%}{%- break -%}{%- endif -%}
+        <div class="f-column">
+          {% render 'product-card',
+            product_card_product: p,
+            media_aspect_ratio: section.settings.image_ratio | default: 'square',
+            show_secondary_image: true,
+            show_vendor: true,
+            show_rating: false,
+            show_quick_add: true,
+            section_id: section.id,
+            image_sizes: image_sizes
+          %}
+        </div>
+        {%- assign _shown = _shown | plus: 1 -%}
+      {%- endfor -%}
+
+      {%- comment -%} If not enough from color collection, pad with Shopify recommendations {%- endcomment -%}
+      {%- if _shown < 4 -%}
+        {%- for p in recommendations.products limit: _limit -%}
+          {%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
+          {%- if _shown >= _limit -%}{%- break -%}{%- endif -%}
+          <div class="f-column">
+            {% render 'product-card',
+              product_card_product: p,
+              media_aspect_ratio: section.settings.image_ratio | default: 'square',
+              show_secondary_image: true,
+              show_vendor: true,
+              show_rating: false,
+              show_quick_add: true,
+              section_id: section.id,
+              image_sizes: image_sizes
+            %}
+          </div>
+          {%- assign _shown = _shown | plus: 1 -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+    {%- else -%}
+      {%- comment -%} Fallback: Shopify native recommendations {%- endcomment -%}
+      {%- for p in recommendations.products limit: _limit -%}
+        {%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
+        <div class="f-column">
+          {% render 'product-card',
+            product_card_product: p,
+            media_aspect_ratio: section.settings.image_ratio | default: 'square',
+            show_secondary_image: true,
+            show_vendor: true,
+            show_rating: false,
+            show_quick_add: true,
+            section_id: section.id,
+            image_sizes: image_sizes
+          %}
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  {%- if _has_coll -%}
+    <div class="section__footer text-center" style="margin-top: 2rem;">
+      <a href="{{ _coll.url }}" class="btn btn--secondary btn--small">
+        View all {{ product.metafields.taxonomy.color_family.value }} {{ product.type }}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Related Products (RueIV)",
+  "tag": "section",
+  "class": "section-related-products-rueiv",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You may also like"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 8,
+      "label": "Products to show"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Desktop columns"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt" },
+        { "value": "square", "label": "Square" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "landscape", "label": "Landscape" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 60,
+      "unit": "px",
+      "label": "Padding top"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 60,
+      "unit": "px",
+      "label": "Padding bottom"
+    }
+  ],
+  "templates": ["product"],
+  "presets": [
+    {
+      "name": "Related Products (RueIV)"
+    }
+  ]
+}
+{% endschema %}

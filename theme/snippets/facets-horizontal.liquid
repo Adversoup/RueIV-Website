@@ -1,0 +1,230 @@
+{%- comment -%}
+  facets-horizontal.liquid
+  ─────────────────────────
+  Horizontal dropdown filter bar for collection pages.
+  Each filter group is a pill-button <details> that opens a dropdown panel.
+{%- endcomment -%}
+
+{%- liquid
+  unless enable_color_swatch
+    assign enable_color_swatch = section.settings.enable_color_swatch
+  endunless
+-%}
+
+{%- if results.filters != empty -%}
+  <form
+    class="face-form facets-h"
+    method="GET"
+    action="{{ request.path }}"
+    is="facet-form"
+    data-section-id="{{ section.id }}"
+    data-history
+    update-on-change
+  >
+    <div data-filter data-index="horizontal-page" hidden>
+      <input type="hidden" name="page" value="">
+      {%- if results.current_type != blank or results.current_vendor != blank -%}
+        <input type="hidden" name="q" value="{{ results.current_vendor | default: results.current_type | escape }}">
+      {%- endif -%}
+      {%- if request.page_type == 'search' -%}
+        <input type="hidden" name="q" value="{{ results.terms | escape }}">
+      {%- endif -%}
+      {%- if results.sort_by != blank -%}
+        <input type="hidden" name="sort_by" value="{{ results.sort_by }}">
+      {%- endif -%}
+    </div>
+
+    <div class="facets-h__bar">
+      {%- comment -%} Filter icon + result count {%- endcomment -%}
+      <div class="facets-h__header">
+        {%- render 'icon-filters' -%}
+        <span class="facets-h__title font-body-bolder">{{ 'products.facets.filter_button' | t | default: 'Filter' }}</span>
+        <span class="facets-h__count text-subtext">
+          {%- liquid
+            if results.results_count
+              echo results.results_count | append: ' Results'
+            else
+              echo results.products_count | append: ' Results'
+            endif
+          -%}
+        </span>
+      </div>
+
+      {%- comment -%} Individual filter dropdowns {%- endcomment -%}
+      {%- assign _rendered_labels = '' -%}
+      {%- for filter in results.filters -%}
+        {%- liquid
+          assign _dl = filter.label | downcase
+          if _dl == 'availability' or _dl == 'end use' or filter.type == 'price_range'
+            continue
+          endif
+          assign _label_check = '|' | append: _dl | append: '|'
+          if _rendered_labels contains _label_check
+            continue
+          endif
+          assign _rendered_labels = _rendered_labels | append: _label_check
+        -%}
+        {%- assign filter_id = 'horizontal-' | append: filter.param_name -%}
+        {%- liquid
+          assign downcase_label = filter.label | downcase
+          assign is_color = false
+          if settings.color_swatch_trigger != blank and enable_color_swatch
+            assign swatch_trigger = settings.color_swatch_trigger | downcase
+            if swatch_trigger contains downcase_label
+              assign is_color = true
+            elsif swatch_trigger contains 'color' and downcase_label contains 'colour'
+              assign is_color = true
+            endif
+          endif
+
+          assign sorted_values = filter.values
+          if filter.operator == 'AND'
+            assign active_filter_values = filter.values | where: 'active', true
+            assign inactive_filter_values = filter.values | where: 'active', false
+            assign sorted_values = active_filter_values | concat: inactive_filter_values
+          endif
+
+          assign active_count = 0
+          for fv in filter.active_values
+            assign active_count = active_count | plus: 1
+          endfor
+        -%}
+
+        <details class="facets-h__dropdown" data-filter data-index="{{ filter_id }}">
+          <summary class="facets-h__trigger{% if active_count > 0 %} facets-h__trigger--active{% endif %}">
+            <span>{{ filter.label | escape }}</span>
+            {%- if active_count > 0 -%}
+              <span class="facets-h__badge">{{ active_count }}</span>
+            {%- endif -%}
+            <svg class="facets-h__chevron" width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9.75 4.5L6 8.25L2.25 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </summary>
+
+          <div class="facets-h__panel">
+            {%- case filter.type -%}
+              {%- when 'list', 'boolean' -%}
+                {%- if is_color or filter.presentation == 'swatch' -%}
+                  <ul class="swatches flex flex-wrap items-center">
+                    {%- for filter_value in sorted_values -%}
+                      {%- liquid
+                        assign filter_value_id = filter_id | append: '-' | append: forloop.index
+                        assign is_disabled = false
+                        if filter_value.count == 0 and filter_value.active == false
+                          assign is_disabled = true
+                        endif
+                      -%}
+                      <li data-tooltip class="filter-item">
+                        {%- capture filter_label -%}{{ filter_value.label }} ({{ filter_value.count }}){%- endcapture -%}
+                        {%- liquid
+                          if filter.presentation == 'swatch'
+                            render 'swatch', allow_multiple: true, value: filter_value.value, name: filter_value.param_name, id: filter_value_id, selected: filter_value.active, disabled: is_disabled, swatch: filter_value.swatch, tooltip: filter_label
+                          else
+                            render 'swatch', allow_multiple: true, value: filter_value.value, name: filter_value.param_name, id: filter_value_id, selected: filter_value.active, disabled: is_disabled, file_extension: 'png', tooltip: filter_label
+                          endif
+                        -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- elsif filter.presentation == 'image' -%}
+                  <ul class="swatches flex flex-wrap items-center">
+                    {%- for filter_value in sorted_values -%}
+                      {%- liquid
+                        assign filter_value_id = filter_id | append: '-' | append: forloop.index
+                        assign is_disabled = false
+                        if filter_value.count == 0 and filter_value.active == false
+                          assign is_disabled = true
+                        endif
+
+                        assign swatch_image = blank
+                        assign swatch_fallback = filter_value.value | split: ' ' | last | handle
+                        assign swatch_focal_point = null
+                        if filter_value.image
+                          assign swatch_image = filter_value.image | image_url: width: 144
+                          assign swatch_focal_point = filter_value.image.presentation.focal_point
+                        endif
+                      -%}
+                      <li data-tooltip class="filter-item">
+                        <input
+                          class="visually-hidden"
+                          name="{{ filter_value.param_name }}"
+                          value="{{ filter_value.value | escape }}"
+                          type="checkbox"
+                          id="{{ filter_value_id }}"
+                          {% if is_disabled %}disabled{% endif %}
+                          {% if filter_value.active %}checked{% endif %}
+                        >
+                        <label
+                          class="swatch-color swatch-image block relative"
+                          for="{{ filter_value_id | escape }}"
+                          style="--swatch-background: {{ swatch_fallback }};{% if swatch_image != blank %} background-image: url({{ swatch_image }});{% endif %}{% if swatch_focal_point %} --swatch-focal-point: {{ swatch_focal_point }}{% endif %}"
+                        >
+                          <span class="tooltip">{{ filter_value.label | escape }} ({{ filter_value.count }})</span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- else -%}
+                  <ul class="facets-h__checklist">
+                    {%- for filter_value in sorted_values -%}
+                      {%- liquid
+                        assign filter_value_id = filter_id | append: '-' | append: forloop.index
+                        assign is_disabled = false
+                        if filter_value.count == 0 and filter_value.active == false
+                          assign is_disabled = true
+                        endif
+                      -%}
+                      <li class="flex items-center gap-3">
+                        <input
+                          name="{{ filter_value.param_name }}"
+                          value="{{ filter_value.value | escape }}"
+                          class="checkbox"
+                          id="{{ filter_value_id | escape }}"
+                          type="checkbox"
+                          {% if filter_value.active %}checked{% endif %}
+                          {% if is_disabled %}disabled{% endif %}
+                        >
+                        <label for="{{ filter_value_id }}" class="flex items-center gap-1">
+                          {{- filter_value.label | escape -}}
+                          <span class="text-sm{% unless filter_value.active %} text-subtext{% endunless %}">({{ filter_value.count }})</span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+
+              {%- when 'price_range' -%}
+                {%- liquid
+                  assign min_value = filter.min_value.value | default: 0.0 | divided_by: 100.0
+                  assign max_value = filter.max_value.value | default: filter.range_max | divided_by: 100.0
+                  assign range_max = filter.range_max | divided_by: 100.0 | ceil
+                  assign step_value = max_value | minus: min_value | divided_by: 100.0 | ceil | at_most: 1
+                  assign lower_progress_limit = min_value | divided_by: range_max | times: 100.0
+                  assign higher_progress_limit = max_value | divided_by: range_max | times: 100.0
+                -%}
+                <price-range class="grid gap-6">
+                  <label class="visually-hidden" for="FacetHRangeFromPrice">{{ 'products.facets.from' | t }}</label>
+                  <label class="visually-hidden" for="FacetHRangeToPrice">{{ 'products.facets.to' | t }}</label>
+                  <div class="facet-range-wrapper relative" style="--range-min: {{ lower_progress_limit }}%; --range-max: {{ higher_progress_limit }}%;">
+                    <input class="facet-range facet-range__min w-full pointer-events-none" type="range" min="0" max="{{ range_max | ceil }}" step="{{ step_value }}" value="{{ min_value | ceil }}" id="FacetHRangeFromPrice">
+                    <input class="facet-range facet-range__max w-full pointer-events-none absolute" type="range" min="0" max="{{ range_max | ceil }}" step="{{ step_value }}" value="{{ max_value | ceil }}" id="FacetHRangeToPrice">
+                  </div>
+                  <div class="facet-input-wrapper flex items-center gap-5">
+                    <div class="flex items-center flex-grow relative">
+                      <span class="facet-range__symbol">{{ cart.currency.symbol }}</span>
+                      <input class="form-control facet-range__input" type="number" inputmode="numeric" name="{{ filter.min_value.param_name }}" id="FacetHInputFromPrice" autocomplete="off" placeholder="0" min="0" max="{{ max_value | ceil }}" step="{{ step_value }}" {% if filter.min_value.value %}value="{{ min_value | ceil }}"{% endif %}>
+                    </div>
+                    <span>{{ 'products.facets.to' | t }}</span>
+                    <div class="flex items-center flex-grow relative">
+                      <span class="facet-range__symbol">{{ cart.currency.symbol }}</span>
+                      <input class="form-control facet-range__input" type="number" inputmode="numeric" name="{{ filter.max_value.param_name }}" id="FacetHInputToPrice" autocomplete="off" placeholder="{{ range_max | ceil }}" min="{{ min_value | ceil }}" max="{{ range_max | ceil }}" step="{{ step_value }}" {% if filter.max_value.value %}value="{{ max_value | ceil }}"{% endif %}>
+                    </div>
+                  </div>
+                </price-range>
+            {%- endcase -%}
+          </div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </form>
+{%- endif -%}

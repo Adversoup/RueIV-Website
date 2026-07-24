@@ -1,0 +1,247 @@
+{%- comment -%}
+  RueIV 404 — Premium not-found page.
+  Large heading, friendly copy, search bar, quick links to Shop & Contact,
+  plus optional featured collection below.
+{%- endcomment -%}
+
+<style>
+  .rv-404 {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    text-align: center;
+  }
+  .rv-404__code {
+    font-family: var(--font-heading-family);
+    font-size: clamp(6rem, 12vw, 12rem);
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    opacity: 0.08;
+    margin: 0;
+    user-select: none;
+  }
+  .rv-404__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    margin: -2rem 0 1rem;
+    position: relative;
+  }
+  .rv-404__body {
+    font-size: 1.2rem; line-height: 1.7;
+    max-width: 480px; margin: 0 auto 2rem;
+    opacity: 0.7;
+  }
+
+  /* Search */
+  .rv-404__search {
+    max-width: 420px; margin: 0 auto 2.5rem;
+    position: relative;
+  }
+  .rv-404__search-input {
+    width: 100%; padding: 0.875rem 3rem 0.875rem 1.25rem;
+    font-size: 1.2rem;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    background: transparent;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .rv-404__search-input:focus {
+    outline: none;
+    border-color: rgba(0,0,0,0.4);
+  }
+  .rv-404__search-btn {
+    position: absolute; right: 0.75rem; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    opacity: 0.5; font-size: 1.2rem; padding: 0.25rem;
+  }
+  .rv-404__search-btn:hover { opacity: 1; }
+
+  /* Quick links */
+  .rv-404__links {
+    display: flex; flex-wrap: wrap;
+    justify-content: center; gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .rv-404__link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.75rem 1.75rem;
+    font-size: 1.2rem; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.25s ease;
+  }
+  .rv-404__link--primary {
+    background: #1a1a1a; color: #fff;
+  }
+  .rv-404__link--primary:hover { background: #333; }
+  .rv-404__link--secondary {
+    background: transparent; color: #1a1a1a;
+    border: 1px solid rgba(0,0,0,0.2);
+  }
+  .rv-404__link--secondary:hover { border-color: #1a1a1a; }
+
+  .rv-404__hint {
+    font-size: 1.2rem; opacity: 0.4;
+    margin-top: 2rem;
+  }
+</style>
+
+<section class="rv-404 color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    <p class="rv-404__code">404</p>
+    <h1 class="rv-404__heading">{{ section.settings.heading }}</h1>
+    <p class="rv-404__body">{{ section.settings.body }}</p>
+
+    {%- if section.settings.show_search -%}
+      <form action="{{ routes.search_url }}" method="get" class="rv-404__search" role="search">
+        <input
+          type="search"
+          name="q"
+          class="rv-404__search-input"
+          placeholder="{{ section.settings.search_placeholder | default: 'Search products, collections…' }}"
+          aria-label="Search"
+        >
+        <button type="submit" class="rv-404__search-btn" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </form>
+    {%- endif -%}
+
+    <div class="rv-404__links">
+      {%- if section.settings.link1_label != blank -%}
+        <a href="{{ section.settings.link1_url | default: routes.all_products_collection_url }}" class="rv-404__link rv-404__link--primary">
+          {{ section.settings.link1_label }}
+        </a>
+      {%- endif -%}
+      {%- if section.settings.link2_label != blank -%}
+        <a href="{{ section.settings.link2_url | default: '/pages/contact' }}" class="rv-404__link rv-404__link--secondary">
+          {{ section.settings.link2_label }}
+        </a>
+      {%- endif -%}
+      {%- if section.settings.link3_label != blank -%}
+        <a href="{{ section.settings.link3_url | default: '/' }}" class="rv-404__link rv-404__link--secondary">
+          {{ section.settings.link3_label }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.hint != blank -%}
+      <p class="rv-404__hint">{{ section.settings.hint }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV 404",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Page Not Found"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body Text",
+      "default": "The page you're looking for may have moved or no longer exists. Try searching, or use the links below to get back on track."
+    },
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show Search Bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search Placeholder",
+      "default": "Search products, collections…"
+    },
+    {
+      "type": "header",
+      "content": "Quick Links"
+    },
+    {
+      "type": "text",
+      "id": "link1_label",
+      "label": "Button 1 Label",
+      "default": "Shop All"
+    },
+    {
+      "type": "url",
+      "id": "link1_url",
+      "label": "Button 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "link2_label",
+      "label": "Button 2 Label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "link2_url",
+      "label": "Button 2 Link"
+    },
+    {
+      "type": "text",
+      "id": "link3_label",
+      "label": "Button 3 Label",
+      "default": "Home"
+    },
+    {
+      "type": "url",
+      "id": "link3_url",
+      "label": "Button 3 Link"
+    },
+    {
+      "type": "text",
+      "id": "hint",
+      "label": "Hint Text",
+      "default": "If you believe this is an error, please contact us."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV 404"
+    }
+  ]
+}
+{% endschema %}

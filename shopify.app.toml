@@ -1,0 +1,14 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+name = "rueiv-importer"
+client_id = ""
+application_url = "https://localhost:3000"
+embedded = false
+
+[access_scopes]
+scopes = "write_products,read_products"
+
+[auth]
+redirect_urls = [ "https://localhost:3000/auth/callback" ]
+
+[webhooks]
+api_version = "2024-10"

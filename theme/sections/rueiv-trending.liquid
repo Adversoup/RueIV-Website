@@ -1,0 +1,90 @@
+<style>
+  .rueiv-trending-wrap { background: #f5f3f0; }
+  .rueiv-trending-wrap .rueiv-trending { margin-block-start: 0 !important; padding-block: var(--rueiv-gap); }
+</style>
+<div class="rueiv-trending-wrap">
+<section class="rueiv-section rueiv-trending">
+  <div class="rueiv-page-width">
+    <div class="rueiv-rail__inner">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="rueiv-section-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <p class="rueiv-subtext">{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      {%- assign coll = collections[section.settings.collection] -%}
+      {%- assign limit = section.settings.products_to_show | default: 4 -%}
+
+      <div class="rueiv-rail__grid">
+        {%- if coll != blank -%}
+          {%- for product in coll.products limit: limit -%}
+            <a href="{{ product.url }}" class="rueiv-pcard">
+              <div class="rueiv-pcard__img-wrap">
+                {%- if product.featured_image != blank -%}
+                  {{ product.featured_image | image_url: width: 700 | image_tag:
+                     loading: 'lazy', class: 'rueiv-pcard__img',
+                     alt: product.title }}
+                {%- else -%}
+                  <div class="rueiv-pcard__placeholder"></div>
+                {%- endif -%}
+              </div>
+              <div class="rueiv-pcard__info">
+                {%- if section.settings.show_vendor and product.vendor != blank -%}
+                  <p class="rueiv-pcard__vendor">{{ product.vendor }}</p>
+                {%- endif -%}
+                <h4 class="rueiv-pcard__title">{{ product.title }}</h4>
+              </div>
+            </a>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for i in (1..4) -%}
+            <div class="rueiv-pcard">
+              <div class="rueiv-pcard__img-wrap">
+                <div class="rueiv-pcard__placeholder"></div>
+              </div>
+              <div class="rueiv-pcard__info">
+                <h4 class="rueiv-pcard__title">Trending Item {{ i }}</h4>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.button_label != blank -%}
+        <div class="rueiv-section-footer">
+          <a href="{{ section.settings.button_url | default: coll.url }}" class="rueiv-btn rueiv-btn--outline">
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+</div>
+
+{% schema %}
+{
+  "name": "RueIV — Trending",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Trending in the Showroom" },
+    { "type": "text", "id": "description", "label": "Description", "default": "Discover the pieces designers are sourcing right now." },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "min": 4, "max": 12, "step": 4, "default": 4, "label": "Products to show" },
+    { "type": "checkbox", "id": "show_vendor", "default": true, "label": "Show vendor" },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "View All Trending" },
+    { "type": "url", "id": "button_url", "label": "Button Link" }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Trending",
+      "settings": {
+        "heading": "Trending in the Showroom",
+        "description": "Discover the pieces designers are sourcing right now.",
+        "button_label": "View All Trending"
+      }
+    }
+  ]
+}
+{% endschema %}

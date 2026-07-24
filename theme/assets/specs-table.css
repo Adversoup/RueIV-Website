@@ -1,0 +1,40 @@
+/* specs-table.css – Minimal specs table styling for product metafields */
+.specs-table {
+  width: 100%;
+  margin: 0;
+}
+.specs-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body-family);
+  font-size: var(--font-body-size);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight);
+  line-height: 1.6;
+}
+.specs-table__row {
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+}
+.specs-table__row:last-child {
+  border-bottom: none;
+}
+.specs-table__label {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.625rem 1rem 0.625rem 0;
+  white-space: nowrap;
+  vertical-align: top;
+  width: 40%;
+  color: rgba(var(--color-foreground), 0.75);
+  font-size: inherit;
+  font-family: inherit;
+}
+.specs-table__value {
+  text-align: left;
+  padding: 0.625rem 0;
+  vertical-align: top;
+  word-break: break-word;
+  font-size: inherit;
+  font-family: inherit;
+  color: rgba(var(--color-foreground), 1);
+}

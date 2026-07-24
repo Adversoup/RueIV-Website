@@ -1,0 +1,154 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "how_it_works": {
+      "type": "section-how-to-buy",
+      "settings": {
+        "bg_asset": "thevibestudio01.png",
+        "eyebrow": "",
+        "heading": "Select Your Project Aesthetic",
+        "subtitle": "Each board represents a carefully curated design direction developed by our showroom team. Add a vibe to your cart and we'll source a cohesive selection tailored to your project.",
+        "pillar_1": "No endless scrolling.",
+        "pillar_2": "No guesswork.",
+        "pillar_3": "Just intentional sourcing.",
+        "body_copy": "Curated sourcing selections are delivered within 24–48 business hours from submission. Trade-only service.",
+        "hiw_copy": "",
+        "disclaimer": "",
+        "cta_label": "",
+        "cta_link": "",
+        "heading_size": 48,
+        "padding_top": 228,
+        "padding_bottom": 0
+      }
+    },
+    "vibe_hiw": {
+      "type": "section-vibe-hiw",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "Browse",
+            "description": "Browse our curated moodboards."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "Add to Cart",
+            "description": "Add your desired vibe to cart."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "Submit",
+            "description": "Submit your request."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "heading": "How It Works",
+        "bg_asset": "wall-background.png",
+        "copy": "Within 24–48 hours, our team delivers a custom-curated selection aligned with your chosen aesthetic. Effortless. Elevated. Trade-only.",
+        "disclaimer": "Shop the Vibe is available exclusively to approved trade clients. Product availability and lead times may vary based on vendor inventory. Selections are provided as a sourcing service. Final availability and pricing confirmed upon inquiry."
+      }
+    },
+    "moodboards": {
+      "type": "section-vibe-moodboard-grid",
+      "blocks": {
+        "mb_1": {
+          "type": "moodboard",
+          "settings": {
+            "title": "Quiet Luxury Living Room",
+            "description": "Warm neutrals, soft bouclé, and sculptural lighting — a serene retreat for modern living.",
+            "tag": "Living Room",
+            "link": "/products/quiet-luxury-living-room-2"
+          }
+        },
+        "mb_2": {
+          "type": "moodboard",
+          "settings": {
+            "title": "Coastal Modern Bedroom",
+            "description": "Light linens, whitewashed textures, and ocean-inspired hues for effortless calm.",
+            "tag": "Bedroom",
+            "link": "/products/coastal-modern-bedroom-2"
+          }
+        },
+        "mb_3": {
+          "type": "moodboard",
+          "settings": {
+            "title": "Industrial Loft Dining",
+            "description": "Raw materials meet refined craft — brass, leather, and statement wallpaper.",
+            "tag": "Dining",
+            "link": "/products/industrial-loft-dining-2"
+          }
+        },
+        "mb_4": {
+          "type": "moodboard",
+          "settings": {
+            "title": "Japandi Study",
+            "description": "Minimalist forms, natural wood, and paper-inspired wallcoverings for focused serenity.",
+            "tag": "Study",
+            "link": "/products/japandi-study-2"
+          }
+        },
+        "mb_5": {
+          "type": "moodboard",
+          "settings": {
+            "title": "Art Deco Lounge",
+            "description": "Rich velvets, geometric patterns, and statement lighting — glamour reimagined.",
+            "tag": "Lounge",
+            "link": "/products/art-deco-lounge-2"
+          }
+        },
+        "mb_6": {
+          "type": "moodboard",
+          "settings": {
+            "title": "Mediterranean Terrace",
+            "description": "Terracotta tones, outdoor-rated fabrics, and sun-drenched warmth.",
+            "tag": "Outdoor",
+            "link": "/products/mediterranean-terrace-2"
+          }
+        }
+      },
+      "block_order": [
+        "mb_1",
+        "mb_2",
+        "mb_3",
+        "mb_4",
+        "mb_5",
+        "mb_6"
+      ],
+      "settings": {
+        "eyebrow": "Curated Vibes",
+        "heading": "Browse Moodboards",
+        "subtitle": "Each moodboard is a complete room concept — fabrics, furniture, lighting, and wallpaper hand-selected by our team.",
+        "columns": 3,
+        "gap": 24,
+        "image_ratio": "4/5",
+        "cta_label": "Submit a Custom Request",
+        "disclaimer": "Shop the Vibe is available exclusively to approved trade clients. Product availability and lead times may vary based on vendor inventory. Selections are provided as a sourcing service. Final availability and pricing confirmed upon inquiry.",
+        "padding_top": 52,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "how_it_works",
+    "vibe_hiw",
+    "moodboards"
+  ]
+}

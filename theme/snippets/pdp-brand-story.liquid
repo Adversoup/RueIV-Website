@@ -1,0 +1,54 @@
+{%- comment -%}
+  snippets/pdp-brand-story.liquid
+  ────────────────────────────────
+  Renders a brand story block at the bottom of PDP.
+  Reads from brand.story metafield. If set, shows an editorial card
+  with vendor name, story text, and a CTA to explore the brand's collection.
+
+  Usage:
+    {% render 'pdp-brand-story', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign _vendor = product.vendor
+  assign _story = product.metafields.brand.story.value
+  assign _logo = product.metafields.brand.logo.value
+  assign _tier = product.metafields.brand.tier.value | default: ''
+
+  comment
+    Build vendor collection URL. Vendor-based collections use handles like "fabricut", "verellen", etc.
+  endcomment
+  assign _vendor_handle = _vendor | handleize
+-%}
+
+{%- if _story != blank -%}
+<div class="pdp-brand-story color-scheme-2">
+  <div class="pdp-brand-story__inner page-width">
+    <div class="pdp-brand-story__content">
+      {%- if _logo != blank -%}
+        <img
+          src="{{ _logo | image_url: width: 240 }}"
+          alt="{{ _vendor | escape }}"
+          class="pdp-brand-story__logo"
+          width="160"
+          height="auto"
+          loading="lazy"
+        >
+      {%- else -%}
+        <h3 class="pdp-brand-story__vendor h4">{{ _vendor }}</h3>
+      {%- endif -%}
+
+      <div class="pdp-brand-story__text rte">
+        {{ _story }}
+      </div>
+
+      {%- assign _vendor_coll = collections[_vendor_handle] -%}
+      {%- if _vendor_coll != blank -%}
+        <a href="{{ _vendor_coll.url }}" class="pdp-brand-story__cta btn btn--secondary btn--small">
+          Explore {{ _vendor }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%- endif -%}

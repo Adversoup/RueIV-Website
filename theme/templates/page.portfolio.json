@@ -1,0 +1,114 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "section-page-hero",
+      "settings": {
+        "eyebrow": "Portfolio",
+        "title": "Our Work",
+        "intro": "<p>Explore curated interiors brought to life with Rue IV products — from concept to completion.</p>",
+        "overlay_opacity": 30,
+        "desktop_ratio": "21/9",
+        "mobile_ratio": "4/3",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "project_gallery": {
+      "type": "section-event-gallery",
+      "settings": {
+        "eyebrow": "Featured",
+        "heading": "Project Highlights",
+        "layout": "grid",
+        "columns": 3,
+        "gap": 16,
+        "image_ratio": "4/3",
+        "padding_top": 52,
+        "padding_bottom": 36
+      }
+    },
+    "portfolio": {
+      "type": "section-portfolio-detail",
+      "blocks": {
+        "credit_1": {
+          "type": "credit",
+          "settings": {
+            "role": "Interior Designer",
+            "name": "Studio Name"
+          }
+        },
+        "credit_2": {
+          "type": "credit",
+          "settings": {
+            "role": "Architect",
+            "name": "Firm Name"
+          }
+        },
+        "vendor_1": {
+          "type": "vendor",
+          "settings": {
+            "name": "Fabricut"
+          }
+        },
+        "vendor_2": {
+          "type": "vendor",
+          "settings": {
+            "name": "Currey & Company"
+          }
+        },
+        "vendor_3": {
+          "type": "vendor",
+          "settings": {
+            "name": "York Wallcoverings"
+          }
+        }
+      },
+      "block_order": [
+        "credit_1",
+        "credit_2",
+        "vendor_1",
+        "vendor_2",
+        "vendor_3"
+      ],
+      "settings": {
+        "project_title": "Project Title",
+        "body_text": "<p>Project description goes here. Replace this with the full story of the design project.</p>",
+        "spec_client": "Client Name",
+        "spec_location": "City, State",
+        "spec_scope": "Full Interior",
+        "spec_year": "2026",
+        "credits_heading": "Credits",
+        "vendors_heading": "Vendors & Makers",
+        "gallery_heading": "Project Gallery",
+        "related_heading": "Products Used",
+        "padding_top": 36,
+        "padding_bottom": 52
+      }
+    },
+    "related": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Shop the Look",
+        "heading_size": "h2",
+        "show_collection_description": false,
+        "columns": 4,
+        "padding_top": 36,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "project_gallery",
+    "portfolio",
+    "related"
+  ]
+}

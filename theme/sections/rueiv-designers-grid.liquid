@@ -1,0 +1,159 @@
+{%- comment -%}
+  RueIV — Designers Grid
+  Groups products by vendor, shows one card per vendor using
+  the first product's featured image as the visual.
+{%- endcomment -%}
+
+<style>
+  .rv-designers {
+    padding: 0 0 100px;
+  }
+  .rv-designers__header {
+    text-align: center;
+    padding: 48px 24px 56px;
+  }
+  .rv-designers__heading {
+    font-family: var(--font-heading-family);
+    font-weight: 300;
+    font-size: clamp(28px, 4vw, 48px);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+  .rv-designers__subtitle {
+    font-size: 15px;
+    color: rgba(var(--color-foreground), 0.6);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .rv-designers__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px 20px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .rv-designers__card {
+    text-decoration: none;
+    color: rgb(var(--color-foreground));
+    display: block;
+    text-align: center;
+  }
+  .rv-designers__img-wrap {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    position: relative;
+    background: #f5f3f0;
+  }
+  .rv-designers__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+  .rv-designers__card:hover .rv-designers__img {
+    transform: scale(1.04);
+  }
+  .rv-designers__name {
+    font-family: var(--font-heading-family);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 16px 0 4px;
+  }
+  .rv-designers__count {
+    font-size: 14px;
+    color: rgba(var(--color-foreground), 0.5);
+  }
+
+  @media (max-width: 989px) {
+    .rv-designers__grid { grid-template-columns: repeat(3, 1fr); padding: 0 24px; }
+  }
+  @media (max-width: 749px) {
+    .rv-designers__grid { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; padding: 0 16px; }
+    .rv-designers__header { padding: 32px 16px 40px; }
+  }
+</style>
+
+{%- assign coll = collection -%}
+{%- assign seen_vendors = '' -%}
+{%- assign vendor_cards = '' -%}
+
+{%- comment -%}
+  Iterate ALL products in the collection (up to 1000 via paginate).
+  Build a deduplicated list of vendors with first product data.
+{%- endcomment -%}
+
+{%- paginate coll.products by 1000 -%}
+  {%- for product in coll.products -%}
+    {%- assign vendor_handle = product.vendor | handleize -%}
+    {%- unless seen_vendors contains vendor_handle -%}
+      {%- if seen_vendors != '' -%}
+        {%- assign seen_vendors = seen_vendors | append: '|' -%}
+        {%- assign vendor_cards = vendor_cards | append: '|||' -%}
+      {%- endif -%}
+      {%- assign seen_vendors = seen_vendors | append: vendor_handle -%}
+      {%- capture card_data -%}{{ product.vendor }}~~~{{ product.featured_image | image_url: width: 800 }}~~~{{ product.vendor | url_encode }}~~~{{ product.url }}{%- endcapture -%}
+      {%- assign vendor_cards = vendor_cards | append: card_data -%}
+    {%- endunless -%}
+  {%- endfor -%}
+{%- endpaginate -%}
+
+{%- assign cards_array = vendor_cards | split: '|||' -%}
+
+<section class="rv-designers">
+  <div class="rv-designers__header">
+    <h1 class="rv-designers__heading">{{ section.settings.heading | default: coll.title }}</h1>
+    {%- if section.settings.subtitle != blank -%}
+      <p class="rv-designers__subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+  </div>
+
+  <div class="rv-designers__grid">
+    {%- for card in cards_array -%}
+      {%- assign parts = card | split: '~~~' -%}
+      {%- assign vendor_name = parts[0] -%}
+      {%- assign img_url = parts[1] -%}
+      {%- assign vendor_encoded = parts[2] -%}
+
+      <a href="/collections/all/{{ vendor_name | handleize }}" class="rv-designers__card">
+        <div class="rv-designers__img-wrap">
+          {%- if img_url != blank -%}
+            <img src="{{ img_url }}" alt="{{ vendor_name | escape }}" class="rv-designers__img" loading="lazy" width="800" height="1067">
+          {%- endif -%}
+        </div>
+        <div class="rv-designers__name">{{ vendor_name }}</div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Designers Grid",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Designers"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "The makers and visionaries behind our curated collections."
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Designers Grid"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,107 @@
+{%- comment -%}
+  ============================================================================
+  RueIV Mega – Vibe Studio  (3-column card layout)
+  ============================================================================
+  Layout:
+  ┌──────────────────┬──────────────────┬──────────────────┐
+  │   [CARD IMAGE]   │   [CARD IMAGE]   │   [CARD IMAGE]   │
+  │ Designer         │ Portfolio         │ Moodboards        │
+  │ Spotlight        │                   │                   │
+  │ Short desc …     │ Short desc …      │ Short desc …      │
+  │ [Explore →]      │ [Explore →]       │ [Explore →]       │
+  └──────────────────┴──────────────────┴──────────────────┘
+
+  Data: child links from the navigation item (link.links)
+  Images + descriptions: block settings (card_image_1 … card_image_3,
+                                          card_desc_1  … card_desc_3)
+{%- endcomment -%}
+
+<link rel="stylesheet" href="{{ 'rueiv-mega-v2.css' | asset_url }}" media="print" fetchpriority="low" onload="this.media='all'">
+
+<details
+  id="RueivMegaVibe-{{ block.id }}"
+  is="details-mega"
+  trigger="{{ section.settings.menu_trigger }}"
+  level="top"
+  data-rv2-mega
+  {{ block.shopify_attributes }}
+>
+  <summary data-link="{{ link.url }}" class="z-2 font-navigation">
+    <span class="menu__item flex items-center relative">
+      <span class="reversed-link flex items-center">
+        {{- link.title | escape }}
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9.75 4.5L6 8.25L2.25 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </span>
+  </summary>
+
+  <div class="mega-menu v-scrollable">
+    <div class="mega-menu__container">
+      <div class="page-width mega-menu__wrapper">
+        <div class="rv2-grid rv2-grid--vibe" data-rv2-grid>
+
+          {%- for child in link.links -%}
+            {%- liquid
+              assign idx = forloop.index
+              assign img = nil
+              assign desc = ''
+
+              case idx
+                when 1
+                  assign img  = block.settings.card_image_1
+                  assign desc = block.settings.card_desc_1
+                when 2
+                  assign img  = block.settings.card_image_2
+                  assign desc = block.settings.card_desc_2
+                when 3
+                  assign img  = block.settings.card_image_3
+                  assign desc = block.settings.card_desc_3
+              endcase
+            -%}
+
+            <div class="rv2-col mega-menu__item">
+              <a href="{{ child.url }}" class="rv2-vibe-card">
+                {%- if img != blank -%}
+                  <div class="rv2-tile__img-wrap rv2-tile__img-wrap--tall">
+                    {{ img | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'rv2-tile__img', alt: child.title }}
+                  </div>
+                {%- endif -%}
+
+                <span class="rv2-vibe-card__title">{{ child.title | escape }}</span>
+
+                {%- if desc != blank -%}
+                  <span class="rv2-vibe-card__desc">{{ desc }}</span>
+                {%- endif -%}
+
+                <span class="rv2-vibe-card__cta">
+                  Explore
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M1.75 7H12.25M12.25 7L7.875 2.625M12.25 7L7.875 11.375" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </a>
+            </div>
+          {%- endfor -%}
+
+        </div><!-- .rv2-grid -->
+
+        {%- comment -%} ── Optional "Explore The Vibe Studio" footer CTA ── {%- endcomment -%}
+        {%- if block.settings.viewall_link != blank -%}
+          <div class="rv2-vibe-footer">
+            <a href="{{ block.settings.viewall_link }}" class="rv2-vibe-footer__link reversed-link">
+              {{ block.settings.viewall_label | default: 'Explore The Vibe Studio' }}
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M1.75 7H12.25M12.25 7L7.875 2.625M12.25 7L7.875 11.375" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        {%- endif -%}
+
+      </div>
+    </div>
+  </div>
+</details>
+
+<script src="{{ 'rueiv-mega-v2.js' | asset_url }}" defer></script>

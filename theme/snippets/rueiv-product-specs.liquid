@@ -1,0 +1,374 @@
+{%- comment -%}
+  snippets/rueiv-product-specs.liquid
+  ────────────────────────────────────
+  Renders structured product specifications from rueiv.* JSON metafields
+  in a collapsible accordion layout (Specifications, Dimensions, Source).
+  Only shows sections that have data.
+{%- endcomment -%}
+
+{%- liquid
+  assign _dims   = product.metafields.rueiv.dimensions.value
+  assign _fiber  = product.metafields.rueiv.fiber_content.value
+  assign _catattr = product.metafields.rueiv.category_attributes.value
+  assign _attrs  = product.metafields.rueiv.attributes.value
+
+  comment
+    ── Also pull from specs.* metafields (the curated specs namespace) ──
+  endcomment
+  assign _sp_composition  = product.metafields.specs.composition.value
+  assign _sp_material     = product.metafields.specs.material.value
+  assign _sp_width        = product.metafields.specs.width.value
+  assign _sp_height       = product.metafields.specs.height.value
+  assign _sp_depth        = product.metafields.specs.depth.value
+  assign _sp_weight       = product.metafields.specs.weight.value
+  assign _sp_color        = product.metafields.specs.color.value
+  assign _sp_pattern      = product.metafields.specs.pattern.value
+  assign _sp_weave        = product.metafields.specs.weave.value
+  assign _sp_finish       = product.metafields.specs.finish.value
+  assign _sp_fire_rating  = product.metafields.specs.fire_rating.value
+  assign _sp_country      = product.metafields.specs.country_of_origin.value
+  assign _sp_lead_time    = product.metafields.specs.lead_time.value
+  assign _sp_repeat_h     = product.metafields.specs.repeat_h.value
+  assign _sp_repeat_v     = product.metafields.specs.repeat_v.value
+  assign _sp_collection   = product.metafields.specs.collection_name.value
+  assign _sp_dimensions   = product.metafields.specs.dimensions.value
+  assign _sp_care         = product.metafields.specs.care.value
+  assign _sp_martindale   = product.metafields.specs.martindale.value
+  assign _sp_usage        = product.metafields.specs.usage.value
+  assign _sp_frame        = product.metafields.specs.frame_material.value
+  assign _sp_upholstery   = product.metafields.specs.upholstery.value
+  assign _sp_style        = product.metafields.specs.style.value
+  assign _sp_com_yardage  = product.metafields.specs.com_yardage.value
+  assign _sp_assembly     = product.metafields.specs.assembly_required.value
+  assign _sp_fixture_type = product.metafields.specs.fixture_type.value
+  assign _sp_constructed  = product.metafields.specs.constructed_from.value
+  assign _sp_bulb_type    = product.metafields.specs.bulb_type.value
+  assign _sp_max_wattage  = product.metafields.specs.max_wattage.value
+  assign _sp_voltage      = product.metafields.specs.voltage.value
+  assign _sp_shade_mat    = product.metafields.specs.shade_material.value
+  assign _sp_dimmable     = product.metafields.specs.dimmable.value
+  assign _sp_ip_rating    = product.metafields.specs.ip_rating.value
+  assign _sp_projection   = product.metafields.specs.projection.value
+  assign _sp_cable_length = product.metafields.specs.cable_length.value
+  assign _sp_roll_width   = product.metafields.specs.roll_width.value
+  assign _sp_roll_length  = product.metafields.specs.roll_length.value
+  assign _sp_substrate    = product.metafields.specs.substrate.value
+  assign _sp_installation = product.metafields.specs.installation.value
+  assign _sp_washability  = product.metafields.specs.washability.value
+
+  assign has_specs = false
+  assign has_dims  = false
+  assign has_sp    = false
+
+  if _fiber != blank or _catattr != blank or _attrs != blank
+    assign has_specs = true
+  endif
+  if _dims != blank
+    assign has_dims = true
+  endif
+  if _sp_composition != blank or _sp_material != blank or _sp_width != blank or _sp_pattern != blank or _sp_weave != blank or _sp_finish != blank or _sp_fire_rating != blank or _sp_country != blank or _sp_dimensions != blank or _sp_fixture_type != blank or _sp_constructed != blank or _sp_roll_width != blank or _sp_frame != blank or _sp_upholstery != blank or _sp_style != blank or _sp_height != blank or _sp_depth != blank or _sp_weight != blank or _sp_color != blank
+    assign has_sp = true
+  endif
+-%}
+
+{%- if has_specs or has_dims or has_sp -%}
+<style>
+  .rv-specs { margin-top: 0; }
+  .rv-specs__panel { border-bottom: 1px solid rgba(var(--color-foreground), 0.10); }
+  .rv-specs__toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 20px 0; background: none; border: none;
+    cursor: pointer; font-family: var(--font-heading-family);
+    font-size: 14px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgb(var(--color-foreground));
+    transition: opacity 0.2s;
+  }
+  .rv-specs__toggle:hover { opacity: 0.65; }
+  .rv-specs__toggle-icon {
+    width: 14px; height: 14px; position: relative; flex-shrink: 0;
+  }
+  .rv-specs__toggle-icon::before,
+  .rv-specs__toggle-icon::after {
+    content: ''; position: absolute;
+    background: rgb(var(--color-foreground));
+    transition: transform 0.25s ease;
+  }
+  .rv-specs__toggle-icon::before {
+    top: 50%; left: 0; width: 100%; height: 1px; transform: translateY(-50%);
+  }
+  .rv-specs__toggle-icon::after {
+    top: 0; left: 50%; width: 1px; height: 100%; transform: translateX(-50%);
+  }
+  .rv-specs__panel[open] .rv-specs__toggle-icon::after {
+    transform: translateX(-50%) rotate(90deg); opacity: 0;
+  }
+  .rv-specs__body {
+    padding: 0 0 24px;
+  }
+  .rv-specs__table {
+    width: 100%; border-collapse: collapse;
+    font-family: var(--font-body-family); line-height: 1.6;
+  }
+  .rv-specs__row { border-bottom: 1px solid rgba(var(--color-foreground), 0.06); }
+  .rv-specs__row:last-child { border-bottom: none; }
+  .rv-specs__label {
+    text-align: left; font-weight: 500; padding: 10px 16px 10px 0;
+    white-space: nowrap; vertical-align: top; width: 40%;
+    color: rgba(var(--color-foreground), 0.55); font-size: 14px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .rv-specs__value {
+    text-align: left; padding: 10px 0; vertical-align: top;
+    word-break: break-word; font-size: 14px;
+    color: rgba(var(--color-foreground), 0.9);
+  }
+  .rv-specs__dims-grid {
+    display: flex; gap: 32px; flex-wrap: wrap; padding: 8px 0 4px;
+  }
+  .rv-specs__dim-item { text-align: center; min-width: 80px; }
+  .rv-specs__dim-val {
+    font-family: var(--font-heading-family); font-size: 28px;
+    font-weight: 300; line-height: 1.1; color: rgb(var(--color-foreground));
+  }
+  .rv-specs__dim-label {
+    font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: rgba(var(--color-foreground), 0.5); margin-top: 6px;
+  }
+  .rv-specs__dim-unit {
+    font-size: 14px; color: rgba(var(--color-foreground), 0.45);
+    margin-top: 12px; letter-spacing: 0.04em;
+  }
+  .rv-specs__source {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; color: rgba(var(--color-foreground), 0.7);
+    text-decoration: none; transition: opacity 0.2s; padding: 4px 0;
+  }
+  .rv-specs__source:hover { opacity: 0.55; }
+  .rv-specs__source svg { width: 14px; height: 14px; }
+</style>
+
+<div class="rv-specs">
+
+  {%- comment -%}── SPECIFICATIONS ──{%- endcomment -%}
+  {%- if has_specs or has_sp -%}
+  <details class="rv-specs__panel">
+    <summary class="rv-specs__toggle">
+      Specifications
+      <span class="rv-specs__toggle-icon"></span>
+    </summary>
+    <div class="rv-specs__body">
+      <table class="rv-specs__table" role="table" aria-label="Specifications">
+        <tbody>
+          {%- comment -%} specs.* metafields (curated) {%- endcomment -%}
+          {%- if _sp_composition != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Composition</th><td class="rv-specs__value">{{ _sp_composition }}</td></tr>{%- endif -%}
+          {%- if _sp_material != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Material</th><td class="rv-specs__value">{{ _sp_material }}</td></tr>{%- endif -%}
+          {%- if _sp_width != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Width</th><td class="rv-specs__value">{{ _sp_width }}</td></tr>{%- endif -%}
+          {%- if _sp_height != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Height</th><td class="rv-specs__value">{{ _sp_height }}</td></tr>{%- endif -%}
+          {%- if _sp_depth != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Depth</th><td class="rv-specs__value">{{ _sp_depth }}</td></tr>{%- endif -%}
+          {%- if _sp_weight != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Weight</th><td class="rv-specs__value">{{ _sp_weight }}</td></tr>{%- endif -%}
+          {%- if _sp_dimensions != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Dimensions</th><td class="rv-specs__value">{{ _sp_dimensions }}</td></tr>{%- endif -%}
+          {%- if _sp_pattern != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Pattern</th><td class="rv-specs__value">{{ _sp_pattern }}</td></tr>{%- endif -%}
+          {%- if _sp_weave != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Weave</th><td class="rv-specs__value">{{ _sp_weave }}</td></tr>{%- endif -%}
+          {%- if _sp_color != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Color</th><td class="rv-specs__value">{{ _sp_color }}</td></tr>{%- endif -%}
+          {%- if _sp_finish != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Finish</th><td class="rv-specs__value">{{ _sp_finish }}</td></tr>{%- endif -%}
+          {%- if _sp_fire_rating != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Fire Rating</th><td class="rv-specs__value">{{ _sp_fire_rating }}</td></tr>{%- endif -%}
+          {%- if _sp_country != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Country of Origin</th><td class="rv-specs__value">{{ _sp_country }}</td></tr>{%- endif -%}
+          {%- if _sp_collection != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Collection</th><td class="rv-specs__value">{{ _sp_collection }}</td></tr>{%- endif -%}
+          {%- if _sp_repeat_h != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Horizontal Repeat</th><td class="rv-specs__value">{{ _sp_repeat_h }}</td></tr>{%- endif -%}
+          {%- if _sp_repeat_v != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Vertical Repeat</th><td class="rv-specs__value">{{ _sp_repeat_v }}</td></tr>{%- endif -%}
+          {%- if _sp_martindale != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Martindale</th><td class="rv-specs__value">{{ _sp_martindale }}</td></tr>{%- endif -%}
+          {%- if _sp_usage != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Usage</th><td class="rv-specs__value">{{ _sp_usage }}</td></tr>{%- endif -%}
+          {%- if _sp_lead_time != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Lead Time</th><td class="rv-specs__value">{{ _sp_lead_time }}</td></tr>{%- endif -%}
+          {%- if _sp_care != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Care</th><td class="rv-specs__value">{{ _sp_care }}</td></tr>{%- endif -%}
+          {%- if _sp_frame != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Frame Material</th><td class="rv-specs__value">{{ _sp_frame }}</td></tr>{%- endif -%}
+          {%- if _sp_upholstery != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Upholstery</th><td class="rv-specs__value">{{ _sp_upholstery }}</td></tr>{%- endif -%}
+          {%- if _sp_style != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Style</th><td class="rv-specs__value">{{ _sp_style }}</td></tr>{%- endif -%}
+          {%- if _sp_com_yardage != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">COM Yardage</th><td class="rv-specs__value">{{ _sp_com_yardage }}</td></tr>{%- endif -%}
+          {%- if _sp_assembly != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Assembly Required</th><td class="rv-specs__value">{{ _sp_assembly }}</td></tr>{%- endif -%}
+          {%- if _sp_fixture_type != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Fixture Type</th><td class="rv-specs__value">{{ _sp_fixture_type }}</td></tr>{%- endif -%}
+          {%- if _sp_constructed != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Constructed From</th><td class="rv-specs__value">{{ _sp_constructed }}</td></tr>{%- endif -%}
+          {%- if _sp_bulb_type != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Bulb Type</th><td class="rv-specs__value">{{ _sp_bulb_type }}</td></tr>{%- endif -%}
+          {%- if _sp_max_wattage != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Max Wattage</th><td class="rv-specs__value">{{ _sp_max_wattage }}</td></tr>{%- endif -%}
+          {%- if _sp_voltage != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Voltage</th><td class="rv-specs__value">{{ _sp_voltage }}</td></tr>{%- endif -%}
+          {%- if _sp_shade_mat != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Shade Material</th><td class="rv-specs__value">{{ _sp_shade_mat }}</td></tr>{%- endif -%}
+          {%- if _sp_dimmable != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Dimmable</th><td class="rv-specs__value">{{ _sp_dimmable }}</td></tr>{%- endif -%}
+          {%- if _sp_ip_rating != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">IP Rating</th><td class="rv-specs__value">{{ _sp_ip_rating }}</td></tr>{%- endif -%}
+          {%- if _sp_projection != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Projection</th><td class="rv-specs__value">{{ _sp_projection }}</td></tr>{%- endif -%}
+          {%- if _sp_cable_length != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Cable Length</th><td class="rv-specs__value">{{ _sp_cable_length }}</td></tr>{%- endif -%}
+          {%- if _sp_roll_width != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Roll Width</th><td class="rv-specs__value">{{ _sp_roll_width }}</td></tr>{%- endif -%}
+          {%- if _sp_roll_length != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Roll Length</th><td class="rv-specs__value">{{ _sp_roll_length }}</td></tr>{%- endif -%}
+          {%- if _sp_substrate != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Substrate</th><td class="rv-specs__value">{{ _sp_substrate }}</td></tr>{%- endif -%}
+          {%- if _sp_installation != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Installation</th><td class="rv-specs__value">{{ _sp_installation }}</td></tr>{%- endif -%}
+          {%- if _sp_washability != blank -%}<tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Washability</th><td class="rv-specs__value">{{ _sp_washability }}</td></tr>{%- endif -%}
+
+          {%- comment -%} rueiv.* metafields (legacy/import data) {%- endcomment -%}
+          {%- if _fiber != blank -%}
+            {%- assign _fiber_display = _fiber -%}
+            {%- if _fiber.raw != blank -%}
+              {%- assign _fiber_display = _fiber.raw -%}
+            {%- endif -%}
+            <tr class="rv-specs__row">
+              <th class="rv-specs__label" scope="row">Fiber Content</th>
+              <td class="rv-specs__value">{{ _fiber_display }}</td>
+            </tr>
+          {%- endif -%}
+
+          {%- comment -%} Category Attributes — all known keys {%- endcomment -%}
+          {%- if _catattr != blank -%}
+            {%- if _catattr.collection != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Collection</th><td class="rv-specs__value">{{ _catattr.collection }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.design != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Design</th><td class="rv-specs__value">{{ _catattr.design }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.color != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Color</th><td class="rv-specs__value">{{ _catattr.color }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.pattern != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Pattern</th><td class="rv-specs__value">{{ _catattr.pattern }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.weave_type != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Weave Type</th><td class="rv-specs__value">{{ _catattr.weave_type }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.finish != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Finish</th><td class="rv-specs__value">{{ _catattr.finish }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.width != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Width</th><td class="rv-specs__value">{{ _catattr.width }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.weight != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Weight</th><td class="rv-specs__value">{{ _catattr.weight }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.vertical_repeat != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Vertical Repeat</th><td class="rv-specs__value">{{ _catattr.vertical_repeat }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.horizontal_repeat != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Horizontal Repeat</th><td class="rv-specs__value">{{ _catattr.horizontal_repeat }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.sold_by != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Sold By</th><td class="rv-specs__value">{{ _catattr.sold_by }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.country_of_origin != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Country of Origin</th><td class="rv-specs__value">{{ _catattr.country_of_origin }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.abrasion != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Abrasion</th><td class="rv-specs__value">{{ _catattr.abrasion }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.fire_codes != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Fire Codes</th><td class="rv-specs__value">{{ _catattr.fire_codes }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.care != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Care</th><td class="rv-specs__value">{{ _catattr.care }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.application != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Application</th><td class="rv-specs__value">{{ _catattr.application }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.voltage != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Voltage</th><td class="rv-specs__value">{{ _catattr.voltage }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.wattage != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Wattage</th><td class="rv-specs__value">{{ _catattr.wattage }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.recommended_shade != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Recommended Shade</th><td class="rv-specs__value">{{ _catattr.recommended_shade }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.alternative_shade != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Alternative Shade</th><td class="rv-specs__value">{{ _catattr.alternative_shade }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.switch_and_cord != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Switch &amp; Cord</th><td class="rv-specs__value">{{ _catattr.switch_and_cord }}</td></tr>
+            {%- endif -%}
+            {%- if _catattr.additional_notes != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Notes</th><td class="rv-specs__value">{{ _catattr.additional_notes }}</td></tr>
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- comment -%} General Attributes {%- endcomment -%}
+          {%- if _attrs != blank -%}
+            {%- if _attrs.uses != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Uses</th><td class="rv-specs__value">{{ _attrs.uses }}</td></tr>
+            {%- endif -%}
+            {%- if _attrs.fire_codes != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Fire Codes</th><td class="rv-specs__value">{{ _attrs.fire_codes }}</td></tr>
+            {%- endif -%}
+            {%- if _attrs.cleaning_codes != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Cleaning Codes</th><td class="rv-specs__value">{{ _attrs.cleaning_codes }}</td></tr>
+            {%- endif -%}
+            {%- if _attrs.country != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Country of Origin</th><td class="rv-specs__value">{{ _attrs.country }}</td></tr>
+            {%- endif -%}
+            {%- if _attrs.abrasion != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Abrasion</th><td class="rv-specs__value">{{ _attrs.abrasion }}</td></tr>
+            {%- endif -%}
+            {%- if _attrs.finish != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Finish</th><td class="rv-specs__value">{{ _attrs.finish }}</td></tr>
+            {%- endif -%}
+            {%- if _attrs.characteristics != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Characteristics</th><td class="rv-specs__value">{{ _attrs.characteristics }}</td></tr>
+            {%- endif -%}
+            {%- if _attrs.transparency != blank -%}
+              <tr class="rv-specs__row"><th class="rv-specs__label" scope="row">Transparency</th><td class="rv-specs__value">{{ _attrs.transparency }}</td></tr>
+            {%- endif -%}
+          {%- endif -%}
+        </tbody>
+      </table>
+    </div>
+  </details>
+  {%- endif -%}
+
+  {%- comment -%}── DIMENSIONS ──{%- endcomment -%}
+  {%- if has_dims -%}
+  <details class="rv-specs__panel">
+    <summary class="rv-specs__toggle">
+      Dimensions
+      <span class="rv-specs__toggle-icon"></span>
+    </summary>
+    <div class="rv-specs__body">
+      <div class="rv-specs__dims-grid">
+        {%- if _dims.height != blank -%}
+          <div class="rv-specs__dim-item">
+            <div class="rv-specs__dim-val">{{ _dims.height }}</div>
+            <div class="rv-specs__dim-label">Height</div>
+          </div>
+        {%- endif -%}
+        {%- if _dims.width != blank -%}
+          <div class="rv-specs__dim-item">
+            <div class="rv-specs__dim-val">{{ _dims.width }}</div>
+            <div class="rv-specs__dim-label">Width</div>
+          </div>
+        {%- endif -%}
+        {%- if _dims.depth != blank -%}
+          <div class="rv-specs__dim-item">
+            <div class="rv-specs__dim-val">{{ _dims.depth }}</div>
+            <div class="rv-specs__dim-label">Depth</div>
+          </div>
+        {%- endif -%}
+        {%- if _dims.diameter != blank -%}
+          <div class="rv-specs__dim-item">
+            <div class="rv-specs__dim-val">{{ _dims.diameter }}</div>
+            <div class="rv-specs__dim-label">Diameter</div>
+          </div>
+        {%- endif -%}
+        {%- if _dims.length != blank -%}
+          <div class="rv-specs__dim-item">
+            <div class="rv-specs__dim-val">{{ _dims.length }}</div>
+            <div class="rv-specs__dim-label">Length</div>
+          </div>
+        {%- endif -%}
+        {%- if _dims.weight != blank -%}
+          <div class="rv-specs__dim-item">
+            <div class="rv-specs__dim-val">{{ _dims.weight }}</div>
+            <div class="rv-specs__dim-label">Weight</div>
+          </div>
+        {%- endif -%}
+      </div>
+      {%- if _dims.unit != blank -%}
+        <div class="rv-specs__dim-unit">All measurements in {{ _dims.unit }}</div>
+      {%- endif -%}
+    </div>
+  </details>
+  {%- endif -%}
+
+</div>
+{%- endif -%}

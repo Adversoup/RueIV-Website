@@ -1,0 +1,59 @@
+<style>
+  .rueiv-ready { margin-block-start: 0 !important; }
+</style>
+<section class="rueiv-section rueiv-ready">
+  <div class="rueiv-ready__grid">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="rueiv-ready__title">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- for block in section.blocks -%}
+      <a href="{{ block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-ready__col" {{ block.shopify_attributes }} style="text-decoration:none;">
+        {%- if block.settings.image != blank -%}
+          {{ block.settings.image | image_url: width: 1200 | image_tag:
+             loading: 'lazy', class: 'rueiv-ready__col-img', alt: block.settings.title }}
+        {%- endif -%}
+        <div class="rueiv-ready__col-overlay">
+          <span class="rueiv-ready__col-label">{{ block.settings.title }}</span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Project Ready",
+  "tag": "div",
+  "settings": [
+    { "type": "image_picker", "id": "background_image", "label": "Background Image" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Quick Ship" },
+    { "type": "text", "id": "button_label", "label": "Button Label" },
+    { "type": "url", "id": "button_url", "label": "Button Link" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Quick Ship Furniture" },
+        { "type": "text", "id": "description", "label": "Description" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Quick Ship",
+      "settings": {
+        "heading": "Quick Ship"
+      },
+      "blocks": [
+        { "type": "category", "settings": { "title": "Quick Ship Furniture" } },
+        { "type": "category", "settings": { "title": "Quick Ship Lighting" } },
+        { "type": "category", "settings": { "title": "Quick Ship Rugs" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

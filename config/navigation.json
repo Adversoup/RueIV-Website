@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "main_menu": {
+    "title": "Main Navigation",
+    "items": [
+      {
+        "title": "Shop",
+        "type": "mega_menu",
+        "children": [
+          {
+            "title": "By Category",
+            "items": [
+              { "title": "Fabric",     "collection": "fabric" },
+              { "title": "Wallpaper",  "collection": "wallpaper" },
+              { "title": "Furniture",  "collection": "furniture" },
+              { "title": "Lighting",   "collection": "lighting" },
+              { "title": "Trim",       "collection": "trim",  "badge": "Coming Soon" },
+              { "title": "Rugs",       "collection": "rugs",  "badge": "Coming Soon" }
+            ]
+          },
+          {
+            "title": "Fabric by End Use",
+            "items": [
+              { "title": "Upholstery",   "collection": "fabric-upholstery" },
+              { "title": "Drapery",       "collection": "fabric-drapery" },
+              { "title": "Multipurpose",  "collection": "fabric-multipurpose" },
+              { "title": "Performance",   "collection": "fabric-performance" },
+              { "title": "Outdoor",       "collection": "fabric-outdoor" }
+            ]
+          },
+          {
+            "title": "By Color",
+            "type": "color_swatches",
+            "note": "Rendered via mega-menu-colors.liquid with category tabs"
+          },
+          {
+            "title": "By Brand",
+            "type": "brand_logos",
+            "items": [
+              { "title": "Fabricut / S. Harris", "collection": "fabricut" },
+              { "title": "Verellen",             "collection": "verellen" },
+              { "title": "Arte",                 "collection": "arte" },
+              { "title": "Porta Romana",         "collection": "porta-romana" },
+              { "title": "ZR",                   "collection": "zr" }
+            ]
+          }
+        ]
+      },
+      { "title": "About", "page": "about" },
+      { "title": "Trade Program", "page": "trade-program" },
+      { "title": "Contact", "page": "contact" }
+    ]
+  },
+  "collection_handles": {
+    "categories": ["fabric", "wallpaper", "furniture", "lighting"],
+    "end_use_prefix": "fabric-",
+    "color_prefix_template": "{category}-{color}",
+    "brand_handles": {
+      "Fabricut": "fabricut",
+      "Verellen": "verellen",
+      "Arte": "arte",
+      "Porta Romana": "porta-romana",
+      "ZR": "zr"
+    }
+  }
+}

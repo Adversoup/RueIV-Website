@@ -1,0 +1,214 @@
+{%- comment -%}
+  RueIV — Brand Spotlight
+  Full-width editorial hero with background image, title, subtitle, copy, and CTA.
+{%- endcomment -%}
+
+<style>
+  .rv-spotlight {
+    position: relative;
+    min-height: clamp(520px, 70vh, 800px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .rv-spotlight__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .rv-spotlight__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 0;
+  }
+  .rv-spotlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 1;
+  }
+  .rv-spotlight__content {
+    position: relative;
+    z-index: 2;
+    text-align: {{ section.settings.text_align }};
+    color: #fff;
+    padding: 80px 24px;
+    max-width: 720px;
+    {% if section.settings.text_align == 'center' %}margin: 0 auto;{% endif %}
+  }
+  .rv-spotlight__title {
+    font-family: var(--font-heading-family);
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+    margin: 0 0 16px;
+    text-transform: uppercase;
+    color: #fff !important;
+  }
+  .rv-spotlight__title em,
+  .rv-spotlight__title i {
+    font-style: italic;
+    font-weight: 300;
+  }
+  .rv-spotlight__subtitle {
+    font-size: 16px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin: 0 0 32px;
+  }
+  .rv-spotlight__copy {
+    font-size: 16px;
+    line-height: 1.7;
+    opacity: 0.85;
+    margin: 0 0 40px;
+  }
+  .rv-spotlight__cta {
+    display: inline-block;
+    padding: 16px 40px;
+    border: 1px solid #fff;
+    color: #fff;
+    background: transparent;
+    font-family: var(--font-heading-family);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+  }
+  .rv-spotlight__cta:hover {
+    background: #fff;
+    color: #111;
+  }
+  @media (max-width: 749px) {
+    .rv-spotlight { min-height: 480px; }
+    .rv-spotlight__content { padding: 60px 20px; }
+  }
+</style>
+
+<section class="rv-spotlight">
+  {%- if section.settings.video_url != blank -%}
+    <video class="rv-spotlight__video" autoplay muted loop playsinline>
+      <source src="{{ section.settings.video_url }}" type="video/mp4">
+    </video>
+  {%- elsif section.settings.image != blank -%}
+    {{ section.settings.image | image_url: width: 2400 | image_tag:
+       loading: 'lazy', class: 'rv-spotlight__bg', alt: section.settings.title }}
+  {%- elsif section.settings.image_asset != blank -%}
+    <img src="{{ section.settings.image_asset | asset_url }}" alt="{{ section.settings.title | escape }}" class="rv-spotlight__bg" loading="lazy">
+  {%- endif -%}
+
+  <div class="rv-spotlight__content">
+    {%- if section.settings.title != blank -%}
+      <h2 class="rv-spotlight__title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subtitle != blank -%}
+      <p class="rv-spotlight__subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+    {%- if section.settings.copy != blank -%}
+      <p class="rv-spotlight__copy">{{ section.settings.copy }}</p>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a href="{{ section.settings.button_url | default: '/collections/designers' }}" class="rv-spotlight__cta">
+        {{ section.settings.button_label }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Brand Spotlight",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Background Video URL",
+      "info": "CDN URL for a muted looping background video (overrides image)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "image_asset",
+      "label": "Background Asset Filename",
+      "info": "Fallback: filename from theme assets"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "<p>Brand Spotlight <em>Porta Romana</em></p>"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "The designers shaping what's next."
+    },
+    {
+      "type": "text",
+      "id": "copy",
+      "label": "Copy",
+      "default": "New launches. — Distinct points of view. — Collections driving the market."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Explore The Designers"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button Link"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Darkness",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Brand Spotlight",
+      "settings": {
+        "title": "<p>Brand Spotlight <em>Porta Romana</em></p>",
+        "subtitle": "The designers shaping what's next.",
+        "copy": "New launches. — Distinct points of view. — Collections driving the market.",
+        "button_label": "Explore The Designers"
+      }
+    }
+  ]
+}
+{% endschema %}

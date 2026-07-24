@@ -1,0 +1,76 @@
+{%- comment -%}
+  ============================================================================
+  RueIV Events — "The Vibe Circuit" gallery grid
+  ============================================================================
+{%- endcomment -%}
+
+<section class="rueiv-events" data-section-id="{{ section.id }}">
+  <div class="rueiv-events__inner page-width">
+    <div class="rueiv-events__header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="rueiv-section-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="rueiv-events__sub">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+    <div class="rueiv-events__grid">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'event' -%}
+          <div class="rueiv-events__card" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}">{%- endif -%}
+            <div class="rueiv-events__img-wrap">
+              {%- if block.settings.image != blank -%}
+                <img
+                  src="{{ block.settings.image | image_url: width: 700, height: 700, crop: 'center' }}"
+                  srcset="{{ block.settings.image | image_url: width: 500, height: 500, crop: 'center' }} 500w,
+                          {{ block.settings.image | image_url: width: 700, height: 700, crop: 'center' }} 700w"
+                  sizes="(min-width: 1024px) 25vw, 50vw"
+                  alt="{{ block.settings.title | escape }}"
+                  loading="lazy"
+                  class="rueiv-events__img"
+                  width="{{ block.settings.image.width }}"
+                  height="{{ block.settings.image.height }}"
+                >
+              {%- else -%}
+                <div class="rueiv-events__placeholder" style="background-image:url('https://picsum.photos/seed/event{{ forloop.index }}/700/700')"></div>
+              {%- endif -%}
+            </div>
+            {%- if block.settings.title != blank -%}
+              <h3 class="rueiv-events__title">{{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.date != blank -%}
+              <p class="rueiv-events__date">{{ block.settings.date }}</p>
+            {%- endif -%}
+            {%- if block.settings.link != blank -%}</a>{%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV Events",
+  "tag": "section",
+  "class": "rueiv-section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "THE VIBE CIRCUIT" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Private previews. Designer events. Industry gatherings." }
+  ],
+  "blocks": [
+    {
+      "type": "event",
+      "name": "Event",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Event title", "default": "Event Title" },
+        { "type": "text", "id": "date", "label": "Date" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "RueIV Events" }]
+}
+{% endschema %}

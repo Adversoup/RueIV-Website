@@ -1,0 +1,167 @@
+{%- comment -%}
+  mega-panel-dropdown.liquid
+  ──────────────────────────
+  Premium panel-based mega menu for the SHOP dropdown.
+  Panel 1 (left)  – top-level child links with chevrons (By Category, By Brand, By Room)
+  Panel 2 (right) – multi-column links from a configurable Shopify navigation menu
+                    + optional promo tile (image + title + link)
+
+  Accepts:
+    link    – the top-level nav link (e.g. "Shop")
+    block   – the mega_panel header block
+    section – the header section (for menu_trigger)
+{%- endcomment -%}
+
+<details
+  is="details-dropdown"
+  level="top"
+  trigger="{{ section.settings.menu_trigger }}"
+  {{ block.shopify_attributes }}
+>
+  <summary data-link="{{ link.url }}" class="z-2">
+    <span class="menu__item flex items-center relative">
+      <span class="reversed-link flex items-center font-navigation">
+        {{- link.title | escape -}}
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9.75 4.5L6 8.25L2.25 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </span>
+  </summary>
+
+  <div class="dropdown">
+    <div class="dropdown__container blocks-radius-bottom-left-right">
+      <ul class="dropdown__nav" role="list">
+        {%- for childlink in link.links -%}
+          {%- liquid
+            assign panel_idx = forloop.index
+            assign menu_key = 'panel_' | append: panel_idx | append: '_menu'
+            assign promo_img_key = 'panel_' | append: panel_idx | append: '_promo_image'
+            assign promo_title_key = 'panel_' | append: panel_idx | append: '_promo_title'
+            assign promo_text_key = 'panel_' | append: panel_idx | append: '_promo_text'
+            assign promo_link_key = 'panel_' | append: panel_idx | append: '_promo_link'
+
+            assign panel_menu_handle = block.settings[menu_key]
+            assign panel_menu = linklists[panel_menu_handle]
+            assign panel_promo_image = block.settings[promo_img_key]
+            assign panel_promo_title = block.settings[promo_title_key]
+            assign panel_promo_text = block.settings[promo_text_key]
+            assign panel_promo_link = block.settings[promo_link_key]
+
+            comment
+              Decide data source: custom menu → grandchild links
+            endcomment
+            assign use_custom_menu = false
+            if panel_menu != blank and panel_menu.links.size > 0
+              assign use_custom_menu = true
+            endif
+
+            assign has_panel_content = false
+            if use_custom_menu or childlink.links.size > 0
+              assign has_panel_content = true
+            endif
+          -%}
+
+          {%- if has_panel_content -%}
+            <li class="relative">
+              <details level="child" trigger="hover" is="details-dropdown">
+                <summary data-link="{{ childlink.url }}" class="flex items-center justify-between gap-x-1">
+                  <a href="{{ childlink.url }}" class="reversed-link" tabindex="-1">
+                    {{- childlink.title | escape -}}
+                  </a>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="-rotate-90"
+                  >
+                    <path d="M9.75 4.5L6 8.25L2.25 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </summary>
+
+                {%- comment -%} ── Panel 2: enhanced mega panel ── {%- endcomment -%}
+                <div class="dropdown mega-panel">
+                  <div class="dropdown__container mega-panel__container blocks-radius">
+                    <div class="mega-panel__inner">
+                      {%- comment -%} ── Panel heading ── {%- endcomment -%}
+                      <p class="mega-panel__heading font-heading h5">
+                        {{ childlink.title | escape }}
+                      </p>
+
+                      {%- comment -%} ── Links grid ── {%- endcomment -%}
+                      <div class="mega-panel__links" role="list">
+                        {%- if use_custom_menu -%}
+                          {%- for menu_link in panel_menu.links -%}
+                            <a href="{{ menu_link.url }}" class="mega-panel__link reversed-link" role="listitem">
+                              {{- menu_link.title | escape -}}
+                            </a>
+                          {%- endfor -%}
+                        {%- else -%}
+                          {%- for grandchildlink in childlink.links -%}
+                            <a href="{{ grandchildlink.url }}" class="mega-panel__link reversed-link" role="listitem">
+                              {{- grandchildlink.title | escape -}}
+                            </a>
+                          {%- endfor -%}
+                        {%- endif -%}
+                      </div>
+
+                      {%- comment -%} ── View all CTA ── {%- endcomment -%}
+                      {%- if childlink.url != blank -%}
+                        <a href="{{ childlink.url }}" class="mega-panel__view-all reversed-link">
+                          View all {{ childlink.title | escape }} →
+                        </a>
+                      {%- endif -%}
+
+                      {%- comment -%} ── Promo tile ── {%- endcomment -%}
+                      {%- if panel_promo_image != blank -%}
+                        <div class="mega-panel__promo">
+                          {%- if panel_promo_link != blank -%}
+                            <a href="{{ panel_promo_link }}" class="mega-panel__promo-link" aria-label="{{ panel_promo_title | default: 'Featured' | escape }}">
+                          {%- endif -%}
+                            <div class="mega-panel__promo-media">
+                              {{
+                                panel_promo_image
+                                | image_url: width: 480
+                                | image_tag:
+                                  loading: 'lazy',
+                                  class: 'mega-panel__promo-img',
+                                  widths: '240, 360, 480',
+                                  sizes: '(max-width: 480px) 240px, 240px'
+                              }}
+                            </div>
+                            {%- if panel_promo_title != blank or panel_promo_text != blank -%}
+                              <div class="mega-panel__promo-content">
+                                {%- if panel_promo_title != blank -%}
+                                  <p class="mega-panel__promo-title font-heading h5">
+                                    {{ panel_promo_title | escape }}
+                                  </p>
+                                {%- endif -%}
+                                {%- if panel_promo_text != blank -%}
+                                  <p class="mega-panel__promo-text">{{ panel_promo_text | escape }}</p>
+                                {%- endif -%}
+                              </div>
+                            {%- endif -%}
+                          {%- if panel_promo_link != blank -%}
+                            </a>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </li>
+          {%- else -%}
+            <li>
+              <p>
+                <a href="{{ childlink.url }}" class="reversed-link">{{ childlink.title | escape }}</a>
+              </p>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+</details>

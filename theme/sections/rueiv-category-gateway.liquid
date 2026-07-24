@@ -1,0 +1,157 @@
+<section class="rueiv-section rueiv-gateway" id="rueiv-gateway">
+  {%- comment -%} Full-width wall background — synced with hero slide {%- endcomment -%}
+  <div class="rueiv-gateway__wall">
+    {%- comment -%} Slide-synced backgrounds (one per hero slide) {%- endcomment -%}
+    {%- assign has_synced_bg = false -%}
+    {%- for i in (1..5) -%}
+      {%- assign bg_key = 'background_image_slide_' | append: i -%}
+      {%- assign bg_img = section.settings[bg_key] -%}
+      {%- if bg_img != blank -%}
+        {%- assign has_synced_bg = true -%}
+        {%- assign slide_index = i | minus: 1 -%}
+        {{ bg_img | image_url: width: 2400 | image_tag:
+           loading: 'lazy',
+           class: 'rueiv-gateway__wall-img rueiv-gateway__wall-img--synced',
+           alt: 'Showroom wall',
+           data-for-slide: slide_index }}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- comment -%} Fallback: original single background (shown when no synced images configured) {%- endcomment -%}
+    {%- unless has_synced_bg -%}
+      {%- if section.settings.background_image != blank -%}
+        {{ section.settings.background_image | image_url: width: 2400 | image_tag:
+           loading: 'lazy', class: 'rueiv-gateway__wall-img',
+           alt: 'Showroom wall' }}
+      {%- else -%}
+        <img src="{{ 'wall-background.png' | asset_url }}" loading="lazy"
+             class="rueiv-gateway__wall-img" alt="Showroom wall">
+      {%- endif -%}
+    {%- endunless -%}
+
+    <div class="rueiv-gateway__wall-inner">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="rueiv-section-heading rueiv-gateway__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subtitle != blank -%}
+        <p class="rueiv-gateway__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+
+      <div class="rueiv-gateway__grid">
+        {%- for block in section.blocks -%}
+          {%- assign col = block.settings.collection -%}
+          {%- assign img = block.settings.image | default: col.image -%}
+          {%- assign label = block.settings.label | default: col.title -%}
+          {%- assign link = block.settings.link | default: col.url -%}
+
+          <a href="{{ link }}" class="rueiv-gateway__tile" {{ block.shopify_attributes }}>
+            <div class="rueiv-gateway__frame">
+              <div class="rueiv-gateway__img-wrap">
+                {%- if img != blank -%}
+                  {{ img | image_url: width: 900 | image_tag:
+                     loading: 'lazy', class: 'rueiv-gateway__img', alt: label }}
+                {%- else -%}
+                  <div class="rueiv-gateway__placeholder"></div>
+                {%- endif -%}
+              </div>
+            </div>
+            <span class="rueiv-gateway__label">{{ label }}</span>
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  /* Sync gateway background with hero slide selection */
+  var gateway = document.getElementById('rueiv-gateway');
+  if (!gateway) return;
+  var synced = gateway.querySelectorAll('.rueiv-gateway__wall-img--synced');
+  if (synced.length < 1) return;
+  var pick = document.documentElement.getAttribute('data-hero-slide');
+  if (pick === null) pick = '0';
+  synced.forEach(function(img){
+    img.style.opacity = (img.getAttribute('data-for-slide') === pick) ? '1' : '0';
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "RueIV — Category Gateway",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Wall Background Image (fallback)"
+    },
+    {
+      "type": "header",
+      "content": "Hero-synced backgrounds",
+      "info": "Upload a background for each hero slide. Slide 1 background syncs with hero slide 1, etc."
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_slide_1",
+      "label": "Background for Hero Slide 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_slide_2",
+      "label": "Background for Hero Slide 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_slide_3",
+      "label": "Background for Hero Slide 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_slide_4",
+      "label": "Background for Hero Slide 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_slide_5",
+      "label": "Background for Hero Slide 5"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Lifestyle Image Override" },
+        { "type": "text", "id": "label", "label": "Label Override" },
+        { "type": "url", "id": "link", "label": "Link Override" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Category Gateway",
+      "blocks": [
+        { "type": "category", "settings": { "label": "Textiles" } },
+        { "type": "category", "settings": { "label": "Wallcovering" } },
+        { "type": "category", "settings": { "label": "Furniture" } },
+        { "type": "category", "settings": { "label": "Lighting" } },
+        { "type": "category", "settings": { "label": "Rugs" } },
+        { "type": "category", "settings": { "label": "Accessories" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

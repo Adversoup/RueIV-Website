@@ -1,0 +1,75 @@
+<section class="rueiv-section rueiv-designers">
+  <div class="rueiv-page-width">
+    <div class="rueiv-designers__inner">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="rueiv-section-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      <div class="rueiv-designers__grid">
+        {%- for block in section.blocks -%}
+          {%- assign col = block.settings.collection -%}
+          {%- assign img = block.settings.image | default: col.image -%}
+          {%- assign name = block.settings.name | default: col.title -%}
+          {%- assign link = block.settings.link | default: col.url -%}
+
+          <a href="{{ link }}" class="rueiv-designer-card" {{ block.shopify_attributes }}>
+            <div class="rueiv-designer-card__img-wrap">
+              {%- if img != blank -%}
+                {{ img | image_url: width: 600 | image_tag:
+                   loading: 'lazy', class: 'rueiv-designer-card__img',
+                   alt: name }}
+              {%- else -%}
+                <div class="rueiv-designer-card__placeholder"></div>
+              {%- endif -%}
+            </div>
+            <p class="rueiv-designer-card__name">{{ name }}</p>
+          </a>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.button_label != blank -%}
+        <div style="margin-top:40px;">
+          <a href="{{ section.settings.button_url }}" class="rueiv-btn rueiv-btn--outline">
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Designers",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Featured Designers" },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "View All Designers" },
+    { "type": "url", "id": "button_url", "label": "Button Link" }
+  ],
+  "blocks": [
+    {
+      "type": "designer",
+      "name": "Designer",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Designer Collection" },
+        { "type": "image_picker", "id": "image", "label": "Portrait / Logo Image" },
+        { "type": "text", "id": "name", "label": "Name Override" },
+        { "type": "url", "id": "link", "label": "Link Override" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Designers",
+      "blocks": [
+        { "type": "designer" },
+        { "type": "designer" },
+        { "type": "designer" },
+        { "type": "designer" },
+        { "type": "designer" }
+      ]
+    }
+  ]
+}
+{% endschema %}

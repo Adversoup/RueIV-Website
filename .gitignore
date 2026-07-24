@@ -1,0 +1,32 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Shopify CLI
+.shopify/
+
+# Editor
+*.swp
+*.swo
+.vscode/
+*.code-workspace
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Import output
+out/
+
+# Recovery scratch dirs (theme restore incident 2026-07-22)
+_live_now/
+_live_verify/
+_modiva_restore/
+_restore_push/
+theme-horizon/
+theme-hydrogen/
+assets/video/

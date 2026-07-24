@@ -1,0 +1,482 @@
+{%- liquid
+  assign menu_columns = block.settings.menu_columns
+  assign promotions_width = block.settings.promotions_width
+  assign promotion_columns = block.settings.promotion_columns
+  case block.type
+    when 'promotion_banner'
+      assign promo_images = block.settings.promo_image_1 | append: ',' | append: block.settings.promo_image_2 | append: ',' | append: block.settings.promo_image_3 | append: ',' | append: block.settings.promo_image_4 | append: ',' | append: block.settings.promo_image_5
+      assign has_promo = false
+      unless promo_images == ',,,,'
+        assign has_promo = true
+      endunless
+    when 'custom_card'
+      assign promo_images = block.settings.promo_image_1 | append: ',' | append: block.settings.promo_image_2 | append: ',' | append: block.settings.promo_image_3 | append: ',' | append: block.settings.promo_image_4 | append: ',' | append: block.settings.promo_image_5
+      assign has_promo = false
+      unless promo_images == ',,,,'
+        assign has_promo = true
+      endunless
+    when 'product_list'
+      assign collections = block.settings.collections
+      assign product_list = block.settings.product_list
+      assign show_menu_column_divider = block.settings.show_menu_column_divider
+      assign heading = block.settings.heading
+      assign number_of_columns = block.settings.number_of_columns
+      assign promotion_columns = number_of_columns
+  endcase
+-%}
+
+{% style %}
+  #Mega-menu-item-{{ block.id }} {
+    --menu-columns: {{ menu_columns }};
+    --promotions-width: {{ promotions_width }}%;
+    --promotion-columns: {{ promotion_columns }};
+  }
+  /* 3-col layout: items | preview | items */
+  #Mega-menu-item-{{ block.id }} .mega-menu__list {
+    grid-template-columns: auto 1fr auto !important;
+    align-items: start;
+  }
+  .mega-menu__item-child li {
+    padding-block: 0.35rem;
+  }
+  .mega-menu__item-child a {
+    transition: opacity 0.2s;
+  }
+  .mega-menu__item-child a:hover {
+    opacity: 0.6;
+  }
+  /* ── Hover preview area ── */
+  .mega-menu__hover-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 1rem;
+  }
+  .mega-menu__hover-preview img {
+    width: 240px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    background: rgb(var(--color-background-2, 245 245 245));
+  }
+  .mega-menu__hover-preview img.is-visible {
+    opacity: 1;
+  }
+  /* ── Brand slider in promotions area ── */
+  .mega-menu__brand-slider-wrap {
+    position: relative;
+    padding: 0 20px;
+  }
+  .mega-menu__brand-slider {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+    scroll-behavior: smooth;
+  }
+  .mega-menu__brand-slider::-webkit-scrollbar {
+    display: none;
+  }
+  .mega-menu__brand-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-60%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.15);
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    padding: 0;
+  }
+  .mega-menu__brand-nav:hover {
+    border-color: rgba(0,0,0,0.4);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .mega-menu__brand-nav--prev { left: -6px; }
+  .mega-menu__brand-nav--next { right: -6px; }
+  .mega-menu__brand-nav svg {
+    width: 14px;
+    height: 14px;
+  }
+  .mega-menu__brand-card {
+    flex: 0 0 120px;
+    scroll-snap-align: start;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mega-menu__brand-card:hover .mega-menu__brand-img {
+    transform: scale(1.03);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .mega-menu__brand-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.6rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgb(var(--color-background-2, 245 245 245));
+  }
+  .mega-menu__brand-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .mega-menu__brand-name {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .mega-menu__brand-header {
+    margin-bottom: 1rem;
+  }
+{% endstyle %}
+<details
+  id="Mega-menu-item-{{ block.id }}"
+  is="details-mega"
+  trigger="{{ section.settings.menu_trigger }}"
+  level="top"
+  {{ block.shopify_attributes }}
+>
+  <summary data-link="{{ link.url }}" class="z-2 font-navigation">
+    <span class="menu__item flex items-center relative">
+      <span class="reversed-link flex items-center">
+        {{- link.title | escape }}
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9.75 4.5L6 8.25L2.25 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </span>
+  </summary>
+  <div class="mega-menu v-scrollable">
+    <div class="mega-menu__container">
+      <div class="page-width mega-menu__wrapper">
+        {%- if link.links != blank -%}
+          {%- comment -%} Separate "By Brand" from other columns {%- endcomment -%}
+          {%- assign brand_childlink = nil -%}
+          {%- assign brand_childlink_title_handle = 'by-brand' -%}
+
+          <div class="mega-menu__list">
+            {%- if collections != blank and block.type == 'product_list' -%}
+              <div class="mega-menu__item">
+                <ul role="list" class="grid gap-3">
+                  {%- for collection in collections -%}
+                    <li>
+                      <a href="{{ collection.url }}" class="h4 reversed-link font-heading">
+                        {{- collection.title | escape -}}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+
+            {%- assign rendered_col_count = 0 -%}
+            {%- for childlink in link.links -%}
+              {%- assign childlink_handle = childlink.title | handle -%}
+              {%- if childlink_handle == brand_childlink_title_handle -%}
+                {%- assign brand_childlink = childlink -%}
+                {%- continue -%}
+              {%- endif -%}
+              {%- assign rendered_col_count = rendered_col_count | plus: 1 -%}
+
+              <div class="mega-menu__item">
+                {%- if show_menu_column_divider -%}
+                  <div class="mega-menu__item-wrapper">
+                {%- endif -%}
+                <a href="{{ childlink.url }}" class="h5 mega-menu__link mega-menu__link--top font-heading">
+                  {{- childlink.title | escape -}}
+                </a>
+                {%- if childlink.links != blank -%}
+                  <ul class="mega-menu__item-child">
+                    {%- for grandchildlink in childlink.links -%}
+                      {%- liquid
+                        assign thumb_image = nil
+                        if grandchildlink.object.image != blank
+                          assign thumb_image = grandchildlink.object.image
+                        elsif grandchildlink.object.products.first.featured_image != blank
+                          assign thumb_image = grandchildlink.object.products.first.featured_image
+                        else
+                          assign _gl_url_parts = grandchildlink.url | split: '/collections/'
+                          if _gl_url_parts.size > 1
+                            assign _gl_col_handle = _gl_url_parts[1] | split: '/' | first | split: '?' | first
+                            assign _gl_col = collections[_gl_col_handle]
+                            if _gl_col.image != blank
+                              assign thumb_image = _gl_col.image
+                            elsif _gl_col.products.first.featured_image != blank
+                              assign thumb_image = _gl_col.products.first.featured_image
+                            endif
+                          endif
+                        endif
+                      -%}
+                      <li>
+                        <a href="{{ grandchildlink.url }}"
+                           class="reversed-link mega-menu__link"
+                           {% if thumb_image %}data-preview-src="{{ thumb_image | image_url: width: 480 }}"{% endif %}
+                           data-preview-target="mega-preview-{{ block.id }}"
+                        >
+                          <span>{{- grandchildlink.title | escape -}}</span>
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+                {%- if show_menu_column_divider -%}
+                  </div>
+                {%- endif -%}
+              </div>
+              {%- if rendered_col_count == 1 -%}
+                <div class="mega-menu__hover-preview">
+                  <img id="mega-preview-{{ block.id }}" src="" alt="Preview">
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- comment -%} Brand slider — right side {%- endcomment -%}
+          {%- if brand_childlink -%}
+            <div class="mega-menu__promotions">
+              <div class="mega-menu__brand-header">
+                <h2 class="h5 font-heading">{{ brand_childlink.title | escape }}</h2>
+              </div>
+              <div class="mega-menu__brand-slider-wrap">
+                <button class="mega-menu__brand-nav mega-menu__brand-nav--prev" aria-label="Previous">
+                  <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 9.75L3.75 6L7.5 2.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="mega-menu__brand-slider">
+                {%- for brandlink in brand_childlink.links -%}
+                  {%- liquid
+                    assign brand_image = nil
+                    if brandlink.object.image != blank
+                      assign brand_image = brandlink.object.image
+                    elsif brandlink.object.products.first.featured_image != blank
+                      assign brand_image = brandlink.object.products.first.featured_image
+                    else
+                      assign _br_url_parts = brandlink.url | split: '/collections/'
+                      if _br_url_parts.size > 1
+                        assign _br_col_handle = _br_url_parts[1] | split: '/' | first | split: '?' | first
+                        assign _br_col = collections[_br_col_handle]
+                        if _br_col.image != blank
+                          assign brand_image = _br_col.image
+                        elsif _br_col.products.first.featured_image != blank
+                          assign brand_image = _br_col.products.first.featured_image
+                        endif
+                      endif
+                    endif
+                  -%}
+                  <a href="{{ brandlink.url }}" class="mega-menu__brand-card promotion-item" style="--index: {{ forloop.index }};">
+                    <div class="mega-menu__brand-img">
+                      {%- if brand_image -%}
+                        {{ brand_image | image_url: width: 400 | image_tag: loading: 'lazy', width: 120, height: 120, alt: brandlink.title }}
+                      {%- endif -%}
+                    </div>
+                    <span class="mega-menu__brand-name font-heading">{{ brandlink.title | escape }}</span>
+                  </a>
+                {%- endfor -%}
+                </div>
+                <button class="mega-menu__brand-nav mega-menu__brand-nav--next" aria-label="Next">
+                  <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 2.25L8.25 6L4.5 9.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+        {%- case block.type -%}
+          {%- when 'promotion_banner' -%}
+            {%- if has_promo -%}
+              <div class="mega-menu__promotions mega-menu__promotions-grid">
+                {%- for i in (1..5) -%}
+                  {%- liquid
+                    assign __promo_image = 'promo_image_' | append: i
+                    assign __color_scheme = 'color_scheme_' | append: i
+                    assign __heading = 'heading_' | append: i
+                    assign __subheading = 'subheading_' | append: i
+                    assign __heading_size = 'heading_size_' | append: i
+                    assign __description = 'description_' | append: i
+                    assign __button_label = 'button_label_' | append: i
+                    assign __button_style = 'button_style_' | append: i
+                    assign __content_position = 'content_position_' | append: i
+                    assign __content_alignment = 'content_alignment_' | append: i
+                    assign __promotion_link = 'promotion_link_' | append: i
+
+                    assign promo_image = block.settings[__promo_image]
+                    assign color_scheme = block.settings[__color_scheme]
+                    assign heading = block.settings[__heading]
+                    assign subheading = block.settings[__subheading]
+                    assign heading_size = block.settings[__heading_size]
+                    assign description = block.settings[__description]
+                    assign button_label = block.settings[__button_label]
+                    assign button_style = block.settings[__button_style]
+                    assign content_position = block.settings[__content_position]
+                    assign content_alignment = block.settings[__content_alignment]
+                    assign promotion_link = block.settings[__promotion_link]
+
+                    if promo_image == blank
+                      continue
+                    endif
+                  -%}
+                  <div class="promotion-item" style="--index: {{ forloop.index }};">
+                    {% render 'card-image',
+                      image: promo_image,
+                      image_ratio: 'adapt',
+                      color_scheme: color_scheme,
+                      heading: heading,
+                      heading_size: heading_size,
+                      description: description,
+                      button_label: button_label,
+                      button_style: button_style,
+                      content_position: content_position,
+                      content_alignment: content_alignment,
+                      link: promotion_link,
+                      subheading: subheading
+                    %}
+                  </div>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          {%- when 'custom_card' -%}
+            {%- if has_promo -%}
+              <div class="mega-menu__promotions mega-menu__promotions-grid">
+                {%- for i in (1..5) -%}
+                  {%- liquid
+                    assign __promo_image = 'promo_image_' | append: i
+                    assign __heading = 'heading_' | append: i
+                    assign __heading_size = 'heading_size_' | append: i
+                    assign __description = 'description_' | append: i
+                    assign __button_style = 'button_style_' | append: i
+                    assign __promotion_link = 'promotion_link_' | append: i
+
+                    assign promo_image = block.settings[__promo_image]
+                    assign heading = block.settings[__heading]
+                    assign heading_size = block.settings[__heading_size]
+                    assign description = block.settings[__description]
+                    assign promotion_link = block.settings[__promotion_link]
+
+                    if promo_image == blank
+                      continue
+                    endif
+                  -%}
+                  <div class="promotion-item" style="--index: {{ forloop.index }};">
+                    {% render 'mega-custom-card',
+                      heading: heading,
+                      heading_size: heading_size,
+                      description: description,
+                      image: promo_image,
+                      link: promotion_link
+                    %}
+                  </div>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          {%- when 'product_list' -%}
+            {%- liquid
+              assign is_carousel = false
+              if product_list.count > number_of_columns
+                assign is_carousel = true
+              endif
+            -%}
+            {%- if product_list != blank -%}
+              <div class="mega-menu__promotions">
+                <menu-product-list class="block w-full" data-columns="{{ number_of_columns }}">
+                  {%- if heading != blank -%}
+                    <div
+                      class="mega-menu__product-list--header flex items-center justify-between promotion-item--product"
+                      style="--index: 1;"
+                    >
+                      <h2 class="h5 promotion-item">{{ heading | escape }}</h2>
+                      {%- if is_carousel -%}
+                        <div class="slider-controls promotion-item slider-controls--fraction-group">
+                          <button
+                            class="swiper-button-prev"
+                            name="previous"
+                            aria-label="{{ 'general.slider.previous_slide' | t }}"
+                          >
+                            {%- render 'icon-slider-prev', size: 'small' -%}
+                          </button>
+                          <div class="swiper-pagination"></div>
+                          <button
+                            class="swiper-button-next"
+                            name="next"
+                            aria-label="{{ 'general.slider.next_slide' | t }}"
+                          >
+                            {%- render 'icon-slider-next', size: 'small' -%}
+                          </button>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  {%- if is_carousel -%}
+                    <div class="swiper swiper-equal-height">
+                  {%- endif -%}
+                  <div class="{% if is_carousel %}swiper-wrapper{% else %}mega-menu__promotions-grid{% endif %}">
+                    {%- for product in product_list -%}
+                      <div
+                        class="swiper-slide promotion-item promotion-item--product"
+                        style="--index: {{ forloop.index }};"
+                      >
+                        {%- render 'card-product',
+                          product: product,
+                          enable_quick_view: false,
+                          enable_quick_add: false
+                        -%}
+                      </div>
+                    {%- endfor -%}
+                  </div>
+                  {%- if is_carousel -%}
+                    </div>
+                  {%- endif -%}
+                </menu-product-list>
+              </div>
+            {%- endif -%}
+        {%- endcase -%}
+      </div>
+    </div>
+  </div>
+</details>
+
+<script>
+    (function() {
+      var container = document.getElementById('Mega-menu-item-{{ block.id }}');
+      if (!container) return;
+      /* ── Hover preview ── */
+      container.addEventListener('mouseover', function(e) {
+        var link = e.target.closest('[data-preview-target]');
+        if (!link) return;
+        var src = link.getAttribute('data-preview-src');
+        var targetId = link.getAttribute('data-preview-target');
+        var img = document.getElementById(targetId);
+        if (img && src) {
+          img.src = src;
+          img.classList.add('is-visible');
+        }
+      });
+      container.addEventListener('toggle', function() {
+        if (!container.open) {
+          var img = container.querySelector('.mega-menu__hover-preview img');
+          if (img) { img.classList.remove('is-visible'); img.src = ''; }
+        }
+      });
+      /* ── Brand slider nav ── */
+      container.querySelectorAll('.mega-menu__brand-slider-wrap').forEach(function(wrap) {
+        var slider = wrap.querySelector('.mega-menu__brand-slider');
+        var prev = wrap.querySelector('.mega-menu__brand-nav--prev');
+        var next = wrap.querySelector('.mega-menu__brand-nav--next');
+        if (!slider || !prev || !next) return;
+        prev.addEventListener('click', function(e) { e.preventDefault(); slider.scrollBy({ left: -260, behavior: 'smooth' }); });
+        next.addEventListener('click', function(e) { e.preventDefault(); slider.scrollBy({ left: 260, behavior: 'smooth' }); });
+      });
+    })();
+  </script>

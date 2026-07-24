@@ -1,0 +1,83 @@
+{%- comment -%}
+  snippets/pdp-jsonld.liquid
+  ──────────────────────────
+  Enhanced JSON-LD Product structured data for SEO.
+  Uses taxonomy metafields for color, brand info for manufacturer.
+  Renders a <script type="application/ld+json"> block.
+
+  Usage:
+    {% render 'pdp-jsonld', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign _color = product.metafields.override.color_family.value
+  if _color == blank
+    assign _color = product.metafields.taxonomy.color_family.value
+  endif
+  if _color == blank
+    assign _color = product.metafields.specs.color.value
+  endif
+  assign _material = product.metafields.specs.material.value
+  assign _brand   = product.vendor
+  assign _sku     = product.variants.first.sku
+  assign _price   = product.price | money_without_currency | strip
+  assign _currency = cart.currency.iso_code
+  if _currency == blank
+    assign _currency = 'USD'
+  endif
+  assign _availability = 'https://schema.org/InStock'
+  unless product.available
+    assign _availability = 'https://schema.org/OutOfStock'
+  endunless
+
+  assign _image = product.featured_image | image_url: width: 1200
+  assign _cat = product.type
+-%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | truncate: 500 | json }},
+  "sku": {{ _sku | json }},
+  "image": {{ _image | json }},
+  "url": {{ canonical_url | json }},
+  "brand": {
+    "@type": "Brand",
+    "name": {{ _brand | json }}
+  },
+  "category": {{ _cat | json }}
+  {%- if _color != blank -%}
+  ,"color": {{ _color | json }}
+  {%- endif -%}
+  {%- if _material != blank -%}
+  ,"material": {{ _material | json }}
+  {%- endif -%}
+  {%- if product.variants.size > 0 -%}
+  ,"offers": {
+    "@type": "Offer",
+    "url": {{ canonical_url | json }},
+    "priceCurrency": {{ _currency | json }},
+    "price": {{ product.price | divided_by: 100.0 | json }},
+    "availability": {{ _availability | json }},
+    "seller": {
+      "@type": "Organization",
+      "name": "Rue IV"
+    }
+  }
+  {%- endif -%}
+  {%- if product.images.size > 1 -%}
+  ,"additionalProperty": [
+    {%- for img in product.images offset: 1 -%}
+      {%- unless forloop.first -%},{%- endunless -%}
+      {
+        "@type": "PropertyValue",
+        "name": "image",
+        "value": {{ img | image_url: width: 800 | json }}
+      }
+    {%- endfor -%}
+  ]
+  {%- endif -%}
+}
+</script>

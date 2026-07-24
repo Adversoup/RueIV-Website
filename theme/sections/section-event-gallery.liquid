@@ -1,0 +1,281 @@
+{%- comment -%}
+  RueIV Event Gallery — Scrolling / Grid photo gallery for events page.
+  Supports horizontal scroll on mobile, grid on desktop.
+  Each block = one image with optional caption and link.
+{%- endcomment -%}
+
+<style>
+  .rv-ev-gallery {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    overflow: hidden;
+  }
+  .rv-ev-gallery__header { text-align: center; margin-bottom: 2rem; }
+  .rv-ev-gallery__eyebrow {
+    font-size: 1.2rem; letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.5; margin-bottom: 0.4rem;
+  }
+  .rv-ev-gallery__heading {
+    font-family: var(--font-heading-family);
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    margin: 0;
+  }
+  .rv-ev-gallery__subtitle {
+    font-size: 1.2rem; max-width: 520px; margin: 0.75rem auto 0;
+    line-height: 1.6; opacity: 0.7;
+  }
+
+  /* Grid mode */
+  .rv-ev-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns | default: 3 }}, 1fr);
+    gap: {{ section.settings.gap | default: 16 }}px;
+  }
+
+  /* Scroll mode */
+  .rv-ev-gallery__grid--scroll {
+    display: flex;
+    gap: {{ section.settings.gap | default: 16 }}px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 0.5rem;
+  }
+  .rv-ev-gallery__grid--scroll .rv-ev-gallery__card {
+    flex: 0 0 {{ section.settings.scroll_card_width | default: 320 }}px;
+    scroll-snap-align: start;
+  }
+
+  .rv-ev-gallery__card {
+    position: relative; overflow: hidden;
+    border-radius: var(--card-corner-radius, 4px);
+  }
+  .rv-ev-gallery__card-img {
+    width: 100%; display: block;
+    aspect-ratio: {{ section.settings.image_ratio | default: '4/3' }};
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .rv-ev-gallery__card:hover .rv-ev-gallery__card-img { transform: scale(1.03); }
+
+  .rv-ev-gallery__card-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+    padding: 1.25rem;
+    color: #fff;
+    transform: translateY(100%);
+    transition: transform 0.35s ease;
+  }
+  .rv-ev-gallery__card:hover .rv-ev-gallery__card-overlay { transform: translateY(0); }
+  .rv-ev-gallery__card-caption {
+    font-size: 1.2rem; font-weight: 600;
+    margin: 0 0 0.25rem;
+  }
+  .rv-ev-gallery__card-sub {
+    font-size: 1.2rem; opacity: 0.8;
+  }
+
+  @media (max-width: 749px) {
+    .rv-ev-gallery__grid:not(.rv-ev-gallery__grid--scroll) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .rv-ev-gallery__grid--scroll .rv-ev-gallery__card {
+      flex: 0 0 280px;
+    }
+  }
+  @media (max-width: 479px) {
+    .rv-ev-gallery__grid:not(.rv-ev-gallery__grid--scroll) {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section class="rv-ev-gallery color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <div class="rv-ev-gallery__header">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="rv-ev-gallery__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="rv-ev-gallery__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="rv-ev-gallery__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="rv-ev-gallery__grid{% if section.settings.layout == 'scroll' %} rv-ev-gallery__grid--scroll{% endif %}">
+        {%- for block in section.blocks -%}
+          <div class="rv-ev-gallery__card" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" style="display:block;">{%- endif -%}
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag:
+                  loading: 'lazy', class: 'rv-ev-gallery__card-img',
+                  sizes: '(max-width: 749px) 90vw, 400px',
+                  widths: '320,480,640,800'
+              }}
+            {%- else -%}
+              <div class="rv-ev-gallery__card-img" style="background:#e8e4df;"></div>
+            {%- endif -%}
+            {%- if block.settings.caption != blank or block.settings.sub_caption != blank -%}
+              <div class="rv-ev-gallery__card-overlay">
+                {%- if block.settings.caption != blank -%}
+                  <p class="rv-ev-gallery__card-caption">{{ block.settings.caption }}</p>
+                {%- endif -%}
+                {%- if block.settings.sub_caption != blank -%}
+                  <p class="rv-ev-gallery__card-sub">{{ block.settings.sub_caption }}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+            {%- if block.settings.link != blank -%}</a>{%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV Event Gallery",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Event Gallery"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "default": "grid",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "scroll", "label": "Horizontal Scroll" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Columns (Grid mode)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "scroll_card_width",
+      "min": 220,
+      "max": 480,
+      "step": 20,
+      "unit": "px",
+      "label": "Card Width (Scroll mode)",
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "default": "4/3",
+      "options": [
+        { "value": "1/1", "label": "Square" },
+        { "value": "4/3", "label": "4:3" },
+        { "value": "3/4", "label": "3:4 Portrait" },
+        { "value": "16/9", "label": "16:9 Wide" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "Photo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption"
+        },
+        {
+          "type": "text",
+          "id": "sub_caption",
+          "label": "Sub-caption",
+          "info": "e.g. event name or date"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV Event Gallery"
+    }
+  ]
+}
+{% endschema %}

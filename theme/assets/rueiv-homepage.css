@@ -1,0 +1,1392 @@
+/* ====================================================================
+   RueIV Homepage — Premium Editorial Showroom v4
+   ====================================================================
+   Design direction: Large-image · oversized-typography · editorial pacing
+   Quiet luxury · confident negative space · premium minimalism
+   Cinematic scroll · gallery-like rhythm
+   ==================================================================== */
+
+/* ── TYPOGRAPHY SCALE ──────────────────────────────────────────────
+   H1 = 48 → 72px   (hero / cinematic titles)
+   H2 = 36 → 48px   (section headings)
+   H3 = 22 → 28px   (category / card titles)
+   H4 = 18px         (product / sub-section titles)
+   H5 = 14px         (kickers / eyebrow text)
+   P  = 15px         (body / descriptions — minimum)
+   ────────────────────────────────────────────────────────────────── */
+
+.rueiv-section p,
+.rueiv-section li {
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.rueiv-section h1 {
+  font-family: var(--font-heading-family);
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 100;
+  letter-spacing: 0.16em;
+  line-height: 1.06;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.rueiv-section h2,
+.rueiv-section-heading {
+  font-family: var(--font-heading-family);
+  font-size: clamp(30px, 3.8vw, 48px);
+  font-weight: 200;
+  letter-spacing: 0.22em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 52px;
+  color: rgb(var(--color-foreground));
+}
+
+.rueiv-section h3 {
+  font-family: var(--font-heading-family);
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.rueiv-section h4 {
+  font-family: var(--font-body-family);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.rueiv-section h5 {
+  font-family: var(--font-body-family);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  margin: 0;
+  color: rgba(var(--color-foreground), 0.45);
+}
+
+/* ── IMAGE UTILITIES ─────────────────────────────────────────────── */
+.rueiv-img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rueiv-img-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
+.rueiv-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ── SHARED TOKENS ───────────────────────────────────────────────── */
+.rueiv-section {
+  --rueiv-gap: 160px;
+}
+
+/* Shopify wraps each section in .shopify-section, so siblings are those wrappers */
+.shopify-section .rueiv-section {
+  margin-block-start: var(--rueiv-gap);
+}
+
+/* No top margin on the hero (first section) */
+.rueiv-hero {
+  margin-block-start: 0 !important;
+}
+
+.rueiv-page-width {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 60px);
+}
+
+.rueiv-subtext {
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.5;
+  text-align: center;
+  max-width: 540px;
+  margin: -32px auto 56px;
+}
+
+/* ── Buttons ── */
+.rueiv-btn {
+  display: inline-block;
+  font-family: var(--font-body-family);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 17px 52px;
+  transition: all 0.35s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.rueiv-btn--primary {
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+.rueiv-btn--primary:hover { opacity: 0.85; }
+
+.rueiv-btn--outline {
+  background: transparent;
+  border: 1px solid rgba(var(--color-foreground), 0.3);
+  color: rgb(var(--color-foreground));
+}
+
+.rueiv-btn--outline:hover {
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+  border-color: rgb(var(--color-foreground));
+}
+
+.rueiv-btn--light {
+  border-color: rgba(255,255,255,0.45);
+  color: #fff;
+}
+
+.rueiv-btn--light:hover {
+  background: #fff;
+  color: #111;
+  border-color: #fff;
+}
+
+.rueiv-section-footer {
+  text-align: center;
+  margin-top: 56px;
+}
+
+/* ====================================================================
+   1. HERO — Full-viewport cinematic opening
+   ==================================================================== */
+.rueiv-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 560px;
+  max-height: 1100px;
+  overflow: hidden;
+}
+
+.rueiv-hero__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+  z-index: 0;
+}
+
+.rueiv-hero__slide.is-active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.rueiv-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rueiv-hero__img--mobile { display: none; }
+
+.rueiv-hero__placeholder {
+  width: 100%;
+  height: 100%;
+  background: #d5d0c8;
+}
+
+.rueiv-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.40) 0%,
+    rgba(0,0,0,0.18) 30%,
+    rgba(0,0,0,0.06) 60%,
+    rgba(0,0,0,0.03) 100%
+  );
+}
+
+.rueiv-hero__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: clamp(40px, 6vw, 88px);
+  color: #fff;
+  max-width: 720px;
+}
+
+.rueiv-hero__content--centered {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(24px, 4vw, 80px);
+  color: #fff;
+  max-width: none;
+  pointer-events: none;
+}
+
+.rueiv-hero__heading--huge {
+  font-family: var(--font-heading-family);
+  font-weight: 100;
+  font-size: clamp(34px, 7vw, 92px);
+  letter-spacing: 0.20em;
+  line-height: 1.03;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 28px;
+  max-width: 1020px;
+}
+
+.rueiv-hero__subtitle {
+  font-family: var(--font-body-family);
+  font-size: clamp(14px, 1.5vw, 17px);
+  font-weight: 300;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  opacity: 0.82;
+  margin: 0;
+}
+
+.rueiv-hero__kicker {
+  font-family: var(--font-body-family);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  opacity: 0.65;
+}
+
+.rueiv-hero__heading {
+  font-family: var(--font-heading-family);
+  font-weight: 200;
+  font-size: clamp(34px, 4.5vw, 56px);
+  letter-spacing: 0.14em;
+  line-height: 1.06;
+  margin-bottom: 18px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.rueiv-hero__desc {
+  font-size: 15px;
+  line-height: 1.85;
+  opacity: 0.82;
+  margin-bottom: 28px;
+  max-width: 480px;
+}
+
+.rueiv-hero__btns {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Sub-banner — warm taupe editorial bar */
+.rueiv-hero-banner {
+  background: #a89382;
+  color: #fff;
+  text-align: center;
+  padding: 20px 32px;
+  font-family: var(--font-body-family);
+  font-size: 14px;
+  letter-spacing: 0.10em;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+/* ====================================================================
+   2. CATEGORY GATEWAY — Wall gallery with background image
+   ==================================================================== */
+
+/* No gap between hero and gateway */
+.rueiv-gateway {
+  margin-block-start: 0 !important;
+}
+
+/* No gap between gateway and vibe studio */
+.rueiv-vibe {
+  margin-block-start: 0 !important;
+}
+
+/* Full-width wall container */
+.rueiv-gateway__wall {
+  position: relative;
+  width: 100%;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #b5a99a;
+}
+
+.rueiv-gateway__wall-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.rueiv-gateway__wall-img--synced {
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+
+.rueiv-gateway__wall-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: clamp(60px, 8vw, 120px) clamp(24px, 4vw, 64px);
+}
+
+/* Section heading on wall — cinematic oversized */
+.rueiv-gateway .rueiv-gateway__heading {
+  color: #fff !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  font-size: clamp(32px, 5vw, 72px);
+  font-weight: 100;
+  letter-spacing: 0.28em;
+  margin-bottom: 16px;
+}
+
+.rueiv-gateway__subtitle {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  font-family: var(--font-body-family);
+  font-size: clamp(14px, 1.4vw, 18px);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  line-height: 1.75;
+  max-width: 720px;
+  margin: 0 auto clamp(48px, 6vw, 88px);
+  text-align: center;
+  opacity: 0.85;
+}
+
+/* 3x2 grid — wall pieces */
+.rueiv-gateway__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(28px, 3.5vw, 52px);
+}
+
+/* Each tile — framed like a wall piece */
+.rueiv-gateway__tile {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* The "frame" — shadow only, no border */
+.rueiv-gateway__frame {
+  position: relative;
+  width: 100%;
+  background: transparent;
+  padding: 0;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.35),
+    0 2px 8px rgba(0,0,0,0.20),
+    0 20px 60px rgba(0,0,0,0.15);
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.6s ease;
+}
+
+.rueiv-gateway__tile:hover .rueiv-gateway__frame {
+  transform: translateY(-4px);
+  box-shadow:
+    0 16px 48px rgba(0,0,0,0.42),
+    0 4px 12px rgba(0,0,0,0.22),
+    0 28px 72px rgba(0,0,0,0.18),
+    inset 0 0 0 1px rgba(255,255,255,0.10);
+}
+
+.rueiv-gateway__img-wrap {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+}
+
+.rueiv-gateway__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.rueiv-gateway__placeholder {
+  width: 100%;
+  height: 100%;
+  background: #d5d0c8;
+}
+
+.rueiv-gateway__tile:hover .rueiv-gateway__img {
+  transform: scale(1.04);
+}
+
+/* Label below the frame */
+.rueiv-gateway__label {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--font-heading-family);
+  font-weight: 200;
+  font-size: clamp(14px, 1.6vw, 20px);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* ====================================================================
+   3. VIBE STUDIO — Full-bleed background hero
+   ==================================================================== */
+.rueiv-vibe__hero {
+  position: relative;
+  min-height: clamp(800px, 95vh, 1100px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.rueiv-vibe__hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rueiv-vibe__hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.30);
+  z-index: 1;
+}
+
+.rueiv-vibe__hero-overlay {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: clamp(60px, 8vw, 120px) 24px;
+}
+
+.rueiv-vibe__hero-content {
+  text-align: center;
+  max-width: 680px;
+  color: #fff;
+}
+
+.rueiv-vibe__hero-title {
+  font-family: var(--font-heading-family);
+  font-size: clamp(40px, 6vw, 80px);
+  font-weight: 100;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  margin: 0 0 20px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+}
+
+.rueiv-vibe__hero-subtitle {
+  font-family: var(--font-body-family);
+  font-size: clamp(22px, 2.8vw, 36px);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  margin: 0 0 28px;
+  opacity: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.65);
+}
+
+.rueiv-vibe__hero-copy {
+  font-size: 15px;
+  line-height: 1.9;
+  opacity: 0.95;
+  margin: 0 0 40px;
+  max-width: 540px;
+  margin-inline: auto;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.rueiv-btn--white {
+  display: inline-block;
+  border: 1px solid #fff;
+  color: #fff;
+  background: transparent;
+  padding: 16px 48px;
+  font-family: var(--font-heading-family);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+
+.rueiv-btn--white:hover {
+  background: #fff;
+  color: #1a1a1a;
+}
+
+/* Moodboard intro */
+.rueiv-vibe__moodboard-intro {
+  text-align: center;
+  margin-top: clamp(64px, 6vw, 100px);
+  max-width: 780px;
+  margin-inline: auto;
+}
+
+.rueiv-vibe__board-copy {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--color-foreground);
+  opacity: 0.72;
+  max-width: 640px;
+  margin-inline: auto;
+  margin-top: 20px;
+}
+
+.rueiv-vibe__pillars {
+  display: flex;
+  justify-content: center;
+  gap: clamp(24px, 3vw, 56px);
+  margin-top: 40px;
+}
+
+.rueiv-vibe__pillar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.rueiv-vibe__pillar-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-foreground);
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  opacity: 0.5;
+}
+
+.rueiv-vibe__pillar p {
+  font-family: var(--font-heading-family);
+  font-size: clamp(14px, 1.2vw, 17px);
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rueiv-vibe__board-note {
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.7;
+  opacity: 0.52;
+  margin-top: 36px;
+}
+
+@media (max-width: 749px) {
+  .rueiv-vibe__pillars {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* Moodboard cards */
+.rueiv-vibe__boards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 2.5vw, 32px);
+  margin-top: 80px;
+}
+
+.rueiv-vibe__board-card {
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+  display: block;
+}
+
+.rueiv-vibe__board-img {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+
+.rueiv-vibe__board-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s ease;
+}
+
+.rueiv-vibe__board-img .rueiv-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e8e5e0;
+}
+
+.rueiv-vibe__board-card:hover .rueiv-vibe__board-img img {
+  transform: scale(1.03);
+}
+
+.rueiv-vibe__board-info {
+  padding-top: 18px;
+}
+
+.rueiv-vibe__board-info h3 {
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.rueiv-vibe__board-info p {
+  font-size: 14px;
+  opacity: 0.45;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ====================================================================
+   4. PRODUCT RAIL — Shared: Trending + New Arrivals
+   ==================================================================== */
+.rueiv-rail__inner {
+  text-align: center;
+}
+
+.rueiv-rail__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(20px, 2.5vw, 32px);
+  text-align: left;
+}
+
+/* ── Shared Product Card — restrained, large image ── */
+.rueiv-pcard {
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+  display: block;
+}
+
+.rueiv-pcard__img-wrap {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #f0eeeb;
+}
+
+.rueiv-pcard__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.rueiv-pcard__placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e8e5e0;
+}
+
+.rueiv-pcard:hover .rueiv-pcard__img {
+  transform: scale(1.03);
+}
+
+.rueiv-pcard__info {
+  padding-top: 16px;
+}
+
+.rueiv-pcard__vendor {
+  font-size: 14px;
+  opacity: 0.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+
+.rueiv-pcard__title {
+  font-family: var(--font-body-family);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.rueiv-pcard__price { display: none !important; }
+
+/* ====================================================================
+   5. QUICK SHIP — Product rail variant
+   ==================================================================== */
+.rueiv-qs__inner {
+  text-align: center;
+}
+
+.rueiv-qs__desc {
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.5;
+  text-align: center;
+  max-width: 540px;
+  margin: -32px auto 56px;
+}
+
+.rueiv-qs__rail {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(20px, 2.5vw, 32px);
+  text-align: left;
+}
+
+.rueiv-qs__footer {
+  text-align: center;
+  margin-top: 56px;
+}
+
+/* ====================================================================
+   6. PROJECT READY / QUICK SHIP — 3-column category gateway
+   ==================================================================== */
+.rueiv-ready__title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  font-family: var(--font-heading-family);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 100;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0;
+  padding: clamp(48px, 6vw, 80px) 24px 0;
+  color: #fff !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.45);
+  pointer-events: none;
+}
+
+.rueiv-ready__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.rueiv-ready__col {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  display: block;
+}
+
+.rueiv-ready__col-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s ease;
+}
+
+.rueiv-ready__col:hover .rueiv-ready__col-img {
+  transform: scale(1.04);
+}
+
+.rueiv-ready__col-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.22);
+  transition: background 0.4s ease;
+}
+
+.rueiv-ready__col:hover .rueiv-ready__col-overlay {
+  background: rgba(0,0,0,0.35);
+}
+
+.rueiv-ready__col-label {
+  font-family: var(--font-heading-family);
+  font-size: clamp(20px, 2.5vw, 32px);
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.rueiv-ready__card {
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+  display: block;
+  text-align: center;
+}
+
+.rueiv-ready__img-wrap {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  position: relative;
+}
+
+.rueiv-ready__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s ease;
+}
+
+.rueiv-ready__placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e8e5e0;
+}
+
+.rueiv-ready__card:hover .rueiv-ready__img {
+  transform: scale(1.03);
+}
+
+.rueiv-ready__card h3 {
+  font-size: 18px;
+  letter-spacing: 0.16em;
+  margin-top: 22px;
+  font-weight: 300;
+}
+
+.rueiv-ready__card p {
+  font-size: 14px;
+  opacity: 0.45;
+  margin-top: 6px;
+}
+
+/* ====================================================================
+   7. TESTIMONIALS — Large editorial quote, random on refresh
+   ==================================================================== */
+.rueiv-testimonials {
+  text-align: center;
+  padding-block: clamp(80px, 10vw, 160px);
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+}
+
+.rueiv-testimonials__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.rueiv-testimonials__bg img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.rueiv-testimonials__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+}
+
+.rueiv-testimonials__eyebrow {
+  font-size: 16px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin: 0 0 40px;
+  font-weight: 400;
+  color: #fff;
+}
+
+.rueiv-testimonials__inner {
+  max-width: 960px;
+  margin-inline: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.rueiv-testimonials__track {
+  position: relative;
+  min-height: 200px;
+}
+
+.rueiv-testimonials__card {
+  border: none;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.7s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.rueiv-testimonials__card.is-active {
+  opacity: 1;
+  position: relative;
+}
+
+.rueiv-testimonials__quote {
+  font-family: var(--font-heading-family);
+  font-size: clamp(31px, 3.9vw, 50px);
+  font-weight: 200;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  font-style: italic;
+  margin: 0 0 44px;
+  color: #fff;
+}
+
+.rueiv-testimonials__author {
+  font-family: var(--font-body-family);
+  font-size: 16px;
+  font-style: normal;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  display: block;
+  color: #fff;
+}
+
+.rueiv-testimonials__role {
+  font-size: 15px;
+  opacity: 0.5;
+  display: block;
+  margin-top: 6px;
+  color: #fff;
+}
+
+/* Remove gap between testimonials and newsletter */
+.rueiv-testimonials + .shopify-section .rueiv-section {
+  margin-block-start: 0;
+}
+.rueiv-newsletter {
+  margin-block-start: 0 !important;
+}
+
+/* ====================================================================
+   8. EVENTS — Editorial culture / showroom life
+   ==================================================================== */
+.rueiv-events__inner {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 60px);
+}
+
+.rueiv-events__sub {
+  font-size: 15px;
+  text-align: center;
+  opacity: 0.45;
+  letter-spacing: 0.08em;
+  margin: -32px 0 56px;
+}
+
+.rueiv-events__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 2.5vw, 32px);
+}
+
+.rueiv-events__card {
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+}
+
+.rueiv-events__card a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.rueiv-events__img-wrap {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #f0eeeb;
+}
+
+.rueiv-events__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s ease;
+}
+
+.rueiv-events__placeholder {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.rueiv-events__card:hover .rueiv-events__img,
+.rueiv-events__card a:hover .rueiv-events__img {
+  transform: scale(1.03);
+}
+
+.rueiv-events__title {
+  font-family: var(--font-body-family);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  margin: 20px 0 6px;
+}
+
+.rueiv-events__date {
+  font-size: 14px;
+  opacity: 0.38;
+  margin: 0;
+  letter-spacing: 0.08em;
+}
+
+/* ====================================================================
+   9. NEWSLETTER — Exclusive insider editorial signup
+   ==================================================================== */
+.rueiv-newsletter {
+  position: relative;
+  overflow: hidden;
+}
+
+.rueiv-newsletter__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.rueiv-newsletter__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rueiv-newsletter__layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+
+.rueiv-newsletter__layout--centered {
+  grid-template-columns: 1fr;
+}
+
+.rueiv-newsletter__image-col {
+  overflow: hidden;
+  min-height: 460px;
+}
+
+.rueiv-newsletter__image-col img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rueiv-newsletter__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(48px, 6vw, 100px);
+  background: transparent;
+}
+
+.rueiv-newsletter__layout--centered .rueiv-newsletter__content {
+  padding-block: clamp(160px, 20vw, 280px);
+  max-width: 600px;
+  margin-inline: auto;
+  background: transparent;
+}
+
+.rueiv-newsletter__content h2 {
+  margin-bottom: 24px;
+  font-size: clamp(26px, 3.2vw, 44px);
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.rueiv-newsletter__desc {
+  font-size: 15px;
+  line-height: 1.85;
+  opacity: 0.85;
+  margin-bottom: 36px;
+  max-width: 380px;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.rueiv-newsletter__desc p { margin: 0; }
+
+.rueiv-newsletter__form {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  max-width: 520px;
+  justify-content: center;
+  align-items: center;
+}
+
+.rueiv-newsletter__input {
+  flex: 1;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-right: none;
+  padding: 16px 20px;
+  font-family: var(--font-body-family);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  height: 52px;
+  box-sizing: border-box;
+}
+
+.rueiv-newsletter__input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+.rueiv-newsletter__input:focus {
+  border-color: #fff;
+}
+
+.rueiv-newsletter__form .rueiv-btn {
+  white-space: nowrap;
+  border-left: none;
+  border-color: rgba(255,255,255,0.5);
+  color: #fff;
+  height: 52px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rueiv-newsletter__form .rueiv-btn:hover {
+  background: #fff;
+  color: #1a1a1a;
+}
+
+.rueiv-newsletter__success {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #2a7a3f;
+}
+
+.rueiv-newsletter__error {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #c0392b;
+}
+
+/* ====================================================================
+   10. CLOSING BANNER — Bold typographic brand signature
+   ==================================================================== */
+.rueiv-banner {
+  position: relative;
+  overflow: hidden;
+  min-height: 540px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rueiv-banner__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rueiv-banner__bg--placeholder {
+  background-color: #1e1c1a;
+  background-size: cover;
+  background-position: center;
+}
+
+.rueiv-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.22);
+}
+
+.rueiv-banner__content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+  padding: clamp(56px, 10vw, 120px) 24px;
+  max-width: 860px;
+}
+
+.rueiv-banner__heading {
+  font-family: var(--font-heading-family);
+  font-size: clamp(30px, 4.5vw, 60px);
+  font-weight: 100;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  line-height: 1.08;
+  margin: 0 0 22px;
+  color: #fff !important;
+}
+
+.rueiv-banner__sub {
+  font-size: 14px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin: 0 0 36px;
+  line-height: 1.75;
+  color: #fff !important;
+}
+
+/* ====================================================================
+   RESPONSIVE
+   ==================================================================== */
+
+/* ── Tablet ── */
+@media (max-width: 1023px) {
+  .rueiv-section { --rueiv-gap: 120px; }
+
+  .rueiv-rail__grid { grid-template-columns: repeat(2, 1fr); }
+  .rueiv-qs__rail { grid-template-columns: repeat(2, 1fr); }
+  .rueiv-ready__grid { grid-template-columns: repeat(3, 1fr); }
+  .rueiv-events__grid { grid-template-columns: repeat(2, 1fr); }
+  .rueiv-vibe__boards { grid-template-columns: repeat(2, 1fr); }
+
+  /* Gateway: 2-col on tablet */
+  .rueiv-gateway__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .rueiv-gateway__wall { min-height: auto; }
+  .rueiv-gateway__frame { padding: 8px; }
+}
+
+/* ── Mobile ── */
+@media (max-width: 767px) {
+  .rueiv-section { --rueiv-gap: 96px; }
+
+  .rueiv-section h1 { font-size: 32px; }
+  .rueiv-section h2,
+  .rueiv-section-heading { font-size: 24px; margin-bottom: 32px; }
+  .rueiv-section h3 { font-size: 20px; }
+
+  .rueiv-hero__heading--huge { font-size: 30px; letter-spacing: 0.14em; }
+  .rueiv-hero__subtitle { letter-spacing: 0.20em; }
+  .rueiv-hero__img--desktop { display: none; }
+  .rueiv-hero__img--mobile { display: block; }
+
+  /* Gateway: 2-col on mobile */
+  .rueiv-gateway__grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .rueiv-gateway__wall { min-height: auto; }
+  .rueiv-gateway__wall-inner { padding: 48px 20px; }
+  .rueiv-gateway__frame { padding: 6px; }
+  .rueiv-gateway__img-wrap { aspect-ratio: 3 / 4; }
+  .rueiv-gateway__label { font-size: 14px; letter-spacing: 0.20em; margin-top: 12px; }
+
+  /* Vibe Studio */
+  .rueiv-vibe__hero { min-height: 420px; }
+  .rueiv-vibe__hero-title { font-size: 32px; }
+  .rueiv-vibe__boards { grid-template-columns: 1fr; }
+
+  /* Product rail */
+  .rueiv-rail__grid { grid-template-columns: repeat(2, 1fr); }
+  .rueiv-qs__rail { grid-template-columns: repeat(2, 1fr); }
+
+  /* Project Ready */
+  .rueiv-ready__grid { grid-template-columns: 1fr; }
+  .rueiv-ready__col { aspect-ratio: 16 / 9; }
+
+  /* Events */
+  .rueiv-events__grid { grid-template-columns: 1fr; }
+
+  /* Testimonials */
+  .rueiv-testimonials__quote { font-size: 24px; }
+  .rueiv-testimonials__track { min-height: 160px; }
+
+  /* Newsletter */
+  .rueiv-newsletter__layout { grid-template-columns: 1fr; }
+  .rueiv-newsletter__image-col { min-height: 280px; }
+  .rueiv-newsletter__content h2 { font-size: 24px; }
+  .rueiv-newsletter__form { flex-direction: column; gap: 8px; }
+  .rueiv-newsletter__input {
+    border-right: 1px solid rgba(var(--color-foreground), 0.18);
+  }
+  .rueiv-newsletter__form .rueiv-btn {
+    border-left: 1px solid rgb(var(--color-foreground));
+  }
+
+  /* Banner */
+  .rueiv-banner__heading { font-size: 26px; letter-spacing: 0.16em; }
+  .rueiv-banner { min-height: 380px; }
+
+  /* Buttons */
+  .rueiv-btn { padding: 15px 36px; font-size: 14px; }
+}
+
+/* ── Desktop Large ── */
+@media (min-width: 768px) {
+  .rueiv-hero__heading { font-size: 56px; }
+}
+
+@media (min-width: 1200px) {
+  .rueiv-gateway__grid { gap: 52px; }
+}

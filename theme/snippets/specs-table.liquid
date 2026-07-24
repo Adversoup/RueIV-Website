@@ -1,0 +1,194 @@
+{%- comment -%}
+  snippets/specs-table.liquid
+  ───────────────────────────
+  Renders a specifications table from product metafields.
+  Skips any row where the metafield is blank.
+  If ALL rows are blank, renders nothing (no empty table).
+
+  Usage:
+    {% render 'specs-table', product: product, heading: 'Specifications' %}
+
+  The snippet uses a curated list of metafield keys under the "specs" namespace.
+  Categories covered: common, fabric, furniture, lighting, wallpaper.
+{%- endcomment -%}
+
+{%- liquid
+  assign _ns = namespace | default: 'specs'
+  assign _heading = heading | default: 'Specifications'
+
+  comment
+    Build the rows array.
+    Each row: label | metafield_key
+    We check every key and count non-blank rows to decide whether to render.
+  endcomment
+
+  assign spec_rows = ''
+
+  comment
+    ── Common fields ──
+  endcomment
+  assign _keys = 'material,finish,dimensions,width,height,depth,weight,color,collection_name,country_of_origin,lead_time,care,fire_rating' | split: ','
+  assign _labels = 'Material,Finish,Dimensions,Width,Height,Depth,Weight,Color,Collection,Country of Origin,Lead Time,Care,Fire Rating' | split: ','
+
+  comment
+    ── Fabric-specific ──
+  endcomment
+  assign _keys_fabric = 'pattern,weave,composition,repeat_h,repeat_v,martindale,usage' | split: ','
+  assign _labels_fabric = 'Pattern,Weave,Composition,Horizontal Repeat,Vertical Repeat,Martindale,Usage' | split: ','
+
+  comment
+    ── Furniture-specific ──
+  endcomment
+  assign _keys_furniture = 'frame_material,upholstery,style,com_yardage,assembly_required' | split: ','
+  assign _labels_furniture = 'Frame Material,Upholstery,Style,COM Yardage,Assembly Required' | split: ','
+
+  comment
+    ── Lighting-specific ──
+  endcomment
+  assign _keys_lighting = 'fixture_type,constructed_from,bulb_type,max_wattage,voltage,shade_material,dimmable,ip_rating,projection,cable_length' | split: ','
+  assign _labels_lighting = 'Fixture Type,Constructed From,Bulb Type,Max Wattage,Voltage,Shade Material,Dimmable,IP Rating,Projection,Cable Length' | split: ','
+
+  comment
+    ── Wallpaper-specific ──
+  endcomment
+  assign _keys_wallpaper = 'roll_width,roll_length,substrate,installation,washability' | split: ','
+  assign _labels_wallpaper = 'Roll Width,Roll Length,Substrate,Installation,Washability' | split: ','
+
+  comment
+    Count non-blank metafields across all categories.
+  endcomment
+  assign _row_count = 0
+
+  for i in (0.._keys.size)
+    if i < _keys.size
+      assign _k = _keys[i]
+      assign _mf = product.metafields[_ns][_k]
+      if _mf != blank and _mf.value != blank
+        assign _row_count = _row_count | plus: 1
+      endif
+    endif
+  endfor
+
+  for i in (0.._keys_fabric.size)
+    if i < _keys_fabric.size
+      assign _k = _keys_fabric[i]
+      assign _mf = product.metafields[_ns][_k]
+      if _mf != blank and _mf.value != blank
+        assign _row_count = _row_count | plus: 1
+      endif
+    endif
+  endfor
+
+  for i in (0.._keys_furniture.size)
+    if i < _keys_furniture.size
+      assign _k = _keys_furniture[i]
+      assign _mf = product.metafields[_ns][_k]
+      if _mf != blank and _mf.value != blank
+        assign _row_count = _row_count | plus: 1
+      endif
+    endif
+  endfor
+
+  for i in (0.._keys_lighting.size)
+    if i < _keys_lighting.size
+      assign _k = _keys_lighting[i]
+      assign _mf = product.metafields[_ns][_k]
+      if _mf != blank and _mf.value != blank
+        assign _row_count = _row_count | plus: 1
+      endif
+    endif
+  endfor
+
+  for i in (0.._keys_wallpaper.size)
+    if i < _keys_wallpaper.size
+      assign _k = _keys_wallpaper[i]
+      assign _mf = product.metafields[_ns][_k]
+      if _mf != blank and _mf.value != blank
+        assign _row_count = _row_count | plus: 1
+      endif
+    endif
+  endfor
+-%}
+
+{%- if _row_count > 0 -%}
+<div class="specs-table">
+  <table class="specs-table__table" role="table" aria-label="{{ _heading | escape }}">
+    <tbody>
+      {%- comment -%} Common {%- endcomment -%}
+      {%- for i in (0.._keys.size) -%}
+        {%- if i < _keys.size -%}
+          {%- assign _k = _keys[i] -%}
+          {%- capture _val -%}{%- render 'metafield-get', product: product, namespace: _ns, key: _k, fallback: '' -%}{%- endcapture -%}
+          {%- assign _val = _val | strip -%}
+          {%- if _val != blank -%}
+            <tr class="specs-table__row">
+              <th class="specs-table__label" scope="row">{{ _labels[i] }}</th>
+              <td class="specs-table__value">{{ _val }}</td>
+            </tr>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} Fabric {%- endcomment -%}
+      {%- for i in (0.._keys_fabric.size) -%}
+        {%- if i < _keys_fabric.size -%}
+          {%- assign _k = _keys_fabric[i] -%}
+          {%- capture _val -%}{%- render 'metafield-get', product: product, namespace: _ns, key: _k, fallback: '' -%}{%- endcapture -%}
+          {%- assign _val = _val | strip -%}
+          {%- if _val != blank -%}
+            <tr class="specs-table__row">
+              <th class="specs-table__label" scope="row">{{ _labels_fabric[i] }}</th>
+              <td class="specs-table__value">{{ _val }}</td>
+            </tr>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} Furniture {%- endcomment -%}
+      {%- for i in (0.._keys_furniture.size) -%}
+        {%- if i < _keys_furniture.size -%}
+          {%- assign _k = _keys_furniture[i] -%}
+          {%- capture _val -%}{%- render 'metafield-get', product: product, namespace: _ns, key: _k, fallback: '' -%}{%- endcapture -%}
+          {%- assign _val = _val | strip -%}
+          {%- if _val != blank -%}
+            <tr class="specs-table__row">
+              <th class="specs-table__label" scope="row">{{ _labels_furniture[i] }}</th>
+              <td class="specs-table__value">{{ _val }}</td>
+            </tr>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} Lighting {%- endcomment -%}
+      {%- for i in (0.._keys_lighting.size) -%}
+        {%- if i < _keys_lighting.size -%}
+          {%- assign _k = _keys_lighting[i] -%}
+          {%- capture _val -%}{%- render 'metafield-get', product: product, namespace: _ns, key: _k, fallback: '' -%}{%- endcapture -%}
+          {%- assign _val = _val | strip -%}
+          {%- if _val != blank -%}
+            <tr class="specs-table__row">
+              <th class="specs-table__label" scope="row">{{ _labels_lighting[i] }}</th>
+              <td class="specs-table__value">{{ _val }}</td>
+            </tr>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} Wallpaper {%- endcomment -%}
+      {%- for i in (0.._keys_wallpaper.size) -%}
+        {%- if i < _keys_wallpaper.size -%}
+          {%- assign _k = _keys_wallpaper[i] -%}
+          {%- capture _val -%}{%- render 'metafield-get', product: product, namespace: _ns, key: _k, fallback: '' -%}{%- endcapture -%}
+          {%- assign _val = _val | strip -%}
+          {%- if _val != blank -%}
+            <tr class="specs-table__row">
+              <th class="specs-table__label" scope="row">{{ _labels_wallpaper[i] }}</th>
+              <td class="specs-table__value">{{ _val }}</td>
+            </tr>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </tbody>
+  </table>
+</div>
+{%- endif -%}

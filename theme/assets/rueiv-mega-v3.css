@@ -1,0 +1,221 @@
+/* ====================================================================
+   RueIV Mega v3 — Universal 3-column category mega menu
+   Scoped with .rv3- prefix.
+
+   Layout (responsive column count):
+   ┌──────────────┬──────────────┬──────────────┐
+   │ [TILE IMAGE] │ [TILE IMAGE] │ [TILE IMAGE] │
+   │ Col A Title  │ Col B Title  │ Col C Title  │
+   ├──────────────┼──────────────┼──────────────┤
+   │ All …        │ All …        │ All …        │
+   │ Link 1       │ Link 1       │ Link 1       │
+   │ …            │ …            │ …            │
+   └──────────────┴──────────────┴──────────────┘
+   ==================================================================== */
+
+/* ── Grid ── */
+.rv3-grid {
+  display: grid;
+  gap: 2rem;
+  width: 100%;
+  padding-block: 2.5rem 2rem;
+}
+
+.rv3-grid--3col { grid-template-columns: repeat(3, 1fr); }
+.rv3-grid--2col { grid-template-columns: repeat(2, 1fr); }
+.rv3-grid--1col { grid-template-columns: 1fr; max-width: 480px; }
+
+/* ── Column ── */
+.rv3-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── Column title — Libre Caslon Display ── */
+.rv3-col__title {
+  display: block;
+  font-family: 'Libre Caslon Display', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: rgb(var(--color-foreground));
+  margin-bottom: 0.75rem;
+}
+
+/* ── Image tiles — max 350px ── */
+.rv3-tile {
+  margin-bottom: 1.25rem;
+  max-width: 350px;
+}
+
+.rv3-tile__img-wrap {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rv3-tile__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s ease;
+}
+
+.rv3-tile:hover .rv3-tile__img {
+  transform: scale(1.04);
+}
+
+/* ── Link lists ── */
+.rv3-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rv3-links li {
+  padding-block: 0.3rem;
+}
+
+.rv3-link {
+  font-size: 1.4rem;
+  transition: opacity 0.2s ease;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.rv3-link:hover,
+.rv3-link:focus-visible {
+  opacity: 0.5;
+}
+
+/* "All" first link — bolder */
+.rv3-link--all {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* ── Two-column split for long link lists (>12 items) ── */
+.rv3-links-split {
+  display: flex;
+  gap: 5rem;
+}
+
+.rv3-links-split__left,
+.rv3-links-split__right {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.rv3-links-split__left li,
+.rv3-links-split__right li {
+  padding-block: 0.3rem;
+}
+
+/* ── Responsive: hide on mobile (theme's mobile nav takes over) ── */
+@media (max-width: 1023.98px) {
+  .rv3-grid {
+    display: none;
+  }
+}
+
+
+/* ── Featured Panel (4th column) ── */
+.rv3-grid--featured {
+  grid-template-columns: repeat(3, 1fr) minmax(220px, 1.2fr);
+}
+.rv3-grid--featured.rv3-grid--2col {
+  grid-template-columns: repeat(2, 1fr) minmax(220px, 1.2fr);
+}
+.rv3-grid--featured.rv3-grid--1col {
+  grid-template-columns: 1fr minmax(220px, 1.2fr);
+  max-width: 100%;
+}
+
+.rv3-featured {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(var(--color-foreground), 0.08);
+  padding-left: 2rem;
+  min-width: 0;
+}
+
+.rv3-featured__img-link {
+  display: block;
+  text-decoration: none;
+}
+
+.rv3-featured__img-wrap {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.rv3-featured__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.rv3-featured__img-link:hover .rv3-featured__img {
+  transform: scale(1.04);
+}
+
+.rv3-featured__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rv3-featured__title {
+  font-family: 'Libre Caslon Display', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  color: rgb(var(--color-foreground));
+}
+
+.rv3-featured__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  margin-top: 0.25rem;
+}
+
+.rv3-featured__btn:hover {
+  opacity: 1;
+}
+
+.rv3-featured__btn svg {
+  transition: transform 0.3s ease;
+}
+
+.rv3-featured__btn:hover svg {
+  transform: translateX(4px);
+}
+
+@media (max-width: 1023.98px) {
+  .rv3-featured {
+    display: none;
+  }
+}

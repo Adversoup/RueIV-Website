@@ -1,0 +1,219 @@
+{%- comment -%}
+  Vibe Studio Hero — cinematic full-bleed hero with eyebrow,
+  headline, body copy, and CTA. Designed for the "Shop the Vibe" page.
+{%- endcomment -%}
+
+<style>
+  .vibe-hero { position: relative; overflow: hidden; }
+  .vibe-hero__media {
+    position: relative; width: 100%;
+    min-height: {{ section.settings.min_height }}px;
+  }
+  .vibe-hero__media img {
+    width: 100%; height: 100%; object-fit: cover;
+    position: absolute; inset: 0; display: block;
+  }
+  .vibe-hero__overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0,0,0,{{ section.settings.overlay_top | divided_by: 100.0 }}) 0%,
+      rgba(0,0,0,{{ section.settings.overlay_bottom | divided_by: 100.0 }}) 100%
+    );
+  }
+  .vibe-hero__content {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column;
+    align-items: {{ section.settings.align }};
+    justify-content: center;
+    min-height: {{ section.settings.min_height }}px;
+    padding: 64px 32px;
+    color: {{ section.settings.text_color }};
+    {% if section.settings.align == 'center' %}text-align: center;{% endif %}
+    {% if section.settings.align == 'flex-start' %}text-align: left;{% endif %}
+  }
+  .vibe-hero__eyebrow {
+    font-size: 14px; letter-spacing: 0.25em; text-transform: uppercase;
+    margin-bottom: 12px; opacity: 0.8;
+  }
+  .vibe-hero__title {
+    font-family: var(--font-heading-family); font-weight: var(--font-heading-weight);
+    font-size: clamp(28px, 5.5vw, 54px); line-height: 1.05;
+    margin: 0 0 16px; max-width: 720px;
+  }
+  .vibe-hero__body {
+    font-size: 14px; line-height: 1.65; max-width: 540px;
+    opacity: 0.9; margin-bottom: 32px;
+  }
+  .vibe-hero__cta { display: inline-flex; gap: 16px; flex-wrap: wrap; }
+  .vibe-hero__cta .btn {
+    min-width: 200px; text-align: center;
+  }
+  .vibe-hero__badge {
+    margin-top: 32px; font-size: 14px;
+    letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.6;
+  }
+
+  @media (max-width: 749px) {
+    .vibe-hero__media { min-height: 420px; }
+    .vibe-hero__content {
+      min-height: 420px; padding: 48px 24px;
+      align-items: center; text-align: center;
+    }
+    .vibe-hero__title { font-size: clamp(20px, 8vw, 32px); }
+  }
+</style>
+
+<section class="vibe-hero">
+  <div class="vibe-hero__media">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 2400 | image_tag:
+          loading: 'eager',
+          fetchpriority: 'high',
+          sizes: '100vw',
+          widths: '600,900,1200,1600,2000,2400',
+          is: 'image-lazy'
+      }}
+    {%- else -%}
+      <div style="background:linear-gradient(135deg,#3a2a1a 0%,#5c4033 100%);width:100%;height:100%;position:absolute;inset:0;"></div>
+    {%- endif -%}
+    <div class="vibe-hero__overlay"></div>
+    <div class="vibe-hero__content page-width">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="vibe-hero__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h1 class="vibe-hero__title">{{ section.settings.title }}</h1>
+      {%- endif -%}
+      {%- if section.settings.body != blank -%}
+        <div class="vibe-hero__body rte">{{ section.settings.body }}</div>
+      {%- endif -%}
+      <div class="vibe-hero__cta">
+        {%- if section.settings.cta_label != blank -%}
+          <a href="{{ section.settings.cta_link | default: '#moodboards' }}" class="btn btn--primary">
+            {{ section.settings.cta_label }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.cta2_label != blank -%}
+          <a href="{{ section.settings.cta2_link | default: '#' }}" class="btn btn--secondary">
+            {{ section.settings.cta2_label }}
+          </a>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.badge != blank -%}
+        <p class="vibe-hero__badge">{{ section.settings.badge }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Vibe Studio Hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "SHOP THE VIBE"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Headline",
+      "default": "A Curated Sourcing Experience for Trade Clients"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body Copy",
+      "default": "<p>Tell us the vibe. We source the product. Rue IV's Vibe Studio brings your vision to life with curated selections from the world's finest makers — delivered with trade-only pricing and white-glove service.</p>"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Primary Button",
+      "default": "Shop the Vibe"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "cta2_label",
+      "label": "Secondary Button"
+    },
+    {
+      "type": "url",
+      "id": "cta2_link",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge / Tag Line",
+      "default": "Trade Clients Only · Curated in 24–48 Hours"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Content Alignment",
+      "default": "flex-start",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "min": 300,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Minimum Height",
+      "default": 580
+    },
+    {
+      "type": "range",
+      "id": "overlay_top",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Top Opacity",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "overlay_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Bottom Opacity",
+      "default": 50
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vibe Studio Hero"
+    }
+  ]
+}
+{% endschema %}

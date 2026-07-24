@@ -1,0 +1,319 @@
+{
+  "version": "2.0.0",
+  "description": "Category-first navigation — vendors as filters only",
+
+  "main_menu": {
+    "handle": "main-menu",
+    "title": "Main Navigation",
+    "items": [
+      {
+        "title": "Textiles",
+        "url": "/collections/textiles",
+        "mega_block": "rueiv_mega_v3",
+        "columns": {
+          "a": { "title": "Shop by Application", "menu": "textiles-application" },
+          "b": { "title": "Shop by Material",    "menu": "textiles-material" },
+          "c": { "title": "Shop by Color",       "menu": "textiles-color" }
+        }
+      },
+      {
+        "title": "Wallcovering",
+        "url": "/collections/wallcovering",
+        "mega_block": "rueiv_mega_v3",
+        "columns": {
+          "a": { "title": "Shop by Material", "menu": "wallcovering-material" },
+          "b": { "title": "Shop by Design",   "menu": "wallcovering-design" },
+          "c": { "title": "Shop by Color",    "menu": "wallcovering-color" }
+        }
+      },
+      {
+        "title": "Furniture",
+        "url": "/collections/furniture",
+        "mega_block": "rueiv_mega_v3",
+        "columns": {
+          "a": { "title": "Shop by Room", "menu": "furniture-room" },
+          "b": { "title": "Shop by Type", "menu": "furniture-type" },
+          "c": { "title": "Project Solutions", "menu": "furniture-solutions" }
+        }
+      },
+      {
+        "title": "Lighting",
+        "url": "/collections/lighting",
+        "mega_block": "rueiv_mega_v3",
+        "columns": {
+          "a": { "title": "Shop by Type",  "menu": "lighting-type" },
+          "b": { "title": "Shop by Style", "menu": "lighting-style" },
+          "c": { "title": "Project Solutions", "menu": "lighting-solutions" }
+        }
+      },
+      {
+        "title": "Rugs",
+        "url": "/collections/rugs",
+        "mega_block": "rueiv_mega_v3",
+        "columns": {
+          "a": { "title": "Shop by Size",     "menu": "rugs-size" },
+          "b": { "title": "Shop by Material", "menu": "rugs-material" },
+          "c": { "title": "Shop by Color",    "menu": "rugs-color" }
+        }
+      },
+      {
+        "title": "Accessories",
+        "url": "/collections/accessories",
+        "mega_block": "rueiv_mega_v3",
+        "columns": {
+          "a": { "title": "Decor",              "menu": "accessories-decor" },
+          "b": { "title": "Tabletop",           "menu": "accessories-tabletop" },
+          "c": { "title": "Shop by Material",   "menu": "accessories-material" }
+        }
+      },
+      {
+        "title": "The Vibe Studio",
+        "url": "/pages/vibe-studio",
+        "mega_block": "rueiv_mega_vibe",
+        "children": [
+          { "title": "Explore Moodboards", "url": "/pages/moodboards" },
+          { "title": "How It Works",       "url": "/pages/how-it-works" },
+          { "title": "Submit a Project",   "url": "/pages/submit-project" }
+        ]
+      }
+    ]
+  },
+
+  "mega_menus": {
+    "textiles-application": {
+      "title": "Textiles — Application",
+      "items": [
+        { "title": "All Textiles",  "url": "/collections/textiles" },
+        { "title": "Upholstery",    "url": "/collections/textiles-upholstery" },
+        { "title": "Drapery",       "url": "/collections/textiles-drapery" },
+        { "title": "Sheers",        "url": "/collections/textiles-sheers" },
+        { "title": "Decorative",    "url": "/collections/textiles-decorative" },
+        { "title": "Outdoor",       "url": "/collections/textiles-outdoor" },
+        { "title": "Leather",       "url": "/collections/textiles-leather" }
+      ]
+    },
+    "textiles-material": {
+      "title": "Textiles — Material",
+      "items": [
+        { "title": "Linen",       "url": "/collections/textiles-linen" },
+        { "title": "Cotton",      "url": "/collections/textiles-cotton" },
+        { "title": "Silk",        "url": "/collections/textiles-silk" },
+        { "title": "Velvet",      "url": "/collections/textiles-velvet" },
+        { "title": "Wool",        "url": "/collections/textiles-wool" },
+        { "title": "Performance", "url": "/collections/textiles-performance" }
+      ]
+    },
+    "textiles-color": {
+      "title": "Textiles — Color",
+      "items": [
+        { "title": "All Colors", "url": "/collections/textiles" },
+        { "title": "Neutrals",   "url": "/collections/textiles-color-neutrals" },
+        { "title": "Warm",       "url": "/collections/textiles-color-warm" },
+        { "title": "Cool",       "url": "/collections/textiles-color-cool" },
+        { "title": "Dark",       "url": "/collections/textiles-color-dark" },
+        { "title": "Patterned",  "url": "/collections/textiles-color-patterned" }
+      ]
+    },
+
+    "wallcovering-material": {
+      "title": "Wallcovering — Material",
+      "items": [
+        { "title": "All Wallcovering", "url": "/collections/wallcovering" },
+        { "title": "Paper",            "url": "/collections/wallcovering-paper" },
+        { "title": "Vinyl",            "url": "/collections/wallcovering-vinyl" },
+        { "title": "Naturals",         "url": "/collections/wallcovering-naturals" },
+        { "title": "Grasscloth",       "url": "/collections/wallcovering-grasscloth" },
+        { "title": "Textile",          "url": "/collections/wallcovering-textile" },
+        { "title": "Murals",           "url": "/collections/wallcovering-murals" }
+      ]
+    },
+    "wallcovering-design": {
+      "title": "Wallcovering — Design",
+      "items": [
+        { "title": "All Designs",    "url": "/collections/wallcovering" },
+        { "title": "Textures",       "url": "/collections/wallcovering-textures" },
+        { "title": "Florals",        "url": "/collections/wallcovering-florals" },
+        { "title": "Geometric",      "url": "/collections/wallcovering-geometric" },
+        { "title": "Scenic",         "url": "/collections/wallcovering-scenic" },
+        { "title": "Animal / Skin",  "url": "/collections/wallcovering-animal" }
+      ]
+    },
+    "wallcovering-color": {
+      "title": "Wallcovering — Color",
+      "items": [
+        { "title": "All Colors", "url": "/collections/wallcovering" },
+        { "title": "Neutrals",   "url": "/collections/wallcovering-color-neutrals" },
+        { "title": "Warm",       "url": "/collections/wallcovering-color-warm" },
+        { "title": "Cool",       "url": "/collections/wallcovering-color-cool" },
+        { "title": "Dark",       "url": "/collections/wallcovering-color-dark" },
+        { "title": "Patterned",  "url": "/collections/wallcovering-color-patterned" }
+      ]
+    },
+
+    "furniture-room": {
+      "title": "Furniture — Room",
+      "items": [
+        { "title": "All Furniture", "url": "/collections/furniture" },
+        { "title": "Living Room",   "url": "/collections/living-room" },
+        { "title": "Dining",        "url": "/collections/dining" },
+        { "title": "Bedroom",       "url": "/collections/bedroom" },
+        { "title": "Office",        "url": "/collections/office" }
+      ]
+    },
+    "furniture-type": {
+      "title": "Furniture — Type",
+      "items": [
+        { "title": "Sofas",          "url": "/collections/furniture-sofas" },
+        { "title": "Lounge Chairs",  "url": "/collections/furniture-lounge-chairs" },
+        { "title": "Dining Chairs",  "url": "/collections/furniture-dining-chairs" },
+        { "title": "Tables",         "url": "/collections/furniture-tables" },
+        { "title": "Casegoods",      "url": "/collections/furniture-casegoods" }
+      ]
+    },
+    "furniture-solutions": {
+      "title": "Furniture — Solutions",
+      "items": [
+        { "title": "Quick Ship",              "url": "/collections/quick-ship" },
+        { "title": "New Arrivals",            "url": "/collections/new-arrivals" },
+        { "title": "Contract / Hospitality",  "url": "/collections/contract-hospitality" }
+      ]
+    },
+
+    "lighting-type": {
+      "title": "Lighting — Type",
+      "items": [
+        { "title": "All Lighting",    "url": "/collections/lighting" },
+        { "title": "Table Lamps",     "url": "/collections/lighting-table-lamps" },
+        { "title": "Floor Lamps",     "url": "/collections/lighting-floor-lamps" },
+        { "title": "Wall Lights",     "url": "/collections/lighting-wall-lights" },
+        { "title": "Ceiling Lights",  "url": "/collections/lighting-ceiling-lights" },
+        { "title": "Pendant",         "url": "/collections/lighting-pendant" }
+      ]
+    },
+    "lighting-style": {
+      "title": "Lighting — Style",
+      "items": [
+        { "title": "Modern",        "url": "/collections/lighting-modern" },
+        { "title": "Traditional",   "url": "/collections/lighting-traditional" },
+        { "title": "Sculptural",    "url": "/collections/lighting-sculptural" },
+        { "title": "Architectural", "url": "/collections/lighting-architectural" }
+      ]
+    },
+    "lighting-solutions": {
+      "title": "Lighting — Solutions",
+      "items": [
+        { "title": "Quick Ship",   "url": "/collections/quick-ship" },
+        { "title": "New Designs",  "url": "/collections/new-arrivals" }
+      ]
+    },
+
+    "rugs-size": {
+      "title": "Rugs — Size",
+      "items": [
+        { "title": "All Rugs",  "url": "/collections/rugs" },
+        { "title": "Small",     "url": "/collections/rugs-small" },
+        { "title": "Medium",    "url": "/collections/rugs-medium" },
+        { "title": "Large",     "url": "/collections/rugs-large" },
+        { "title": "Oversize",  "url": "/collections/rugs-oversize" }
+      ]
+    },
+    "rugs-material": {
+      "title": "Rugs — Material",
+      "items": [
+        { "title": "Wool",          "url": "/collections/rugs-wool" },
+        { "title": "Natural Fiber", "url": "/collections/rugs-natural-fiber" },
+        { "title": "Flatweave",     "url": "/collections/rugs-flatweave" },
+        { "title": "Hand Knotted",  "url": "/collections/rugs-hand-knotted" }
+      ]
+    },
+    "rugs-color": {
+      "title": "Rugs — Color",
+      "items": [
+        { "title": "All Colors", "url": "/collections/rugs" },
+        { "title": "Neutrals",   "url": "/collections/rugs-color-neutrals" },
+        { "title": "Warm",       "url": "/collections/rugs-color-warm" },
+        { "title": "Cool",       "url": "/collections/rugs-color-cool" },
+        { "title": "Dark",       "url": "/collections/rugs-color-dark" },
+        { "title": "Patterned",  "url": "/collections/rugs-color-patterned" }
+      ]
+    },
+
+    "accessories-decor": {
+      "title": "Accessories — Decor",
+      "items": [
+        { "title": "All Accessories", "url": "/collections/accessories" },
+        { "title": "Objects",         "url": "/collections/accessories-objects" },
+        { "title": "Sculpture",       "url": "/collections/accessories-sculpture" },
+        { "title": "Frames",          "url": "/collections/accessories-frames" }
+      ]
+    },
+    "accessories-tabletop": {
+      "title": "Accessories — Tabletop",
+      "items": [
+        { "title": "Trays",              "url": "/collections/accessories-trays" },
+        { "title": "Bowls",              "url": "/collections/accessories-bowls" },
+        { "title": "Decorative Pieces",  "url": "/collections/accessories-decorative-pieces" }
+      ]
+    },
+    "accessories-material": {
+      "title": "Accessories — Material",
+      "items": [
+        { "title": "Stone",       "url": "/collections/accessories-stone" },
+        { "title": "Metal",       "url": "/collections/accessories-metal" },
+        { "title": "Glass",       "url": "/collections/accessories-glass" },
+        { "title": "Mixed Media", "url": "/collections/accessories-mixed-media" }
+      ]
+    }
+  },
+
+  "footer_company": {
+    "handle": "footer-company",
+    "items": [
+      { "title": "About",              "url": "/pages/about" },
+      { "title": "Designers",          "url": "/pages/designers" },
+      { "title": "Press",              "url": "/pages/press" },
+      { "title": "Careers",            "url": "/pages/careers" }
+    ]
+  },
+
+  "footer_resources": {
+    "handle": "footer-resources",
+    "items": [
+      { "title": "Trade Program",      "url": "/pages/trade-program" },
+      { "title": "Events",             "url": "/pages/events" },
+      { "title": "Contact",            "url": "/pages/contact" },
+      { "title": "Find a Showroom",    "url": "/pages/find-a-store" }
+    ]
+  },
+
+  "footer": {
+    "handle": "footer",
+    "items": [
+      { "title": "About",              "url": "/pages/about" },
+      { "title": "Designers",          "url": "/pages/designers" },
+      { "title": "Trade Program",      "url": "/pages/trade-program" },
+      { "title": "Events",             "url": "/pages/events" },
+      { "title": "Press",              "url": "/pages/press" },
+      { "title": "Contact",            "url": "/pages/contact" },
+      { "title": "Find a Showroom",    "url": "/pages/find-a-store" }
+    ]
+  },
+
+  "footer_secondary": {
+    "handle": "footer-secondary",
+    "items": [
+      { "title": "Privacy Policy",     "url": "/policies/privacy-policy" },
+      { "title": "Terms of Service",   "url": "/policies/terms-of-service" },
+      { "title": "Shipping & Returns", "url": "/pages/shipping-returns" },
+      { "title": "Accessibility",      "url": "/pages/accessibility" }
+    ]
+  },
+
+  "color_families": {
+    "neutrals": ["white", "ivory", "cream", "beige", "taupe", "grey", "natural"],
+    "warm":     ["camel", "gold", "terracotta", "rust", "orange", "blush", "red"],
+    "cool":     ["blue", "navy", "teal", "green", "sage", "indigo", "forest"],
+    "dark":     ["charcoal", "black", "burgundy"],
+    "patterned": ["multi"]
+  }
+}

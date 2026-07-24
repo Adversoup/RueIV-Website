@@ -1,0 +1,336 @@
+{%- comment -%}
+  RueIV Brand Hero — Per-brand landing hero.
+  Cover image + brand logo + name + description + Shop CTA.
+  Binds to a collection handle so "Shop All [Brand]" links to the right place.
+{%- endcomment -%}
+
+{%- assign brand_collection = collections[section.settings.collection] -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --brand-hero-min-h: {{ section.settings.min_height }}px;
+    --brand-hero-min-h-mobile: {{ section.settings.min_height_mobile | default: 380 }}px;
+    --brand-hero-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+  }
+  .rv-brand-hero {
+    position: relative; overflow: hidden;
+    min-height: var(--brand-hero-min-h);
+    display: flex; align-items: flex-end;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  .rv-brand-hero__media {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .rv-brand-hero__media img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .rv-brand-hero__overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(0,0,0,calc(var(--brand-hero-overlay) * 0.2)) 0%,
+      rgba(0,0,0,var(--brand-hero-overlay)) 100%
+    );
+  }
+  .rv-brand-hero__content {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 800px;
+    padding: 2.5rem 0;
+    color: {{ section.settings.text_color | default: '#ffffff' }};
+  }
+  .rv-brand-hero__logo {
+    max-width: {{ section.settings.logo_width | default: 200 }}px;
+    height: auto; margin-bottom: 1.5rem;
+    filter: {{ section.settings.logo_invert | default: 'none' }};
+  }
+  .rv-brand-hero__name {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(2rem, 4vw, 3.6rem);
+    line-height: 1.1; margin: 0 0 1rem;
+  }
+  .rv-brand-hero__desc {
+    font-size: 1.2rem; line-height: 1.7; opacity: 0.9;
+    max-width: 640px;
+  }
+  .rv-brand-hero__actions {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    margin-top: 1.75rem;
+  }
+  .rv-brand-hero__btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    font-size: 1.2rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; text-decoration: none;
+    border-radius: 2px; transition: all 0.25s ease;
+  }
+  .rv-brand-hero__btn--primary {
+    background: #fff; color: #1a1a1a;
+  }
+  .rv-brand-hero__btn--primary:hover { background: #f0ece6; }
+  .rv-brand-hero__btn--secondary {
+    background: transparent; color: #fff;
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+  .rv-brand-hero__btn--secondary:hover { border-color: #fff; }
+  .rv-brand-hero__meta {
+    margin-top: 1.5rem;
+    font-size: 1.2rem; opacity: 0.6;
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 749px) {
+    .rv-brand-hero {
+      min-height: var(--brand-hero-min-h-mobile);
+      align-items: flex-end;
+    }
+    .rv-brand-hero__logo { max-width: 140px; }
+    .rv-brand-hero__content { padding: 1.5rem 0; }
+  }
+</style>
+
+<section class="rv-brand-hero color-{{ section.settings.color_scheme }}">
+  {%- comment -%} Background image {%- endcomment -%}
+  <div class="rv-brand-hero__media">
+    {%- if section.settings.cover_image != blank -%}
+      {{ section.settings.cover_image | image_url: width: 2400 | image_tag:
+          loading: 'eager', sizes: '100vw',
+          widths: '600,900,1200,1600,2000,2400'
+      }}
+    {%- elsif brand_collection != blank and brand_collection.image != blank -%}
+      {{ brand_collection.image | image_url: width: 2400 | image_tag:
+          loading: 'eager', sizes: '100vw',
+          widths: '600,900,1200,1600,2000,2400'
+      }}
+    {%- else -%}
+      <div style="background:#e8e4df;width:100%;height:100%;"></div>
+    {%- endif -%}
+    <div class="rv-brand-hero__overlay"></div>
+  </div>
+
+  {%- comment -%} Content {%- endcomment -%}
+  <div class="page-width">
+    <div class="rv-brand-hero__content">
+      {%- if section.settings.brand_logo != blank -%}
+        <img
+          class="rv-brand-hero__logo"
+          src="{{ section.settings.brand_logo | image_url: width: 400 }}"
+          alt="{{ section.settings.brand_name | default: 'Brand logo' }}"
+          width="{{ section.settings.brand_logo.width }}"
+          height="{{ section.settings.brand_logo.height }}"
+          loading="eager"
+        >
+      {%- endif -%}
+
+      {%- assign hero_name = section.settings.brand_name -%}
+      {%- if hero_name == blank and brand_collection != blank -%}
+        {%- assign hero_name = brand_collection.title -%}
+      {%- endif -%}
+      {%- if hero_name != blank -%}
+        <h1 class="rv-brand-hero__name">{{ hero_name }}</h1>
+      {%- endif -%}
+
+      {%- assign hero_desc = section.settings.description -%}
+      {%- if hero_desc == blank and brand_collection != blank and brand_collection.description != blank -%}
+        {%- assign hero_desc = brand_collection.description -%}
+      {%- endif -%}
+      {%- if hero_desc != blank -%}
+        <div class="rv-brand-hero__desc rte">{{ hero_desc }}</div>
+      {%- endif -%}
+
+      <div class="rv-brand-hero__actions">
+        {%- if section.settings.cta_label != blank -%}
+          {%- if section.settings.cta_link != blank -%}
+            {%- assign cta_url = section.settings.cta_link -%}
+          {%- elsif brand_collection != blank -%}
+            {%- assign cta_url = brand_collection.url -%}
+          {%- else -%}
+            {%- assign cta_url = '#' -%}
+          {%- endif -%}
+          <a href="{{ cta_url }}" class="rv-brand-hero__btn rv-brand-hero__btn--primary">
+            {{ section.settings.cta_label }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.cta2_label != blank -%}
+          <a href="{{ section.settings.cta2_link }}" class="rv-brand-hero__btn rv-brand-hero__btn--secondary">
+            {{ section.settings.cta2_label }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.meta_text != blank -%}
+        <div class="rv-brand-hero__meta">{{ section.settings.meta_text }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV Brand Hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Brand Collection",
+      "info": "Links 'Shop All' CTA and falls back to collection image/description when not set above."
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name",
+      "info": "Falls back to collection title if empty."
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Brand Description",
+      "info": "Falls back to collection description if empty."
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "Cover Image",
+      "info": "Full-width background. Falls back to collection image."
+    },
+    {
+      "type": "image_picker",
+      "id": "brand_logo",
+      "label": "Brand Logo",
+      "info": "White/transparent recommended for dark overlays."
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 60,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo Max Width",
+      "default": 200
+    },
+    {
+      "type": "select",
+      "id": "logo_invert",
+      "label": "Logo Filter",
+      "default": "none",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "brightness(0) invert(1)", "label": "Invert to White" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Primary Button",
+      "default": "Shop All"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Primary Link",
+      "info": "Falls back to collection URL."
+    },
+    {
+      "type": "text",
+      "id": "cta2_label",
+      "label": "Secondary Button"
+    },
+    {
+      "type": "url",
+      "id": "cta2_link",
+      "label": "Secondary Link"
+    },
+    {
+      "type": "text",
+      "id": "meta_text",
+      "label": "Meta Line",
+      "info": "e.g. 'Since 1865 · Made in Italy · 200+ Collections'"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "min": 300,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Min Height (Desktop)",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "min_height_mobile",
+      "min": 240,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "label": "Min Height (Mobile)",
+      "default": 380
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV Brand Hero"
+    }
+  ]
+}
+{% endschema %}

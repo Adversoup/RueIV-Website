@@ -1,0 +1,195 @@
+{%- comment -%}
+  RueIV Gallery Grid — Masonry-style image grid with optional captions.
+  Used on Vibe Studio, Portfolio, Brand pages.
+{%- endcomment -%}
+
+<style>
+  .rv-gallery { padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px; }
+  .rv-gallery__header { text-align: center; margin-bottom: 2.5rem; }
+  .rv-gallery__eyebrow {
+    font-size: 1.2rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--color-foreground); opacity: 0.6; margin-bottom: 0.5rem;
+  }
+  .rv-gallery__title { font-family: var(--font-heading-family); font-size: clamp(2rem, 3vw, 3rem); margin: 0; }
+  .rv-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns }}, 1fr);
+    gap: {{ section.settings.gap }}px;
+  }
+  .rv-gallery__item { position: relative; overflow: hidden; border-radius: var(--card-corner-radius, 0); }
+  .rv-gallery__item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+  .rv-gallery__item:hover img { transform: scale(1.03); }
+  .rv-gallery__caption {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.55));
+    color: #fff; padding: 1.5rem 1rem 1rem;
+    font-size: 1.2rem; font-weight: 500;
+  }
+  .rv-gallery__caption-title { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.25rem; }
+  @media (max-width: 749px) {
+    .rv-gallery__grid { grid-template-columns: repeat({{ section.settings.columns_mobile | default: 1 }}, 1fr); }
+  }
+</style>
+
+<section class="rv-gallery color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <div class="rv-gallery__header">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="rv-gallery__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="rv-gallery__title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="rv-gallery__grid">
+      {%- for block in section.blocks -%}
+        <div class="rv-gallery__item" {{ block.shopify_attributes }}
+          {%- if block.settings.span > 1 %} style="grid-column: span {{ block.settings.span }};"{%- endif -%}
+        >
+          {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}">{%- endif -%}
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 1200 | image_tag:
+                loading: 'lazy',
+                sizes: '(max-width: 749px) 90vw, 600px',
+                widths: '400,600,800,1000,1200',
+                is: 'image-lazy'
+            }}
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+          {%- if block.settings.caption != blank or block.settings.caption_title != blank -%}
+            <div class="rv-gallery__caption">
+              {%- if block.settings.caption_title != blank -%}
+                <div class="rv-gallery__caption-title">{{ block.settings.caption_title }}</div>
+              {%- endif -%}
+              {%- if block.settings.caption != blank -%}
+                <div>{{ block.settings.caption }}</div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+          {%- if block.settings.link != blank -%}</a>{%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV Gallery Grid",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Desktop Columns",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile Columns",
+      "default": "1",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "gallery_image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "caption_title",
+          "label": "Caption Title"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption Text"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "range",
+          "id": "span",
+          "min": 1,
+          "max": 3,
+          "step": 1,
+          "label": "Column Span",
+          "default": 1
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV Gallery Grid"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,101 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "section-page-hero",
+      "settings": {
+        "eyebrow": "Our Commitment",
+        "title": "Sustainability",
+        "overlay_opacity": 30,
+        "desktop_ratio": "21/9",
+        "mobile_ratio": "4/3",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "mission": {
+      "type": "section-rich-content",
+      "settings": {
+        "eyebrow": "Our Mission",
+        "heading": "Design with Purpose",
+        "two_column": true,
+        "text_align": "left",
+        "padding_top": 60,
+        "padding_bottom": 36
+      }
+    },
+    "pillars": {
+      "type": "section-card-grid",
+      "blocks": {
+        "p_1": {
+          "type": "card",
+          "settings": {
+            "title": "Responsible Sourcing"
+          }
+        },
+        "p_2": {
+          "type": "card",
+          "settings": {
+            "title": "Artisan Partnerships"
+          }
+        },
+        "p_3": {
+          "type": "card",
+          "settings": {
+            "title": "Minimal Waste"
+          }
+        }
+      },
+      "block_order": [
+        "p_1",
+        "p_2",
+        "p_3"
+      ],
+      "settings": {
+        "eyebrow": "How We Act",
+        "heading": "Our Pillars",
+        "columns": 3,
+        "gap": 24,
+        "image_ratio": "1/1",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "partners": {
+      "type": "section-gallery-grid",
+      "settings": {
+        "eyebrow": "Partners",
+        "heading": "Makers We Trust",
+        "columns": 4,
+        "gap": 16,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "closing": {
+      "type": "section-rich-content",
+      "settings": {
+        "heading": "Our Promise",
+        "text_align": "center",
+        "cta_label": "Learn More",
+        "padding_top": 36,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "mission",
+    "pillars",
+    "partners",
+    "closing"
+  ]
+}

@@ -1,0 +1,398 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "rueiv_hero": {
+      "type": "rueiv-hero",
+      "blocks": {
+        "slide_PTGEyb": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/arte-hero.png",
+            "kicker": "",
+            "heading": "Curated Design for Interior Professionals",
+            "description": "",
+            "button_label": "Explore Textiles",
+            "button_url": "",
+            "button_label_2": "",
+            "button_url_2": ""
+          }
+        },
+        "slide_NB3KVD": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/porta-romano-hero.jpg",
+            "kicker": "",
+            "heading": "Curated Design for Interior Professionals",
+            "description": "",
+            "button_label": "Explore Textiles",
+            "button_url": "",
+            "button_label_2": "",
+            "button_url_2": ""
+          }
+        },
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/hero-image.jpg",
+            "kicker": "The Showroom",
+            "heading": "Curated Design for Interior Professionals",
+            "description": "Textiles. Wallcovering. Furniture. Lighting. Rugs. An editorial gateway to the showroom.",
+            "button_label": "Explore Collections",
+            "button_url": "/collections",
+            "button_label_2": "",
+            "button_url_2": ""
+          }
+        },
+        "slide_3": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/rueiv-hero-lola-outdoor-poufs.jpg",
+            "kicker": "New Arrivals",
+            "heading": "Outdoor Living, Reimagined",
+            "description": "",
+            "button_label": "Shop Outdoor",
+            "button_url": "/collections/furniture",
+            "button_label_2": "",
+            "button_url_2": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_PTGEyb",
+        "slide_NB3KVD",
+        "slide_1",
+        "slide_3"
+      ],
+      "settings": {
+        "hero_heading": "YOUR NEXT GENERATION SHOWROOM",
+        "hero_subtitle": "Textiles. Wallcovering. Furniture. Lighting. Rugs.",
+        "banner_text": "An editorial gateway to the showroom — presenting the most compelling pieces from the world’s leading design houses. Discover materials, collections, and ideas curated to inspire exceptional interiors."
+      }
+    },
+    "rueiv_gateway": {
+      "type": "rueiv-category-gateway",
+      "blocks": {
+        "gw_textiles": {
+          "type": "category",
+          "settings": {
+            "collection": "textiles",
+            "image": "shopify://shop_images/Powell-and-Bonnell-Textiles-Britches_1-e1632941865163.jpg",
+            "label": "Textiles",
+            "link": ""
+          }
+        },
+        "gw_wallcovering": {
+          "type": "category",
+          "settings": {
+            "collection": "wallpaper",
+            "image": "shopify://shop_images/ddoc-22800-4fd90d9e9cd367f5951aeba3779678e2-alexander-lamont-wall-panel-ligne-ebony-straw-marquetry01-1-copy_329e054d-6207-47e8-a0e4-f270d1fb0752.jpg",
+            "label": "Wallcovering",
+            "link": ""
+          }
+        },
+        "gw_furniture": {
+          "type": "category",
+          "settings": {
+            "collection": "furniture",
+            "image": "shopify://shop_images/CLOUD_SOFA_251993_600x_55ea77d1-2566-4efc-a90a-76048f9f121a.jpg",
+            "label": "Furniture",
+            "link": ""
+          }
+        },
+        "gw_lighting": {
+          "type": "category",
+          "settings": {
+            "collection": "lighting",
+            "image": "shopify://shop_images/Powell-and-Bonnell-lighting-9596-Emperor-sconce-2.jpg",
+            "label": "Lighting",
+            "link": ""
+          }
+        },
+        "gw_rugs": {
+          "type": "category",
+          "settings": {
+            "collection": "rugs",
+            "image": "shopify://shop_images/ZA_ZA_RUG_252202_2000x_0000f73c-f893-4e95-a77f-3ac8ec850d51.jpg",
+            "label": "Rugs",
+            "link": ""
+          }
+        },
+        "gw_accessories": {
+          "type": "category",
+          "settings": {
+            "collection": "accessories",
+            "image": "shopify://shop_images/Elliot_Pillow.webp",
+            "label": "Accessories",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "gw_textiles",
+        "gw_wallcovering",
+        "gw_furniture",
+        "gw_lighting",
+        "gw_rugs",
+        "gw_accessories"
+      ],
+      "custom_css": [],
+      "settings": {
+        "heading": "WHERE YOUR PROJECT BEGINS",
+        "subtitle": "PRESENTING THE MOST COMPELLING PIECES FROM THE WORLD'S LEADING DESIGN HOUSES. DISCOVER MATERIALS, COLLECTIONS, AND IDEAS CURATED TO INSPIRE EXCEPTIONAL INTERIORS."
+      }
+    },
+    "rueiv_video": {
+      "type": "rueiv-brand-video",
+      "settings": {
+        "video_url": "https://cdn.shopify.com/videos/c/o/v/0187419af46a4cc1a0591d9e65cccbd5.mp4",
+        "video_asset": "",
+        "constrain_height": false,
+        "link": ""
+      }
+    },
+    "rueiv_spotlight": {
+      "type": "rueiv-brand-spotlight",
+      "settings": {
+        "video_url": "https://cdn.shopify.com/videos/c/o/v/2eb723bafc90472184c7a0e0065fcad5.mp4",
+        "image_asset": "",
+        "title": "<p>Brand Spotlight <em>Porta Romana</em></p>",
+        "subtitle": "The designers shaping what's next.",
+        "copy": "New launches. — Distinct points of view. — Collections driving the market.",
+        "button_label": "Explore The Designers",
+        "button_url": "/collections/designers",
+        "text_align": "center",
+        "overlay_opacity": 40
+      }
+    },
+    "rueiv_vibe": {
+      "type": "rueiv-vibe-studio",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "Browse",
+            "description": "Browse our curated moodboards."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "Add to Cart",
+            "description": "Add your desired vibe to cart."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "Submit",
+            "description": "Submit your request."
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "title": "Receive",
+            "description": "Within 24–48 hours, receive a custom-curated selection."
+          }
+        },
+        "pillar_1": {
+          "type": "pillar",
+          "settings": {
+            "text": "No endless scrolling."
+          }
+        },
+        "pillar_2": {
+          "type": "pillar",
+          "settings": {
+            "text": "No guesswork."
+          }
+        },
+        "pillar_3": {
+          "type": "pillar",
+          "settings": {
+            "text": "Just intentional sourcing."
+          }
+        },
+        "board_1": {
+          "type": "moodboard",
+          "settings": {
+            "image": "shopify://shop_images/desert-modern-moodboard02.png",
+            "title": "California Beach Vibe",
+            "description": "",
+            "link": ""
+          }
+        },
+        "board_2": {
+          "type": "moodboard",
+          "settings": {
+            "image": "shopify://shop_images/desert-modern-moodboard02.png",
+            "title": "Mid-Century Warmth",
+            "description": "",
+            "link": ""
+          }
+        },
+        "board_3": {
+          "type": "moodboard",
+          "settings": {
+            "image": "shopify://shop_images/desert-modern-moodboard02.png",
+            "title": "Quiet Luxury",
+            "description": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4",
+        "pillar_1",
+        "pillar_2",
+        "pillar_3",
+        "board_1",
+        "board_2",
+        "board_3"
+      ],
+      "settings": {
+        "heading": "The Vibe Studio",
+        "kicker": "A more intuitive way to source.",
+        "body_text": "Browse our vibe boards developed by our showroom team, each grounded in a distinct point of view, with color palettes that can be refined to suit your project.",
+        "button_label": "Shop the Vibe",
+        "button_url": "/pages/vibe-studio",
+        "board_heading": "Select Your Project Aesthetic",
+        "board_copy": "Each board represents a carefully curated design direction developed by our showroom team. Add a vibe to your cart and we'll source a cohesive selection tailored to your project.",
+        "board_note": "Curated sourcing selections are delivered within 24–48 business hours from submission. Trade-only service."
+      }
+    },
+    "rueiv_trending": {
+      "type": "rueiv-trending",
+      "settings": {
+        "heading": "Trending in the Showroom",
+        "description": "Discover the pieces designers are sourcing right now.",
+        "collection": "lighting",
+        "products_to_show": 4,
+        "show_vendor": true,
+        "button_label": "View All Trending",
+        "button_url": ""
+      }
+    },
+    "rueiv_ready": {
+      "type": "rueiv-project-ready",
+      "blocks": {
+        "cat_furniture": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Altura-Furniture-Timbre-Console-VEv1_cd8e62ff-ad79-44d5-a02d-230e4a7b20e1.jpg",
+            "title": "Furniture",
+            "description": "",
+            "link": "/collections/quick-ship-furniture"
+          }
+        },
+        "cat_lighting": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Powell-and-Bonnell-lighting-9542-Phantom-Chandelier-2.jpg",
+            "title": "Lighting",
+            "description": "",
+            "link": "/collections/quick-ship-lighting"
+          }
+        },
+        "cat_rugs": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/DOUBLE_ALPACA_RUG_DETAIL_002_2000x_34d6a158-ba68-47c0-9ef6-d7036a4dec2a.jpg",
+            "title": "Rugs",
+            "description": "",
+            "link": "/collections/quick-ship-rugs"
+          }
+        }
+      },
+      "block_order": [
+        "cat_furniture",
+        "cat_lighting",
+        "cat_rugs"
+      ],
+      "settings": {
+        "heading": "Quick Ship",
+        "button_label": "",
+        "button_url": ""
+      }
+    },
+    "rueiv_testimonials": {
+      "type": "rueiv-testimonials",
+      "blocks": {
+        "q_1": {
+          "type": "quote",
+          "settings": {
+            "quote": "A sourcing platform that actually understands our workflow. Exactly what the industry needed.",
+            "author": "Sarah C.",
+            "role": "Interior Designer, NYC"
+          }
+        },
+        "q_2": {
+          "type": "quote",
+          "settings": {
+            "quote": "The Vibe Studio concept is genius. Submit a mood, receive a curated pull — it saves hours.",
+            "author": "Marcus T.",
+            "role": "Design Director, LA"
+          }
+        },
+        "q_3": {
+          "type": "quote",
+          "settings": {
+            "quote": "Finally, a trade platform that feels as premium as the product it carries.",
+            "author": "Rachel M.",
+            "role": "Principal, RM Interiors"
+          }
+        }
+      },
+      "block_order": [
+        "q_1",
+        "q_2",
+        "q_3"
+      ],
+      "settings": {
+        "heading": "In Your Words"
+      }
+    },
+    "rueiv_newsletter": {
+      "type": "rueiv-newsletter",
+      "settings": {
+        "heading": "The Vibe List",
+        "description": "<p>Inside the Vibe. New launches. Designer moments. Events worth attending.</p>",
+        "placeholder": "Your email address",
+        "button_label": "Subscribe",
+        "success_message": "Thank you for subscribing."
+      }
+    },
+    "rueiv_banner": {
+      "type": "rueiv-closing-banner",
+      "settings": {
+        "heading": "Where Great Design Begins.",
+        "subtext": "The sourcing platform for interior professionals.",
+        "btn_label": "",
+        "btn_link": ""
+      }
+    }
+  },
+  "order": [
+    "rueiv_hero",
+    "rueiv_gateway",
+    "rueiv_video",
+    "rueiv_vibe",
+    "rueiv_spotlight",
+    "rueiv_trending",
+    "rueiv_ready",
+    "rueiv_testimonials",
+    "rueiv_newsletter",
+    "rueiv_banner"
+  ]
+}

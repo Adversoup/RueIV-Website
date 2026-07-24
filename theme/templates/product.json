@@ -1,0 +1,204 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "settings": {
+        "text_alignment": "start"
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "brand_badge": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{{ 'pdp-premium.css' | asset_url | stylesheet_tag }}{% render 'pdp-brand-badge', product: product %}"
+          }
+        },
+        "badges": {
+          "type": "badges",
+          "settings": {
+            "show_soldout_badge": true,
+            "show_sale_badge": true,
+            "sale_badge_type": "percentage"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "heading_size": "h1"
+          }
+        },
+        "color_chip": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'pdp-override-resolver', product: product %}"
+          }
+        },
+        "sku_block": {
+          "type": "sku",
+          "settings": {
+            "text_style": "subtitle"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "inventory": {
+          "type": "inventory",
+          "settings": {
+            "text_style": "body",
+            "inventory_threshold": 20,
+            "show_inventory_quantity": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_type": "variant_image",
+            "button_style": "square",
+            "button_size": 56,
+            "size_title": "",
+            "size_chart_from_page": ""
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_quantity_selector": true,
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": true
+          }
+        },
+        "icon_with_text": {
+          "type": "icon-with-text",
+          "settings": {
+            "layout": "horizontal",
+            "title_font": "body",
+            "title_size": "text-base",
+            "icon_1": "package",
+            "heading_1": "Orders over $800 ship free",
+            "icon_2": "arrow-up-left",
+            "heading_2": "30 day returns",
+            "icon_3": "star-four",
+            "heading_3": ""
+          }
+        },
+        "pickup_availability": {
+          "type": "pickup_availability",
+          "settings": {}
+        },
+        "complementary": {
+          "type": "complementary",
+          "settings": {
+            "block_heading": "Pairs well with",
+            "make_collapsible_row": false,
+            "icon": "tag",
+            "product_list_limit": 4,
+            "products_per_page": 1,
+            "image_ratio": "adapt",
+            "enable_quick_add": true
+          }
+        },
+        "collapsible-row-1": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Material & Care",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{% assign _mat = product.metafields.specs.material.value %}{% assign _comp = product.metafields.specs.composition.value %}{% assign _finish = product.metafields.specs.finish.value %}{% assign _care = product.metafields.specs.care.value %}{% assign _uph = product.metafields.specs.upholstery.value %}{% assign _frame = product.metafields.specs.frame_material.value %}{% assign _constructed = product.metafields.specs.constructed_from.value %}{% assign _shade = product.metafields.specs.shade_material.value %}{% if _mat != blank or _comp != blank or _finish != blank or _uph != blank or _frame != blank or _constructed != blank %}<ul>{% if _mat != blank %}<li><strong>Material:</strong> {{ _mat }}</li>{% endif %}{% if _comp != blank %}<li><strong>Composition:</strong> {{ _comp }}</li>{% endif %}{% if _frame != blank %}<li><strong>Frame:</strong> {{ _frame }}</li>{% endif %}{% if _uph != blank %}<li><strong>Upholstery:</strong> {{ _uph }}</li>{% endif %}{% if _constructed != blank %}<li><strong>Constructed From:</strong> {{ _constructed }}</li>{% endif %}{% if _shade != blank %}<li><strong>Shade:</strong> {{ _shade }}</li>{% endif %}{% if _finish != blank %}<li><strong>Finish:</strong> {{ _finish }}</li>{% endif %}</ul>{% endif %}{% if _care != blank %}<p style='margin-top:1.2rem'><strong>Care Instructions:</strong></p><p>{{ _care }}</p>{% endif %}",
+            "page": "",
+            "default_open": false
+          }
+        },
+        "collapsible-row-3": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Returns",
+            "icon": "none",
+            "content": "<p><strong>Shipping Policy</strong></p><ul><li><strong>Shipping Time:</strong> Standard shipping takes 5-7 business days. Expedited options are available at checkout.</li><li><strong>Shipping Areas:</strong> We ship to all contiguous U.S. states. No shipping to Alaska, Hawaii, or international addresses.</li><li><strong>Tracking:</strong> A confirmation email with a tracking number is sent once your order is shipped.</li></ul><p><strong>Returns Policy</strong></p><ul><li><strong>Return Window:</strong> Returns are accepted within 30 days of delivery.</li><li><strong>Return Process:</strong> Contact us with your order number and reason for return. We will provide return authorization and instructions.</li><li><strong>Refunds:</strong> Once we receive and inspect the returned item, a refund will be issued to your original payment method within 7-10 business days. Shipping fees are non-refundable.</li></ul><p>For questions or concerns, contact customer service at <a href=\"/pages/contact\" title=\"Contact\">contact us</a>.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "default_open": false
+          }
+        },
+        "addons": {
+          "type": "addons",
+          "settings": {
+            "show_share": false,
+            "show_ask_question": false
+          }
+        },
+        "brand_story_block": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'pdp-brand-story', product: product %}"
+          }
+        },
+        "rueiv_specs": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'rueiv-product-specs', product: product %}"
+          }
+        },
+        "jsonld_block": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'pdp-jsonld', product: product %}"
+          }
+        }
+      },
+      "block_order": [
+        "brand_badge",
+        "badges",
+        "title",
+        "color_chip",
+        "sku_block",
+        "inventory",
+        "description",
+        "variant_picker",
+        "buy_buttons",
+        "pickup_availability",
+        "complementary",
+        "rueiv_specs",
+        "collapsible-row-1",
+        "brand_story_block",
+        "jsonld_block"
+      ],
+      "custom_css": [
+        ".loox-rating {margin-top: -1rem;}",
+        ".complementary-products__container .product-card__wrapper .btn--secondary {background-color: transparent;}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "enable_sticky_info": true,
+        "media_size": "large",
+        "gallery_layout": "carousel",
+        "mobile_thumbnails": "hide",
+        "enable_image_zoom": true,
+        "enable_video_looping": true,
+        "padding_top": 0,
+        "padding_bottom": 100
+      }
+    },
+  },
+  "order": [
+    "breadcrumbs",
+    "main"
+  ]
+}

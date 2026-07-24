@@ -1,0 +1,83 @@
+<section class="rueiv-section rueiv-qs">
+  <div class="rueiv-page-width">
+    <div class="rueiv-qs__inner">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="rueiv-section-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <p class="rueiv-qs__desc">{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      {%- assign qs_collection = collections[section.settings.collection] -%}
+      {%- assign limit = section.settings.products_to_show | default: 4 -%}
+
+      <div class="rueiv-qs__rail">
+        {%- if qs_collection != blank -%}
+          {%- for product in qs_collection.products limit: limit -%}
+            <a href="{{ product.url }}" class="rueiv-pcard">
+              <div class="rueiv-pcard__img-wrap">
+                {%- if product.featured_image != blank -%}
+                  {{ product.featured_image | image_url: width: 700 | image_tag:
+                     loading: 'lazy', class: 'rueiv-pcard__img',
+                     alt: product.title }}
+                {%- else -%}
+                  <div class="rueiv-pcard__placeholder"></div>
+                {%- endif -%}
+              </div>
+              <div class="rueiv-pcard__info">
+                <h4 class="rueiv-pcard__title">{{ product.title }}</h4>
+                {%- if section.settings.show_vendor and product.vendor != blank -%}
+                  <p class="rueiv-pcard__vendor">{{ product.vendor }}</p>
+                {%- endif -%}
+              </div>
+            </a>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for i in (1..4) -%}
+            <div class="rueiv-pcard">
+              <div class="rueiv-pcard__img-wrap">
+                <div class="rueiv-pcard__placeholder"></div>
+              </div>
+              <div class="rueiv-pcard__info">
+                <h4 class="rueiv-pcard__title">Product {{ i }}</h4>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.button_label != blank -%}
+        <div class="rueiv-qs__footer">
+          <a href="{{ section.settings.button_url | default: qs_collection.url }}" class="rueiv-btn rueiv-btn--outline">
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Quick Ship",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Quick Ship" },
+    { "type": "textarea", "id": "description", "label": "Subtext" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "min": 2, "max": 8, "step": 1, "default": 4, "label": "Products to show" },
+    { "type": "checkbox", "id": "show_vendor", "default": true, "label": "Show vendor" },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "Shop All Quick Ship" },
+    { "type": "url", "id": "button_url", "label": "Button Link" }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Quick Ship",
+      "settings": {
+        "heading": "Quick Ship",
+        "button_label": "Shop All Quick Ship"
+      }
+    }
+  ]
+}
+{% endschema %}

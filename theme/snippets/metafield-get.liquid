@@ -1,0 +1,43 @@
+{%- comment -%}
+  snippets/metafield-get.liquid
+  ─────────────────────────────
+  Safe getter for a product metafield with fallback.
+  Returns: assigns a variable named after `output` with the metafield value
+  or the fallback string.
+
+  Usage:
+    {% render 'metafield-get',
+       product: product,
+       namespace: 'specs',
+       key: 'width',
+       fallback: '',
+       output_id: 'metafield_value'
+    %}
+    Result is available as {{ metafield_value }}
+
+  Because Liquid render blocks scope, this snippet outputs the value directly.
+  Combine with capture in the caller to assign it:
+    {%- capture my_val -%}
+      {% render 'metafield-get', product: product, namespace: 'specs', key: 'width', fallback: '' %}
+    {%- endcapture -%}
+{%- endcomment -%}
+
+{%- liquid
+  assign _ns = namespace | default: 'specs'
+  assign _key = key | default: ''
+  assign _fallback = fallback | default: ''
+  assign _mf = product.metafields[_ns][_key]
+-%}
+
+{%- if _mf != blank and _mf.value != blank -%}
+  {%- comment -%} Handle list/json metafields vs single values {%- endcomment -%}
+  {%- if _mf.type == 'list.single_line_text_field' -%}
+    {{- _mf.value | join: ', ' -}}
+  {%- elsif _mf.type == 'json' -%}
+    {{- _mf.value -}}
+  {%- else -%}
+    {{- _mf.value -}}
+  {%- endif -%}
+{%- elsif _fallback != blank -%}
+  {{- _fallback -}}
+{%- endif -%}

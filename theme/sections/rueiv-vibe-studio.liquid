@@ -1,0 +1,99 @@
+<section class="rueiv-section rueiv-vibe">
+  {%- comment -%} Full-bleed background hero with text overlay {%- endcomment -%}
+  <div class="rueiv-vibe__hero">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 2400 | image_tag:
+         loading: 'eager', class: 'rueiv-vibe__hero-img', alt: section.settings.heading }}
+    {%- else -%}
+      <img src="{{ 'thevibestudio01.png' | asset_url }}" alt="{{ section.settings.heading }}" class="rueiv-vibe__hero-img" loading="eager">
+    {%- endif -%}
+    <div class="rueiv-vibe__hero-overlay">
+      <div class="rueiv-vibe__hero-content">
+        {%- if section.settings.heading != blank -%}
+          <h1 class="rueiv-vibe__hero-title">{{ section.settings.heading }}</h1>
+        {%- endif -%}
+        {%- if section.settings.kicker != blank -%}
+          <p class="rueiv-vibe__hero-subtitle">{{ section.settings.kicker }}</p>
+        {%- endif -%}
+        {%- if section.settings.body_text != blank -%}
+          <p class="rueiv-vibe__hero-copy">{{ section.settings.body_text }}</p>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_url }}" class="rueiv-btn rueiv-btn--white">
+            {{ section.settings.button_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Vibe Studio",
+  "tag": "div",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background Image" },
+    { "type": "text", "id": "heading", "label": "Title", "default": "The Vibe Studio" },
+    { "type": "text", "id": "kicker", "label": "Subtitle", "default": "A more intuitive way to source." },
+    { "type": "textarea", "id": "body_text", "label": "Body Copy", "default": "Browse our vibe boards developed by our showroom team, each grounded in a distinct point of view, with color palettes that can be refined to suit your project." },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "Shop The Vibe" },
+    { "type": "url", "id": "button_url", "label": "Button Link" },
+    { "type": "header", "content": "Moodboard Intro" },
+    { "type": "text", "id": "board_heading", "label": "Moodboard Heading", "default": "Select Your Project Aesthetic" },
+    { "type": "textarea", "id": "board_copy", "label": "Moodboard Copy", "default": "Each board represents a carefully curated design direction developed by our showroom team. Add a vibe to your cart and we'll source a cohesive selection tailored to your project." },
+    { "type": "textarea", "id": "board_note", "label": "Moodboard Note (italic)", "default": "Curated sourcing selections are delivered within 24–48 business hours from submission. Trade-only service." }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "How It Works Step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Step Title", "default": "Browse" },
+        { "type": "text", "id": "description", "label": "Step Description", "default": "Browse our curated moodboards." }
+      ]
+    },
+    {
+      "type": "pillar",
+      "name": "Value Pillar",
+      "limit": 3,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Pillar Text", "default": "No endless scrolling." }
+      ]
+    },
+    {
+      "type": "moodboard",
+      "name": "Moodboard Card",
+      "limit": 3,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Moodboard Image" },
+        { "type": "text", "id": "title", "label": "Moodboard Title", "default": "California Beach Vibe" },
+        { "type": "textarea", "id": "description", "label": "Brief Description" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Vibe Studio",
+      "settings": {
+        "heading": "The Vibe Studio",
+        "kicker": "Curated Sourcing",
+        "button_label": "Shop The Vibe"
+      },
+      "blocks": [
+        { "type": "step", "settings": { "title": "Browse", "description": "Browse our curated moodboards." } },
+        { "type": "step", "settings": { "title": "Add to Cart", "description": "Add your desired vibe to cart." } },
+        { "type": "step", "settings": { "title": "Submit", "description": "Submit your request." } },
+        { "type": "step", "settings": { "title": "Receive", "description": "Within 24–48 hours, receive a custom-curated selection." } },
+        { "type": "pillar", "settings": { "text": "No endless scrolling." } },
+        { "type": "pillar", "settings": { "text": "No guesswork." } },
+        { "type": "pillar", "settings": { "text": "Just intentional sourcing." } },
+        { "type": "moodboard", "settings": { "title": "California Beach Vibe" } },
+        { "type": "moodboard", "settings": { "title": "Mid-Century Warmth" } },
+        { "type": "moodboard", "settings": { "title": "Quiet Luxury" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

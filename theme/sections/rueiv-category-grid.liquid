@@ -1,0 +1,64 @@
+<section class="rueiv-section rueiv-catgrid">
+  <div class="rueiv-page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="rueiv-section-heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    <div class="rueiv-catgrid__inner">
+      {%- for block in section.blocks -%}
+        {%- assign col = block.settings.collection -%}
+        {%- assign img = block.settings.image | default: col.image -%}
+        {%- assign label = block.settings.label | default: col.title -%}
+        {%- assign link  = block.settings.link | default: col.url -%}
+
+        <a href="{{ link }}" class="rueiv-catgrid__tile" {{ block.shopify_attributes }}>
+          <div class="rueiv-catgrid__img-wrap">
+            {%- if img != blank -%}
+              {{ img | image_url: width: 900 | image_tag:
+                 loading: 'lazy', class: 'rueiv-catgrid__img', alt: label }}
+            {%- else -%}
+              <div class="rueiv-catgrid__placeholder"></div>
+            {%- endif -%}
+            <div class="rueiv-catgrid__overlay"></div>
+          </div>
+          <span class="rueiv-catgrid__label">{{ label }}</span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Categories",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Section Heading", "default": "Shop by Category" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category Tile",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Image Override" },
+        { "type": "text", "id": "label", "label": "Label Override" },
+        { "type": "url", "id": "link", "label": "Link Override" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Categories",
+      "blocks": [
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" }
+      ]
+    }
+  ]
+}
+{% endschema %}

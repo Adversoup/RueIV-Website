@@ -1,0 +1,56 @@
+{%- comment -%}
+  ============================================================================
+  RueIV Closing Banner — Full-width statement
+  ============================================================================
+{%- endcomment -%}
+
+<section class="rueiv-banner" data-section-id="{{ section.id }}">
+  {%- if section.settings.image != blank -%}
+    <img
+      src="{{ section.settings.image | image_url: width: 1920 }}"
+      srcset="{{ section.settings.image | image_url: width: 1200 }} 1200w,
+              {{ section.settings.image | image_url: width: 1920 }} 1920w"
+      sizes="100vw"
+      alt="{{ section.settings.heading | escape }}"
+      loading="lazy"
+      class="rueiv-banner__bg"
+      width="{{ section.settings.image.width }}"
+      height="{{ section.settings.image.height }}"
+    >
+  {%- else -%}
+    <img
+      src="{{ 'wall-background2.png' | asset_url }}"
+      alt="{{ section.settings.heading | escape }}"
+      loading="lazy"
+      class="rueiv-banner__bg"
+    >
+  {%- endif -%}
+  <div class="rueiv-banner__overlay"></div>
+  <div class="rueiv-banner__content">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="rueiv-banner__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subtext != blank -%}
+      <p class="rueiv-banner__sub">{{ section.settings.subtext }}</p>
+    {%- endif -%}
+    {%- if section.settings.btn_label != blank -%}
+      <a href="{{ section.settings.btn_link }}" class="rueiv-btn rueiv-btn--outline rueiv-btn--light">{{ section.settings.btn_label }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV Banner",
+  "tag": "section",
+  "class": "rueiv-section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background image" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "ONE SHOWROOM. EVERY CATEGORY." },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "The sourcing platform for interior professionals." },
+    { "type": "text", "id": "btn_label", "label": "Button label" },
+    { "type": "url", "id": "btn_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "RueIV Banner" }]
+}
+{% endschema %}

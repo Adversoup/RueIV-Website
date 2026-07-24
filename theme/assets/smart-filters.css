@@ -1,0 +1,271 @@
+/* ====================================================================
+   Smart Filters — Category-aware horizontal filter bar
+   Scoped with .facets-smart- prefix.
+   ==================================================================== */
+
+/* ── Bar layout ── */
+.facets-smart__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+  position: sticky;
+  top: var(--header-height, 80px);
+  z-index: 10;
+  background: rgb(var(--color-background));
+  transition: box-shadow 0.3s ease;
+}
+
+.facets-smart__bar.is-stuck {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Header (icon + title + count) ── */
+.facets-smart__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 0.75rem;
+  white-space: nowrap;
+}
+
+.facets-smart__title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.facets-smart__count {
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+/* ── Dropdown triggers ── */
+.facets-smart__dropdown {
+  position: relative;
+}
+
+.facets-smart__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.85rem;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(var(--color-foreground), 0.15);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+  list-style: none;
+  background: transparent;
+}
+
+.facets-smart__trigger::-webkit-details-marker {
+  display: none;
+}
+
+.facets-smart__trigger:hover {
+  border-color: rgba(var(--color-foreground), 0.4);
+}
+
+.facets-smart__trigger--active {
+  border-color: rgb(var(--color-foreground));
+  background: rgba(var(--color-foreground), 0.04);
+}
+
+.facets-smart__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.35rem;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgb(var(--color-background));
+  background: rgb(var(--color-foreground));
+  border-radius: 100px;
+}
+
+.facets-smart__chevron {
+  transition: transform 0.25s ease;
+}
+
+.facets-smart__dropdown[open] .facets-smart__chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Panel ── */
+.facets-smart__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 220px;
+  max-height: 360px;
+  overflow-y: auto;
+  background: rgb(var(--color-background));
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  padding: 0.75rem 0;
+  z-index: 100;
+}
+
+/* Designer panel is wider */
+.facets-smart__dropdown--designer .facets-smart__panel {
+  min-width: 280px;
+  max-height: 400px;
+}
+
+/* ── Search input (for designer dropdown) ── */
+.facets-smart__search-wrap {
+  padding: 0 0.75rem 0.5rem;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.06);
+  margin-bottom: 0.5rem;
+}
+
+.facets-smart__search {
+  width: 100%;
+  font-size: 14px;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid rgba(var(--color-foreground), 0.12);
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.facets-smart__search:focus {
+  border-color: rgba(var(--color-foreground), 0.4);
+}
+
+/* ── Checklist ── */
+.facets-smart__checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.facets-smart__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  transition: background 0.15s ease;
+}
+
+.facets-smart__item:hover {
+  background: rgba(var(--color-foreground), 0.03);
+}
+
+.facets-smart__item--disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.facets-smart__label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.facets-smart__label-count {
+  font-size: 13px;
+  opacity: 0.45;
+}
+
+/* Alphabetical grid for designer list */
+.facets-smart__checklist--designer {
+  columns: 1;
+}
+
+/* ── Active filter tags ── */
+.facets-smart__active {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.facets-smart__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(var(--color-foreground), 0.06);
+  border-radius: 100px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s ease;
+}
+
+.facets-smart__tag:hover {
+  background: rgba(var(--color-foreground), 0.12);
+}
+
+.facets-smart__clear {
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.facets-smart__clear:hover {
+  opacity: 1;
+}
+
+/* ── Sticky scroll observation ── */
+@supports (position: sticky) {
+  .facets-smart__bar {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+}
+
+/* ── Mobile: stack vertically ── */
+@media (max-width: 767.98px) {
+  .facets-smart__bar {
+    gap: 0.35rem;
+    padding: 0.75rem 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .facets-smart__bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .facets-smart__panel {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 60vh;
+    border-radius: 16px 16px 0 0;
+    border: none;
+    box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  .facets-smart__active {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+}

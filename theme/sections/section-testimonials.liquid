@@ -1,0 +1,270 @@
+{%- comment -%}
+  RueIV Testimonials / Social Embed — Testimonials cards + optional IG embed.
+  Block types: "testimonial" and "embed" (raw HTML for IG/social embeds).
+{%- endcomment -%}
+
+<style>
+  .rv-testimonials {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  .rv-testimonials__header { text-align: center; margin-bottom: 2.5rem; }
+  .rv-testimonials__eyebrow {
+    font-size: 1.2rem; letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.5; margin-bottom: 0.4rem;
+  }
+  .rv-testimonials__heading {
+    font-family: var(--font-heading-family);
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    margin: 0;
+  }
+  .rv-testimonials__subtitle {
+    font-size: 1.2rem; max-width: 520px; margin: 0.75rem auto 0;
+    line-height: 1.6; opacity: 0.7;
+  }
+
+  /* Cards grid */
+  .rv-testimonials__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns | default: 3 }}, 1fr);
+    gap: 2rem;
+  }
+
+  /* Testimonial card */
+  .rv-testimonial-card {
+    background: var(--color-background, #fff);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 6px;
+    padding: 2rem;
+    display: flex; flex-direction: column;
+  }
+  .rv-testimonial-card__quote {
+    font-size: 1.2rem; line-height: 1.7; font-style: italic;
+    flex: 1; margin: 0 0 1.5rem;
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 3px solid rgba(0,0,0,0.1);
+  }
+  .rv-testimonial-card__footer {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .rv-testimonial-card__avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    object-fit: cover; flex-shrink: 0;
+  }
+  .rv-testimonial-card__name {
+    font-weight: 600; font-size: 1.2rem; line-height: 1.3;
+  }
+  .rv-testimonial-card__role {
+    font-size: 1.2rem; opacity: 0.6;
+  }
+  .rv-testimonial-card__stars {
+    margin-bottom: 1rem;
+    color: #d4a853;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+  }
+
+  /* Embed card */
+  .rv-embed-card {
+    border-radius: 6px; overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .rv-embed-card iframe { max-width: 100%; }
+  .rv-embed-card__placeholder {
+    display: flex; align-items: center; justify-content: center;
+    aspect-ratio: 1/1; background: #f5f3ef;
+    font-size: 1.2rem; opacity: 0.5; text-align: center; padding: 2rem;
+  }
+
+  @media (max-width: 999px) {
+    .rv-testimonials__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 599px) {
+    .rv-testimonials__grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<section class="rv-testimonials color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <div class="rv-testimonials__header">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="rv-testimonials__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="rv-testimonials__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="rv-testimonials__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="rv-testimonials__grid">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+
+            {%- when 'testimonial' -%}
+              <div class="rv-testimonial-card" {{ block.shopify_attributes }}>
+                {%- if block.settings.stars > 0 -%}
+                  <div class="rv-testimonial-card__stars">
+                    {%- for i in (1..block.settings.stars) -%}★{%- endfor -%}
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.quote != blank -%}
+                  <blockquote class="rv-testimonial-card__quote">{{ block.settings.quote }}</blockquote>
+                {%- endif -%}
+                <div class="rv-testimonial-card__footer">
+                  {%- if block.settings.avatar != blank -%}
+                    <img class="rv-testimonial-card__avatar"
+                      src="{{ block.settings.avatar | image_url: width: 88 }}"
+                      alt="{{ block.settings.name }}" width="44" height="44" loading="lazy">
+                  {%- endif -%}
+                  <div>
+                    {%- if block.settings.name != blank -%}
+                      <div class="rv-testimonial-card__name">{{ block.settings.name }}</div>
+                    {%- endif -%}
+                    {%- if block.settings.role != blank -%}
+                      <div class="rv-testimonial-card__role">{{ block.settings.role }}</div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+
+            {%- when 'embed' -%}
+              <div class="rv-embed-card" {{ block.shopify_attributes }}>
+                {%- if block.settings.html != blank -%}
+                  {{ block.settings.html }}
+                {%- else -%}
+                  <div class="rv-embed-card__placeholder">
+                    Paste Instagram or social embed code in the section editor
+                  </div>
+                {%- endif -%}
+              </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV Testimonials",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What People Are Saying"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "Working with Rue IV transformed our space. The sourcing was impeccable."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "Sarah M."
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Role / Company",
+          "default": "Interior Designer"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Avatar"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "label": "Star Rating",
+          "default": 5
+        }
+      ]
+    },
+    {
+      "type": "embed",
+      "name": "Social Embed",
+      "settings": [
+        {
+          "type": "html",
+          "id": "html",
+          "label": "Embed Code",
+          "info": "Paste an Instagram embed, TikTok, or any social embed HTML."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV Testimonials"
+    }
+  ]
+}
+{% endschema %}

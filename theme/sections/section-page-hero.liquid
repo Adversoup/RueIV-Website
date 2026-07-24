@@ -1,0 +1,178 @@
+{%- comment -%}
+  RueIV Page Hero – Full-width image with eyebrow, title & intro text.
+  Used on Brand, About, Vibe Studio, Events, Portfolio, Newsletter pages.
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  .rv-page-hero { position: relative; overflow: hidden; }
+  .rv-page-hero__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: {{ section.settings.desktop_ratio | default: '21/9' }};
+  }
+  .rv-page-hero__media img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .rv-page-hero__overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }});
+  }
+  .rv-page-hero__content {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 2rem;
+    color: {{ section.settings.text_color | default: '#ffffff' }};
+  }
+  .rv-page-hero__eyebrow {
+    font-size: 1.2rem; letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 0.75rem; opacity: 0.85;
+  }
+  .rv-page-hero__title {
+    font-family: var(--font-heading-family); font-weight: var(--font-heading-weight);
+    font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 1.1;
+    margin: 0 0 1rem;
+  }
+  .rv-page-hero__intro {
+    font-size: 1.2rem; max-width: 640px; line-height: 1.6; opacity: 0.9;
+  }
+  .rv-page-hero__cta {
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 749px) {
+    .rv-page-hero__media { aspect-ratio: {{ section.settings.mobile_ratio | default: '4/3' }}; }
+    .rv-page-hero__title { font-size: clamp(1.8rem, 6vw, 3rem); }
+  }
+</style>
+
+<section class="rv-page-hero section--padding" style="--section-padding-top: {{ section.settings.padding_top }}px; --section-padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="rv-page-hero__media">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 2400 | image_tag:
+          loading: 'eager',
+          sizes: '100vw',
+          widths: '600,900,1200,1600,2000,2400',
+          is: 'image-lazy'
+      }}
+    {%- else -%}
+      <div style="background:#e8e4df;width:100%;height:100%;"></div>
+    {%- endif -%}
+    <div class="rv-page-hero__overlay"></div>
+    <div class="rv-page-hero__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="rv-page-hero__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h1 class="rv-page-hero__title">{{ section.settings.title }}</h1>
+      {%- endif -%}
+      {%- if section.settings.intro != blank -%}
+        <div class="rv-page-hero__intro rte">{{ section.settings.intro }}</div>
+      {%- endif -%}
+      {%- if section.settings.cta_label != blank -%}
+        <a href="{{ section.settings.cta_link }}" class="rv-page-hero__cta btn btn--primary">
+          {{ section.settings.cta_label }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV Page Hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero Image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Rue IV"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Page Title"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro Text"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button Label"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 30
+    },
+    {
+      "type": "text",
+      "id": "desktop_ratio",
+      "label": "Desktop Aspect Ratio",
+      "default": "21/9",
+      "info": "e.g. 21/9, 16/9, 3/1"
+    },
+    {
+      "type": "text",
+      "id": "mobile_ratio",
+      "label": "Mobile Aspect Ratio",
+      "default": "4/3"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV Page Hero"
+    }
+  ]
+}
+{% endschema %}

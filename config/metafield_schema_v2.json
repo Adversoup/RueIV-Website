@@ -1,0 +1,239 @@
+{
+  "version": "2.0.0",
+  "description": "Extended metafield schema for filter-driven navigation",
+  "owner_type": "PRODUCT",
+
+  "definitions": [
+    {
+      "namespace": "taxonomy",
+      "key": "color_family",
+      "type": "single_line_text_field",
+      "name": "Color Family",
+      "description": "Primary color (e.g., Navy, Ivory). 24 controlled values.",
+      "pin": true,
+      "existing": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "color_family_group",
+      "type": "single_line_text_field",
+      "name": "Color Family Group",
+      "description": "Browsing color group: Neutrals, Warm, Cool, Dark, Patterned",
+      "pin": true,
+      "validations": [
+        { "name": "choices", "value": "[\"Neutrals\",\"Warm\",\"Cool\",\"Dark\",\"Patterned\"]" }
+      ]
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "color_family_secondary",
+      "type": "single_line_text_field",
+      "name": "Color Family Secondary",
+      "description": "Optional second color for multi-tone products",
+      "pin": false,
+      "existing": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "color_raw",
+      "type": "single_line_text_field",
+      "name": "Color Raw",
+      "description": "Original vendor color string",
+      "pin": false,
+      "existing": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "color_confidence",
+      "type": "number_decimal",
+      "name": "Color Confidence",
+      "description": "AI mapping confidence 0.0–1.0",
+      "pin": false,
+      "existing": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "color_source",
+      "type": "single_line_text_field",
+      "name": "Color Source",
+      "description": "ai · manual · ai+override · dictionary",
+      "pin": false,
+      "existing": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "end_use",
+      "type": "list.single_line_text_field",
+      "name": "End Use / Application",
+      "description": "Controlled application values",
+      "pin": true,
+      "existing": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "subcategory",
+      "type": "single_line_text_field",
+      "name": "Subcategory / Type",
+      "description": "Product subcategory (e.g., Dining Chair, Table Lamp)",
+      "pin": true,
+      "existing": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "material_type",
+      "type": "list.single_line_text_field",
+      "name": "Material Type",
+      "description": "Controlled material values for filtering (e.g., Linen, Wool, Metal)",
+      "pin": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "design",
+      "type": "single_line_text_field",
+      "name": "Pattern / Design",
+      "description": "Design classification: Florals, Geometric, Textures, Scenic, etc.",
+      "pin": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "style",
+      "type": "single_line_text_field",
+      "name": "Style",
+      "description": "Design style: Modern, Traditional, Sculptural, Architectural",
+      "pin": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "room",
+      "type": "list.single_line_text_field",
+      "name": "Room",
+      "description": "Applicable rooms: Living Room, Dining, Bedroom, Office",
+      "pin": true
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "size_group",
+      "type": "single_line_text_field",
+      "name": "Size Group",
+      "description": "Size classification for rugs: Small, Medium, Large, Oversize",
+      "pin": false
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "lead_time",
+      "type": "single_line_text_field",
+      "name": "Lead Time",
+      "description": "Quick Ship or Standard",
+      "pin": true,
+      "validations": [
+        { "name": "choices", "value": "[\"Quick Ship\",\"Standard\"]" }
+      ]
+    },
+    {
+      "namespace": "taxonomy",
+      "key": "application",
+      "type": "list.single_line_text_field",
+      "name": "Application",
+      "description": "Textile application: Upholstery, Drapery, Sheers, Decorative, Outdoor",
+      "pin": true
+    },
+
+    {
+      "namespace": "override",
+      "key": "title",
+      "type": "single_line_text_field",
+      "name": "Title Override",
+      "description": "Display title override",
+      "pin": true,
+      "existing": true
+    },
+    {
+      "namespace": "override",
+      "key": "hero_image",
+      "type": "file_reference",
+      "name": "Hero Image Override",
+      "description": "Hero image override",
+      "pin": true,
+      "existing": true
+    },
+    {
+      "namespace": "override",
+      "key": "category",
+      "type": "single_line_text_field",
+      "name": "Category Override",
+      "description": "Category override",
+      "pin": true,
+      "existing": true
+    },
+    {
+      "namespace": "override",
+      "key": "color_family",
+      "type": "single_line_text_field",
+      "name": "Color Override",
+      "description": "Color override (ALWAYS wins over AI)",
+      "pin": true,
+      "existing": true
+    },
+    {
+      "namespace": "override",
+      "key": "end_use",
+      "type": "list.single_line_text_field",
+      "name": "End Use Override",
+      "description": "End-use override",
+      "pin": true,
+      "existing": true
+    },
+    {
+      "namespace": "override",
+      "key": "grid_weight",
+      "type": "number_integer",
+      "name": "Grid Weight",
+      "description": "1=normal, 2=featured, 3=hero",
+      "pin": true,
+      "existing": true
+    },
+
+    {
+      "namespace": "brand",
+      "key": "story",
+      "type": "multi_line_text_field",
+      "name": "Brand Story",
+      "description": "Brand story for PDP",
+      "pin": false,
+      "existing": true
+    },
+    {
+      "namespace": "brand",
+      "key": "logo",
+      "type": "file_reference",
+      "name": "Brand Logo",
+      "description": "Brand logo image",
+      "pin": false,
+      "existing": true
+    },
+    {
+      "namespace": "brand",
+      "key": "tier",
+      "type": "single_line_text_field",
+      "name": "Brand Tier",
+      "description": "flagship · partner · emerging",
+      "pin": false,
+      "existing": true
+    }
+  ],
+
+  "tag_conventions": [
+    { "prefix": "color:",       "example": "color:navy",                "used_by": "Color × Category collections" },
+    { "prefix": "color-family:","example": "color-family:Cool",         "used_by": "Color family filter collections" },
+    { "prefix": "end-use:",     "example": "end-use:Upholstery",        "used_by": "Application/End-use collections" },
+    { "prefix": "material:",    "example": "material:Linen",            "used_by": "Material filter collections" },
+    { "prefix": "design:",      "example": "design:Geometric",          "used_by": "Design/Pattern filter collections" },
+    { "prefix": "style:",       "example": "style:Modern",              "used_by": "Style filter collections" },
+    { "prefix": "room:",        "example": "room:living-room",          "used_by": "Room filter collections" },
+    { "prefix": "subcat:",      "example": "subcat:Table Lamp",         "used_by": "Type filter collections" },
+    { "prefix": "size:",        "example": "size:Large",                "used_by": "Size filter collections (rugs)" },
+    { "prefix": "lead-time:",   "example": "lead-time:Quick Ship",      "used_by": "Lead time filter + Quick Ship collection" },
+    { "prefix": "new-arrival",  "example": "new-arrival",               "used_by": "New Arrivals collection" },
+    { "prefix": "trade:",       "example": "trade:Contract",            "used_by": "Contract/Hospitality collection" }
+  ]
+}

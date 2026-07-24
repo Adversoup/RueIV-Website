@@ -1,0 +1,75 @@
+/* ====================================================================
+   RueIV Global Overrides
+   Loaded site-wide via theme.liquid after rueiv-fonts.css
+   ==================================================================== */
+
+/* ── 1. HIDE ALL PRICE INFORMATION ─────────────────────────────────── */
+.f-price,
+.f-price__regular,
+.f-price__sale,
+.f-price__unit-wrapper,
+.f-price__badges,
+.f-price-item,
+.rueiv-pcard__price,
+.product__block--price,
+.price__container,
+.price-item,
+.volume-pricing-note,
+.product__tax,
+.installment {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Catch any price-range filters in collection facets */
+.facets__price,
+.price-filter,
+[data-price-range] {
+  display: none !important;
+}
+
+/* ── 2. FONT-SIZE FLOOR: 1.1rem minimum ───────────────────────────── */
+
+/* mega-panel.css overrides (was 0.75rem) */
+.mega-panel__heading {
+  font-size: 1.1rem !important;
+}
+
+/* mega-panel links (was 0.9375rem) */
+.mega-panel__link {
+  font-size: 1.1rem !important;
+}
+
+/* mega-panel view-all (was 0.8125rem) */
+.mega-panel__view-all {
+  font-size: 1.1rem !important;
+}
+
+/* mega-panel promo title (was 0.875rem) */
+.mega-panel__promo-title {
+  font-size: 1.1rem !important;
+}
+
+/* mega-panel promo text (was 0.8125rem) */
+.mega-panel__promo-text {
+  font-size: 1.1rem !important;
+}
+
+/* collection facet count (was calc * 0.9) */
+.facets-h__count {
+  font-size: 1.1rem !important;
+}
+
+/* collection facet trigger (was calc * 0.95) */
+.facets-h__trigger {
+  font-size: 1.1rem !important;
+}
+
+/* ── 3. HEADING FLOOR: 1.5rem minimum ─────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-size: max(1.5rem, inherit);
+}

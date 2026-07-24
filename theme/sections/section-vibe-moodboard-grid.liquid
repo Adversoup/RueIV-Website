@@ -1,0 +1,339 @@
+{%- comment -%}
+  Vibe Moodboard Grid — Hoverable moodboard cards managed via theme editor blocks.
+  Each card: image + title + short description + optional link.
+  Supports 2- or 3-column layouts. Includes a configurable CTA at the bottom.
+{%- endcomment -%}
+
+<style>
+  .vibe-mb { padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px; }
+
+  /* Header */
+  .vibe-mb__header { text-align: center; margin-bottom: 48px; }
+  .vibe-mb__eyebrow {
+    font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.55; margin-bottom: 8px;
+  }
+  .vibe-mb__heading {
+    font-family: var(--font-heading-family); font-weight: var(--font-heading-weight);
+    font-size: clamp(24px, 3vw, 36px); margin: 0 0 12px;
+  }
+  .vibe-mb__subtitle {
+    font-size: 14px; line-height: 1.65; max-width: 600px;
+    margin: 0 auto; opacity: 0.7;
+  }
+
+  /* Grid */
+  .vibe-mb__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns }}, 1fr);
+    gap: {{ section.settings.gap }}px;
+  }
+
+  /* Card */
+  .vibe-mb__card {
+    position: relative; overflow: hidden;
+    border-radius: var(--card-corner-radius, 4px);
+    background: var(--color-background);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    display: flex; flex-direction: column;
+    text-decoration: none; color: inherit;
+    cursor: pointer;
+  }
+  .vibe-mb__card:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+    transform: translateY(-3px);
+  }
+  .vibe-mb__card-media {
+    position: relative; overflow: hidden;
+    aspect-ratio: {{ section.settings.image_ratio | default: '4/5' }};
+  }
+  .vibe-mb__card-media img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.5s ease;
+  }
+  .vibe-mb__card:hover .vibe-mb__card-media img {
+    transform: scale(1.04);
+  }
+  .vibe-mb__card-body { padding: 16px 16px 20px; flex: 1; }
+  .vibe-mb__card-title {
+    font-family: var(--font-heading-family); font-weight: 600;
+    font-size: 16px; margin: 0 0 6px; line-height: 1.25;
+  }
+  .vibe-mb__card-desc {
+    font-size: 14px; line-height: 1.55; opacity: 0.7; margin: 0;
+  }
+  .vibe-mb__card-link {
+    display: inline-block; margin-top: 10px;
+    font-size: 14px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; text-decoration: none;
+    color: var(--color-foreground); opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .vibe-mb__card-link:hover { opacity: 1; text-decoration: underline; }
+  .vibe-mb__card-link::after { content: ' →'; }
+
+  /* Placeholder */
+  .vibe-mb__placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(145deg, #d4cfc8 0%, #e8e4df 50%, #c9c2b8 100%);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 32px;
+  }
+  .vibe-mb__placeholder-label {
+    font-family: var(--font-heading-family); font-weight: 500;
+    font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #6b6358; opacity: 0.7;
+  }
+  .vibe-mb__card:nth-child(2) .vibe-mb__placeholder { background: linear-gradient(145deg, #c8d4d9 0%, #dfe8ec 50%, #b5c5cd 100%); }
+  .vibe-mb__card:nth-child(3) .vibe-mb__placeholder { background: linear-gradient(145deg, #ccc5be 0%, #e0dad3 50%, #b8afa5 100%); }
+  .vibe-mb__card:nth-child(4) .vibe-mb__placeholder { background: linear-gradient(145deg, #d1d4c8 0%, #e5e8df 50%, #bfc2b5 100%); }
+  .vibe-mb__card:nth-child(5) .vibe-mb__placeholder { background: linear-gradient(145deg, #d0c8d4 0%, #e4dfe8 50%, #bdb5c5 100%); }
+  .vibe-mb__card:nth-child(6) .vibe-mb__placeholder { background: linear-gradient(145deg, #d4d0c4 0%, #e8e5da 50%, #c5c0b2 100%); }
+
+  /* Tag chip */
+  .vibe-mb__tag {
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(4px);
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase; color: #333;
+  }
+
+  /* Bottom CTA */
+  .vibe-mb__cta {
+    text-align: center; margin-top: 48px;
+  }
+
+  /* Disclaimer */
+  .vibe-mb__disclaimer {
+    text-align: center; margin-top: 40px; padding-top: 32px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    font-size: 14px; line-height: 1.6; opacity: 0.55;
+    max-width: 600px; margin-left: auto; margin-right: auto;
+  }
+
+  @media (max-width: 749px) {
+    .vibe-mb__grid { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 750px) and (max-width: 1023px) {
+    .vibe-mb__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<section class="vibe-mb color-{{ section.settings.color_scheme }}" id="moodboards">
+  <div class="page-width">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <div class="vibe-mb__header">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="vibe-mb__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="vibe-mb__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="vibe-mb__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- assign cards = section.blocks | where: 'type', 'moodboard' -%}
+    {%- if cards.size > 0 -%}
+      <div class="vibe-mb__grid">
+        {%- for block in cards -%}
+          <a href="{{ block.settings.link | default: '#' }}" class="vibe-mb__card" {{ block.shopify_attributes }}>
+            <div class="vibe-mb__card-media">
+              {%- if block.settings.tag != blank -%}
+                <span class="vibe-mb__tag">{{ block.settings.tag }}</span>
+              {%- endif -%}
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 900 | image_tag:
+                    loading: 'lazy',
+                    sizes: '(max-width: 749px) 90vw, (max-width: 1023px) 45vw, 30vw',
+                    widths: '400,600,800,900',
+                    is: 'image-lazy'
+                }}
+              {%- else -%}
+                <div class="vibe-mb__placeholder">
+                  <span class="vibe-mb__placeholder-label">{{ block.settings.title | default: 'Moodboard' }}</span>
+                </div>
+              {%- endif -%}
+            </div>
+            <div class="vibe-mb__card-body">
+              {%- if block.settings.title != blank -%}
+                <h3 class="vibe-mb__card-title">{{ block.settings.title }}</h3>
+              {%- endif -%}
+              {%- if block.settings.description != blank -%}
+                <p class="vibe-mb__card-desc">{{ block.settings.description }}</p>
+              {%- endif -%}
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="vibe-mb__cta">
+        <a href="{{ section.settings.cta_link | default: '/pages/contact' }}" class="btn btn--primary">
+          {{ section.settings.cta_label }}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.disclaimer != blank -%}
+      <div class="vibe-mb__disclaimer">{{ section.settings.disclaimer }}</div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Vibe Moodboard Grid",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Curated Vibes"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Browse Moodboards"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Each moodboard is a complete room concept — fabrics, furniture, lighting, and wallpaper hand-selected by our team."
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Desktop Columns",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap",
+      "default": 24
+    },
+    {
+      "type": "text",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "default": "4/5",
+      "info": "e.g. 4/5, 3/4, 1/1, 16/9"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Bottom CTA Label",
+      "default": "Submit a Custom Request"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Bottom CTA Link"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Disclaimer Text",
+      "default": "The Vibe Studio is available exclusively to verified trade clients. Custom sourcing requests are curated and returned within 24–48 hours. Pricing is provided on request."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "moodboard",
+      "name": "Moodboard",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Quiet Luxury Living Room"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Warm neutrals, soft bouclé, and sculptural lighting — a serene retreat for modern living."
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tag Chip",
+          "default": "Living Room",
+          "info": "Displayed as a floating label on the image"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link Label",
+          "default": "Shop this Vibe"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vibe Moodboard Grid",
+      "blocks": [
+        { "type": "moodboard", "settings": { "title": "Quiet Luxury Living Room", "description": "Warm neutrals, soft bouclé, and sculptural lighting — a serene retreat for modern living.", "tag": "Living Room", "link_label": "Shop this Vibe" } },
+        { "type": "moodboard", "settings": { "title": "Coastal Modern Bedroom", "description": "Light linens, whitewashed textures, and ocean-inspired hues for effortless calm.", "tag": "Bedroom", "link_label": "Shop this Vibe" } },
+        { "type": "moodboard", "settings": { "title": "Industrial Loft Dining", "description": "Raw materials meet refined craft — brass, leather, and statement wallpaper.", "tag": "Dining", "link_label": "Shop this Vibe" } },
+        { "type": "moodboard", "settings": { "title": "Japandi Study", "description": "Minimalist forms, natural wood, and paper-inspired wallcoverings for focused serenity.", "tag": "Study", "link_label": "Shop this Vibe" } },
+        { "type": "moodboard", "settings": { "title": "Art Deco Lounge", "description": "Rich velvets, geometric patterns, and statement lighting — glamour reimagined.", "tag": "Lounge", "link_label": "Shop this Vibe" } },
+        { "type": "moodboard", "settings": { "title": "Mediterranean Terrace", "description": "Terracotta tones, outdoor-rated fabrics, and sun-drenched warmth.", "tag": "Outdoor", "link_label": "Shop this Vibe" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

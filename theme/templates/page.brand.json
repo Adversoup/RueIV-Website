@@ -1,0 +1,90 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "brand_hero": {
+      "type": "section-brand-hero",
+      "settings": {
+        "brand_name": "",
+        "description": "",
+        "cta_label": "Shop All",
+        "meta_text": "",
+        "overlay_opacity": 45,
+        "min_height": 520,
+        "min_height_mobile": 380,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "collections": {
+      "type": "collection-list",
+      "blocks": {
+        "col_1": {
+          "type": "featured_collection",
+          "settings": {}
+        },
+        "col_2": {
+          "type": "featured_collection",
+          "settings": {}
+        },
+        "col_3": {
+          "type": "featured_collection",
+          "settings": {}
+        },
+        "col_4": {
+          "type": "featured_collection",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "col_1",
+        "col_2",
+        "col_3",
+        "col_4"
+      ],
+      "settings": {
+        "layout": "standard",
+        "heading": "Explore Collections",
+        "heading_size": "h2",
+        "show_product_count": true,
+        "card_image_ratio": "3/4",
+        "padding_top": 52,
+        "padding_bottom": 36
+      }
+    },
+    "featured_products": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Featured Products",
+        "heading_size": "h2",
+        "show_collection_description": false,
+        "columns": 4,
+        "padding_top": 36,
+        "padding_bottom": 52
+      }
+    },
+    "showroom": {
+      "type": "section-brand-showroom",
+      "settings": {
+        "eyebrow": "Visit Us",
+        "heading": "Showroom",
+        "cta_label": "Book an Appointment",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    }
+  },
+  "order": [
+    "brand_hero",
+    "collections",
+    "featured_products",
+    "showroom"
+  ]
+}

@@ -1,0 +1,357 @@
+{%- comment -%}
+  ============================================================================
+  RueIV Mega v3 — Universal 3-column category mega menu
+  ============================================================================
+  Layout:
+  ┌────────────────────┬────────────────────┬────────────────────┐
+  │   [TILE IMAGE]     │   [TILE IMAGE]     │   [TILE IMAGE]     │
+  │ Column A Title     │ Column B Title     │ Column C Title     │
+  ├────────────────────┼────────────────────┼────────────────────┤
+  │ All …              │ All …              │ All …              │
+  │ Link 1             │ Link 1             │ Link 1             │
+  │ Link 2             │ Link 2             │ Link 2             │
+  │ …                  │ …                  │ …                  │
+  └────────────────────┴────────────────────┴────────────────────┘
+
+  Data: Three link_list menus + three image_pickers (one per column).
+  Auto-fallback: If image_picker blank, try UNIQUE collection image per column
+                 (skips URLs already used by another column).
+  Collapse: Empty columns are hidden. Empty images are hidden.
+  Split: If a link list has >6 items, it splits into two sub-columns with
+         a vertical separator after the 6th item.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    ── Column A ──
+  endcomment
+  assign col_a_menu_handle = block.settings.col_a_menu | default: ''
+  assign col_a_menu = linklists[col_a_menu_handle]
+  assign col_a_title = block.settings.col_a_title | default: ''
+  assign col_a_img = block.settings.col_a_image
+
+  comment
+    ── Column B ──
+  endcomment
+  assign col_b_menu_handle = block.settings.col_b_menu | default: ''
+  assign col_b_menu = linklists[col_b_menu_handle]
+  assign col_b_title = block.settings.col_b_title | default: ''
+  assign col_b_img = block.settings.col_b_image
+
+  comment
+    ── Column C ──
+  endcomment
+  assign col_c_menu_handle = block.settings.col_c_menu | default: ''
+  assign col_c_menu = linklists[col_c_menu_handle]
+  assign col_c_title = block.settings.col_c_title | default: ''
+  assign col_c_img = block.settings.col_c_image
+  comment
+    ── Featured Panel ──
+  endcomment
+  assign feat_collection_obj = block.settings.featured_collection
+  assign feat_title = block.settings.featured_title | default: ''
+  assign feat_label = block.settings.featured_label | default: 'Shop Now'
+  assign feat_link = block.settings.featured_link | default: ''
+  assign has_featured = false
+  if feat_collection_obj != blank
+    assign has_featured = true
+    if feat_title == blank
+      assign feat_title = feat_collection_obj.title
+    endif
+    if feat_link == blank
+      assign feat_link = feat_collection_obj.url
+    endif
+  endif
+
+  
+
+  comment
+    ── Count visible columns ──
+  endcomment
+  assign visible_cols = 0
+  if col_a_menu != blank and col_a_menu.links.size > 0
+    assign visible_cols = visible_cols | plus: 1
+  endif
+  if col_b_menu != blank and col_b_menu.links.size > 0
+    assign visible_cols = visible_cols | plus: 1
+  endif
+  if col_c_menu != blank and col_c_menu.links.size > 0
+    assign visible_cols = visible_cols | plus: 1
+  endif
+-%}
+
+{%- comment -%} ── Auto-fallback: UNIQUE collection images per column (with repeat fallback) ── {%- endcomment -%}
+{%- liquid
+  assign _used_img_handles = ''
+
+  comment
+    ── Column A: first unique collection image ──
+  endcomment
+  if col_a_img == blank and col_a_menu != blank
+    for _link in col_a_menu.links
+      assign _parts = _link.url | split: '/collections/'
+      if _parts.size > 1
+        assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+        unless _used_img_handles contains _handle
+          assign _col = collections[_handle]
+          if _col.image != blank
+            assign col_a_img = _col.image
+            assign _used_img_handles = _used_img_handles | append: _handle | append: ','
+            break
+          endif
+        endunless
+      endif
+    endfor
+  else
+    if col_a_img != blank
+      assign _used_img_handles = _used_img_handles | append: 'col_a_custom,'
+    endif
+  endif
+
+  comment
+    ── Column B: unique first, repeat fallback ──
+  endcomment
+  if col_b_img == blank and col_b_menu != blank
+    for _link in col_b_menu.links
+      assign _parts = _link.url | split: '/collections/'
+      if _parts.size > 1
+        assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+        unless _used_img_handles contains _handle
+          assign _col = collections[_handle]
+          if _col.image != blank
+            assign col_b_img = _col.image
+            assign _used_img_handles = _used_img_handles | append: _handle | append: ','
+            break
+          endif
+        endunless
+      endif
+    endfor
+    if col_b_img == blank
+      for _link in col_b_menu.links
+        assign _parts = _link.url | split: '/collections/'
+        if _parts.size > 1
+          assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+          assign _col = collections[_handle]
+          if _col.image != blank
+            assign col_b_img = _col.image
+            break
+          endif
+        endif
+      endfor
+    endif
+  else
+    if col_b_img != blank
+      assign _used_img_handles = _used_img_handles | append: 'col_b_custom,'
+    endif
+  endif
+
+  comment
+    ── Column C: unique first, repeat fallback ──
+  endcomment
+  if col_c_img == blank and col_c_menu != blank
+    for _link in col_c_menu.links
+      assign _parts = _link.url | split: '/collections/'
+      if _parts.size > 1
+        assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+        unless _used_img_handles contains _handle
+          assign _col = collections[_handle]
+          if _col.image != blank
+            assign col_c_img = _col.image
+            assign _used_img_handles = _used_img_handles | append: _handle | append: ','
+            break
+          endif
+        endunless
+      endif
+    endfor
+    if col_c_img == blank
+      for _link in col_c_menu.links
+        assign _parts = _link.url | split: '/collections/'
+        if _parts.size > 1
+          assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+          assign _col = collections[_handle]
+          if _col.image != blank
+            assign col_c_img = _col.image
+            break
+          endif
+        endif
+      endfor
+    endif
+  endif
+-%}
+
+{%- if visible_cols > 0 -%}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'rueiv-mega-v3.css' | asset_url }}" media="print" fetchpriority="low" onload="this.media='all'">
+
+<details
+  id="RueivMegaV3-{{ block.id }}"
+  is="details-mega"
+  trigger="{{ section.settings.menu_trigger }}"
+  level="top"
+  data-rv3-mega
+  {{ block.shopify_attributes }}
+>
+  <summary data-link="{{ link.url }}" class="z-2 font-navigation">
+    <span class="menu__item flex items-center relative">
+      <span class="reversed-link flex items-center">
+        {{- link.title | escape }}
+        {%- if link.links != blank or visible_cols > 0 -%}
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9.75 4.5L6 8.25L2.25 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        {%- endif -%}
+      </span>
+    </span>
+  </summary>
+
+  <div class="mega-menu v-scrollable">
+    <div class="mega-menu__container">
+      <div class="page-width mega-menu__wrapper">
+        <div class="rv3-grid rv3-grid--{{ visible_cols }}col{% if has_featured %} rv3-grid--featured{% endif %}" data-rv3-grid>
+
+          {%- comment -%} ── COLUMN A ── {%- endcomment -%}
+          {%- if col_a_menu != blank and col_a_menu.links.size > 0 -%}
+            <div class="rv3-col mega-menu__item">
+              {%- if col_a_img != blank -%}
+                <div class="rv3-tile">
+                  <div class="rv3-tile__img-wrap">
+                    {{ col_a_img | image_url: width: 700 | image_tag: loading: 'lazy', class: 'rv3-tile__img', alt: col_a_title }}
+                  </div>
+                </div>
+              {%- endif -%}
+              {%- if col_a_title != blank -%}
+                <span class="rv3-col__title">{{ col_a_title }}</span>
+              {%- endif -%}
+              {%- assign col_a_half = col_a_menu.links.size | plus: 1 | divided_by: 2 -%}
+              {%- if col_a_menu.links.size > 12 -%}
+                <div class="rv3-links-split">
+                  <ul class="rv3-links-split__left" role="list">
+                    {%- for _link in col_a_menu.links limit: col_a_half -%}
+                      <li><a href="{{ _link.url }}" class="rv3-link reversed-link{% if forloop.first %} rv3-link--all{% endif %}">{{ _link.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                  <ul class="rv3-links-split__right" role="list">
+                    {%- for _link in col_a_menu.links offset: col_a_half -%}
+                      <li><a href="{{ _link.url }}" class="rv3-link reversed-link">{{ _link.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {%- else -%}
+                <ul class="rv3-links" role="list">
+                  {%- for _link in col_a_menu.links -%}
+                    <li><a href="{{ _link.url }}" class="rv3-link reversed-link{% if forloop.first %} rv3-link--all{% endif %}">{{ _link.title | escape }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} ── COLUMN B ── {%- endcomment -%}
+          {%- if col_b_menu != blank and col_b_menu.links.size > 0 -%}
+            <div class="rv3-col mega-menu__item">
+              {%- if col_b_img != blank -%}
+                <div class="rv3-tile">
+                  <div class="rv3-tile__img-wrap">
+                    {{ col_b_img | image_url: width: 700 | image_tag: loading: 'lazy', class: 'rv3-tile__img', alt: col_b_title }}
+                  </div>
+                </div>
+              {%- endif -%}
+              {%- if col_b_title != blank -%}
+                <span class="rv3-col__title">{{ col_b_title }}</span>
+              {%- endif -%}
+              {%- assign col_b_half = col_b_menu.links.size | plus: 1 | divided_by: 2 -%}
+              {%- if col_b_menu.links.size > 12 -%}
+                <div class="rv3-links-split">
+                  <ul class="rv3-links-split__left" role="list">
+                    {%- for _link in col_b_menu.links limit: col_b_half -%}
+                      <li><a href="{{ _link.url }}" class="rv3-link reversed-link{% if forloop.first %} rv3-link--all{% endif %}">{{ _link.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                  <ul class="rv3-links-split__right" role="list">
+                    {%- for _link in col_b_menu.links offset: col_b_half -%}
+                      <li><a href="{{ _link.url }}" class="rv3-link reversed-link">{{ _link.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {%- else -%}
+                <ul class="rv3-links" role="list">
+                  {%- for _link in col_b_menu.links -%}
+                    <li><a href="{{ _link.url }}" class="rv3-link reversed-link{% if forloop.first %} rv3-link--all{% endif %}">{{ _link.title | escape }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} ── COLUMN C ── {%- endcomment -%}
+          {%- if col_c_menu != blank and col_c_menu.links.size > 0 -%}
+            <div class="rv3-col mega-menu__item">
+              {%- if col_c_img != blank -%}
+                <div class="rv3-tile">
+                  <div class="rv3-tile__img-wrap">
+                    {{ col_c_img | image_url: width: 700 | image_tag: loading: 'lazy', class: 'rv3-tile__img', alt: col_c_title }}
+                  </div>
+                </div>
+              {%- endif -%}
+              {%- if col_c_title != blank -%}
+                <span class="rv3-col__title">{{ col_c_title }}</span>
+              {%- endif -%}
+              {%- assign col_c_half = col_c_menu.links.size | plus: 1 | divided_by: 2 -%}
+              {%- if col_c_menu.links.size > 12 -%}
+                <div class="rv3-links-split">
+                  <ul class="rv3-links-split__left" role="list">
+                    {%- for _link in col_c_menu.links limit: col_c_half -%}
+                      <li><a href="{{ _link.url }}" class="rv3-link reversed-link{% if forloop.first %} rv3-link--all{% endif %}">{{ _link.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                  <ul class="rv3-links-split__right" role="list">
+                    {%- for _link in col_c_menu.links offset: col_c_half -%}
+                      <li><a href="{{ _link.url }}" class="rv3-link reversed-link">{{ _link.title | escape }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {%- else -%}
+                <ul class="rv3-links" role="list">
+                  {%- for _link in col_c_menu.links -%}
+                    <li><a href="{{ _link.url }}" class="rv3-link reversed-link{% if forloop.first %} rv3-link--all{% endif %}">{{ _link.title | escape }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} ── FEATURED PANEL ── {%- endcomment -%}
+          {%- if has_featured -%}
+            <div class="rv3-featured">
+              {%- if feat_collection_obj.image != blank -%}
+                <a href="{{ feat_link }}" class="rv3-featured__img-link">
+                  <div class="rv3-featured__img-wrap">
+                    {{ feat_collection_obj.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'rv3-featured__img', alt: feat_title }}
+                  </div>
+                </a>
+              {%- endif -%}
+              <div class="rv3-featured__content">
+                {%- if feat_title != blank -%}
+                  <span class="rv3-featured__title">{{ feat_title }}</span>
+                {%- endif -%}
+                {%- if feat_label != blank and feat_link != blank -%}
+                  <a href="{{ feat_link }}" class="rv3-featured__btn">
+                    {{ feat_label }}
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+
+        </div><!-- .rv3-grid -->
+      </div>
+    </div>
+  </div>
+</details>
+
+<script src="{{ 'rueiv-mega-v2.js' | asset_url }}" defer></script>
+{%- endif -%}

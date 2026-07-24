@@ -1,0 +1,226 @@
+{%- comment -%}
+  RueIV Newsletter Signup — "The Vibe List" dedicated newsletter section
+  with full-page styling, value props, and Shopify customer form.
+{%- endcomment -%}
+
+<style>
+  .rv-newsletter { padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px; }
+  .rv-newsletter__wrap {
+    max-width: 640px; margin: 0 auto; text-align: center;
+  }
+  .rv-newsletter__eyebrow {
+    font-size: 1.2rem; letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.6; margin-bottom: 0.5rem;
+  }
+  .rv-newsletter__title {
+    font-family: var(--font-heading-family); font-weight: var(--font-heading-weight);
+    font-size: clamp(2rem, 4vw, 3.6rem); margin: 0 0 1rem;
+  }
+  .rv-newsletter__desc { font-size: 1.2rem; line-height: 1.7; opacity: 0.8; margin-bottom: 2rem; }
+
+  .rv-newsletter__perks {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .rv-newsletter__perk {
+    flex: 1 1 140px; max-width: 180px; text-align: center;
+  }
+  .rv-newsletter__perk-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .rv-newsletter__perk-label { font-size: 1.2rem; font-weight: 500; }
+
+  .rv-newsletter__form {
+    display: flex; gap: 0.5rem; max-width: 480px; margin: 0 auto;
+  }
+  .rv-newsletter__form input[type="email"] {
+    flex: 1; padding: 0.9rem 1.2rem;
+    border: 1px solid rgba(0,0,0,0.15); border-radius: var(--card-corner-radius, 0);
+    font-size: 1.2rem; background: transparent;
+  }
+  .rv-newsletter__form button {
+    white-space: nowrap;
+  }
+  .rv-newsletter__terms {
+    font-size: 1.2rem; opacity: 0.5; margin-top: 1rem; line-height: 1.5;
+  }
+
+  .rv-newsletter__success {
+    display: none; padding: 1.5rem; border: 1px solid var(--color-foreground);
+    border-radius: var(--card-corner-radius, 0);
+    font-size: 1.3rem; margin-top: 1rem;
+  }
+
+  @media (max-width: 749px) {
+    .rv-newsletter__form { flex-direction: column; }
+    .rv-newsletter__form button { width: 100%; }
+  }
+</style>
+
+<section class="rv-newsletter color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    <div class="rv-newsletter__wrap">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="rv-newsletter__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h1 class="rv-newsletter__title">{{ section.settings.title }}</h1>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <div class="rv-newsletter__desc rte">{{ section.settings.description }}</div>
+      {%- endif -%}
+
+      {%- assign perks = section.blocks | where: 'type', 'perk' -%}
+      {%- if perks.size > 0 -%}
+        <div class="rv-newsletter__perks">
+          {%- for block in perks -%}
+            <div class="rv-newsletter__perk" {{ block.shopify_attributes }}>
+              {%- if block.settings.icon != blank -%}
+                <div class="rv-newsletter__perk-icon">{{ block.settings.icon }}</div>
+              {%- endif -%}
+              <div class="rv-newsletter__perk-label">{{ block.settings.label }}</div>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- form 'customer', id: 'rv-newsletter-form' -%}
+        {%- if form.errors -%}
+          <div class="form__message errors" role="alert">
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+        {%- if form.posted_successfully? -%}
+          <div class="rv-newsletter__success" style="display:block;">
+            {{ section.settings.success_message | default: "You're on The Vibe List! Welcome." }}
+          </div>
+        {%- else -%}
+          <input type="hidden" name="contact[tags]" value="newsletter,vibe-list">
+          <div class="rv-newsletter__form">
+            <input
+              type="email"
+              name="contact[email]"
+              placeholder="{{ section.settings.placeholder | default: 'Enter your email' }}"
+              required
+              autocomplete="email"
+              aria-label="Email address"
+            >
+            <button type="submit" class="btn btn--primary">
+              {{ section.settings.button_label | default: 'Join The Vibe List' }}
+            </button>
+          </div>
+          {%- if section.settings.terms != blank -%}
+            <p class="rv-newsletter__terms">{{ section.settings.terms }}</p>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV Newsletter Signup",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Stay in the Know"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "The Vibe List"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Exclusive access to new arrivals, designer collaborations, trade events, and curated style guides — delivered to your inbox.</p>"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email Placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Join The Vibe List"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success Message",
+      "default": "You're on The Vibe List! Welcome."
+    },
+    {
+      "type": "text",
+      "id": "terms",
+      "label": "Terms / Privacy note",
+      "default": "By signing up you agree to our Privacy Policy. Unsubscribe anytime."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "perk",
+      "name": "Perk",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji or text)",
+          "default": "✦"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Exclusive Previews"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV Newsletter Signup",
+      "blocks": [
+        { "type": "perk", "settings": { "icon": "✦", "label": "New Arrivals" } },
+        { "type": "perk", "settings": { "icon": "🎨", "label": "Design Guides" } },
+        { "type": "perk", "settings": { "icon": "🏷️", "label": "Trade Events" } },
+        { "type": "perk", "settings": { "icon": "💎", "label": "Members-Only Offers" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

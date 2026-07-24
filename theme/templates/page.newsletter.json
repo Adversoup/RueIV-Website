@@ -1,0 +1,126 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "section-page-hero",
+      "settings": {
+        "eyebrow": "Stay in the Know",
+        "title": "The Vibe List",
+        "intro": "<p>Exclusive access to new arrivals, designer collaborations, trade events, and curated style guides.</p>",
+        "overlay_opacity": 25,
+        "desktop_ratio": "21/9",
+        "mobile_ratio": "4/3",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "signup": {
+      "type": "section-newsletter-signup",
+      "blocks": {
+        "perk_1": {
+          "type": "perk",
+          "settings": {
+            "icon": "✦",
+            "label": "New Arrivals"
+          }
+        },
+        "perk_2": {
+          "type": "perk",
+          "settings": {
+            "icon": "🎨",
+            "label": "Design Guides"
+          }
+        },
+        "perk_3": {
+          "type": "perk",
+          "settings": {
+            "icon": "🏷️",
+            "label": "Trade Events"
+          }
+        },
+        "perk_4": {
+          "type": "perk",
+          "settings": {
+            "icon": "💎",
+            "label": "Members-Only Offers"
+          }
+        }
+      },
+      "block_order": [
+        "perk_1",
+        "perk_2",
+        "perk_3",
+        "perk_4"
+      ],
+      "settings": {
+        "eyebrow": "Join Us",
+        "title": "The Vibe List",
+        "description": "<p>Exclusive access to new arrivals, designer collaborations, trade events, and curated style guides — delivered to your inbox.</p>",
+        "placeholder": "Enter your email",
+        "button_label": "Join The Vibe List",
+        "success_message": "You're on The Vibe List! Welcome.",
+        "terms": "By signing up you agree to our Privacy Policy. Unsubscribe anytime.",
+        "padding_top": 60,
+        "padding_bottom": 40
+      }
+    },
+    "testimonials": {
+      "type": "section-testimonials",
+      "blocks": {
+        "t_1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The Vibe List emails are the highlight of my inbox — beautifully curated every time.",
+            "name": "Jessica R.",
+            "role": "Trade Client",
+            "stars": 5
+          }
+        },
+        "t_2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I found three of my favorite brands through The Vibe List recommendations.",
+            "name": "Mark T.",
+            "role": "Interior Designer",
+            "stars": 5
+          }
+        }
+      },
+      "block_order": [
+        "t_1",
+        "t_2"
+      ],
+      "settings": {
+        "eyebrow": "Subscribers Say",
+        "heading": "Why Join?",
+        "columns": 2,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Trending Now",
+        "heading_size": "h2",
+        "columns": 4,
+        "padding_top": 36,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "signup",
+    "testimonials",
+    "featured"
+  ]
+}

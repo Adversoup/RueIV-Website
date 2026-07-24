@@ -1,0 +1,244 @@
+/* ─────────────────────────────────────────────────
+   pdp-premium.css  —  RueIV PDP premium styling
+   Sprint 3: PDP Premiumization
+   ───────────────────────────────────────────────── */
+
+/* ── Brand Badge ── */
+.pdp-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.pdp-brand-badge__logo {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+.pdp-brand-badge__link {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.pdp-brand-badge__link:hover {
+  opacity: 0.7;
+}
+
+.pdp-brand-badge__link--text {
+  display: inline-flex;
+  align-items: center;
+}
+
+.pdp-brand-badge__name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-foreground, #222);
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+
+.pdp-brand-badge__tier {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent, #8B7D6B);
+  background: var(--color-accent-bg, rgba(139, 125, 107, 0.08));
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+/* ── Brand Story Block ── */
+.pdp-brand-story {
+  padding: 3rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pdp-brand-story__inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.pdp-brand-story__logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 1.5rem;
+}
+
+.pdp-brand-story__vendor {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-foreground-secondary, #666);
+  margin-bottom: 1rem;
+}
+
+.pdp-brand-story__text {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-foreground-secondary, #555);
+  margin-bottom: 1.5rem;
+}
+
+.pdp-brand-story__cta {
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── Hide embedded specs table inside product description ── */
+.product__block--description .product-specs { display: none; }
+
+/* ── Override Resolver: Color chip ── */
+.pdp-color-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.pdp-color-chip__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.pdp-color-chip__label {
+  font-size: 14px;
+  color: var(--color-foreground, #333);
+}
+
+/* ── Color variant swatches row ── */
+.pdp-color-variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.pdp-color-variants__swatch {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+.pdp-color-variants__swatch:hover,
+.pdp-color-variants__swatch.is-active {
+  border-color: rgb(var(--color-foreground));
+}
+.pdp-color-variants__swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ── Related Products Section ── */
+.section--related-products .section__heading {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section--related-products .section__footer {
+  margin-top: 2rem;
+}
+
+/* ── PDP Typography Refinements ── */
+.product__title .h1 {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* Vendor subtitle under title */
+.product__vendor-link {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-foreground-secondary, #666);
+  text-decoration: none;
+}
+
+.product__vendor-link:hover {
+  color: var(--color-foreground, #000);
+}
+
+/* ── Accordion Refinements ── */
+.accordion-details__summary .h4 {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Specs Table Polish ── */
+.specs-table__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.specs-table__row {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.specs-table__row:last-child {
+  border-bottom: none;
+}
+
+.specs-table__label {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--color-foreground-secondary, #666);
+  padding: 0.625rem 0;
+  width: 40%;
+  vertical-align: top;
+  text-align: left;
+}
+
+.specs-table__value {
+  font-size: 14px;
+  padding: 0.625rem 0;
+  vertical-align: top;
+}
+
+/* ── JSON-LD (hidden, just ensures no CLS) ── */
+.pdp-jsonld {
+  display: none;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 767px) {
+  .pdp-brand-story__inner {
+    padding: 0 1rem;
+  }
+
+  .pdp-brand-story__text {
+    font-size: 14px;
+  }
+
+  .pdp-brand-badge__logo {
+    height: 22px;
+  }
+
+  .section--related-products .f-grid--4-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

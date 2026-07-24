@@ -1,0 +1,40 @@
+{%- comment -%}
+  snippets/pdp-brand-badge.liquid
+  ────────────────────────────────
+  Renders a premium brand badge above the product title on PDP.
+  Shows vendor name with optional logo from brand.logo metafield.
+  Falls back to a styled text badge if no logo is available.
+
+  Usage:
+    {% render 'pdp-brand-badge', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign _vendor = product.vendor
+  assign _logo = product.metafields.brand.logo.value
+  assign _tier = product.metafields.brand.tier.value | default: ''
+-%}
+
+{%- if _vendor != blank -%}
+<div class="pdp-brand-badge">
+  {%- if _logo != blank -%}
+    <a href="{{ collections.all.url }}?q={{ _vendor | url_encode }}&type=product" class="pdp-brand-badge__link" title="View all {{ _vendor }} products">
+      <img
+        src="{{ _logo | image_url: width: 200 }}"
+        alt="{{ _vendor | escape }}"
+        class="pdp-brand-badge__logo"
+        width="120"
+        height="auto"
+        loading="eager"
+      >
+    </a>
+  {%- else -%}
+    <a href="{{ collections.all.url }}?q={{ _vendor | url_encode }}&type=product" class="pdp-brand-badge__link pdp-brand-badge__link--text" title="View all {{ _vendor }} products">
+      <span class="pdp-brand-badge__name">{{ _vendor }}</span>
+    </a>
+  {%- endif -%}
+  {%- if _tier == 'flagship' -%}
+    <span class="pdp-brand-badge__tier">Flagship Collection</span>
+  {%- endif -%}
+</div>
+{%- endif -%}

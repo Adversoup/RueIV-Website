@@ -1,0 +1,69 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "menu_company": {
+          "type": "menu",
+          "settings": {
+            "block_width": 20,
+            "heading": "Company",
+            "menu": "footer-company"
+          }
+        },
+        "menu_resources": {
+          "type": "menu",
+          "settings": {
+            "block_width": 20,
+            "heading": "Resources",
+            "menu": "footer-resources"
+          }
+        },
+        "newsletter_3qCrWc": {
+          "type": "newsletter",
+          "settings": {
+            "block_width": 41,
+            "heading": "The Vibe List",
+            "heading_size": "h2",
+            "newsletter_description": "<p>Subscribe for exclusive access to new collections, designer spotlights, and showroom events.</p>",
+            "newsletter_term": "<p>By subscribing you agree to the <a href=\"/policies/terms-of-service\" target=\"_blank\" title=\"Terms of Service\">Terms of Use</a> & <a href=\"/policies/privacy-policy\" target=\"_blank\" title=\"Privacy Policy\">Privacy Policy.</a></p>",
+            "newsletter_text_alignment": "left",
+            "form_width": 465,
+            "order_first": true
+          }
+        }
+      },
+      "block_order": [
+        "menu_company",
+        "menu_resources",
+        "newsletter_3qCrWc"
+      ],
+      "custom_css": [],
+      "settings": {
+        "color_scheme": "scheme-6",
+        "enable_follow_on_shop": true,
+        "show_social": true,
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "payment_enable": true,
+        "footer_bottom_menu": "footer",
+        "show_section_divider": false,
+        "divider_width": "full"
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

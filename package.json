@@ -1,0 +1,33 @@
+{
+  "name": "rueiv-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "image:normalize": "node scripts/image_normalize.js",
+    "image:preview": "node scripts/image_normalize.js --limit 5",
+    "image:batch": "node scripts/image_normalize.js --upload",
+    "image:dry-run": "node scripts/image_normalize.js --dry-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adversoup/RueIV-platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Adversoup/RueIV-platform/issues"
+  },
+  "homepage": "https://github.com/Adversoup/RueIV-platform#readme",
+  "dependencies": {
+    "csv-parse": "^6.1.0",
+    "dotenv": "^17.3.1",
+    "sharp": "^0.34.5"
+  }
+}

@@ -1,0 +1,95 @@
+{%- comment -%}
+  RueIV — Full-width auto-playing brand video
+{%- endcomment -%}
+
+<style>
+  .rv-video {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+  }
+  .rv-video video {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+  .rv-video a {
+    display: block;
+    line-height: 0;
+  }
+</style>
+
+<section class="rv-video{% if section.settings.constrain_height %} rv-video--constrained{% endif %}">
+  <a href="{{ section.settings.link | default: '/collections/arte' }}">
+  {%- if section.settings.video_url != blank -%}
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      {%- if section.settings.poster_image != blank %}
+        poster="{{ section.settings.poster_image | image_url: width: 1920 }}"
+      {%- endif %}
+    >
+      <source src="{{ section.settings.video_url }}" type="video/mp4">
+    </video>
+  {%- elsif section.settings.video_asset != blank -%}
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    >
+      <source src="{{ section.settings.video_asset | asset_url }}" type="video/mp4">
+    </video>
+  {%- endif -%}
+  </a>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Brand Video",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL",
+      "info": "Full CDN URL to an MP4 file (e.g. from Shopify Files)"
+    },
+    {
+      "type": "text",
+      "id": "video_asset",
+      "label": "Video Asset Filename",
+      "info": "Fallback: filename from theme assets (e.g. brand-video.mp4)"
+    },
+    {
+      "type": "image_picker",
+      "id": "poster_image",
+      "label": "Poster Image",
+      "info": "Shown while the video loads"
+    },
+    {
+      "type": "checkbox",
+      "id": "constrain_height",
+      "label": "Constrain to 80vh max",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Video Link",
+      "info": "Where the video links to when clicked"
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Brand Video"
+    }
+  ]
+}
+{% endschema %}

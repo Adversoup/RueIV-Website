@@ -1,0 +1,116 @@
+/* ====================================================================
+   RueIV Custom Fonts — RH Sans + RH C
+   ====================================================================
+   Loaded AFTER theme.css so CSS variable overrides take effect.
+   ==================================================================== */
+
+/* ── @font-face declarations ── */
+
+@font-face {
+  font-family: 'RH Sans';
+  src: url('RHSans-UltraThin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RH Sans';
+  src: url('RHSans-Thin.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RH Sans';
+  src: url('RHSans-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RH Sans';
+  src: url('RHSans-Roman.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RH C';
+  src: url('RHC-Thin.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Override theme CSS custom properties ── */
+
+:root {
+  /* Body: RH Sans (Roman = 400 as base) */
+  --font-body-family: 'RH Sans', sans-serif;
+  --font-body-weight: 400;
+  --font-body-weight-bolder: 400;
+  --font-body-weight-bold: 400;
+  --font-body-style: normal;
+
+  /* Headings: RH C (Thin = 200) */
+  --font-heading-family: 'RH C', serif;
+  --font-heading-weight: 200;
+  --font-heading-style: normal;
+  --font-heading-letter-spacing: 0.06em;
+  --font-heading-transform: uppercase;
+
+  /* Navigation: RH Sans Light with uppercase + tracking */
+  --font-navigation-family: 'RH Sans', sans-serif;
+  --font-navigation-weight: 300;
+  --navigation-transform: uppercase;
+
+  /* Subheading: RH Sans Light */
+  --font-subheading-family: 'RH Sans', sans-serif;
+  --font-subheading-weight: 300;
+  --font-subheading-transform: uppercase;
+  --font-subheading-letter-spacing: 0.1em;
+
+  /* Buttons: RH Sans */
+  --font-button-family: 'RH Sans', sans-serif;
+  --font-button-weight: 300;
+
+  /* Product card titles: RH Sans */
+  --font-pcard-title-family: 'RH Sans', sans-serif;
+  --font-pcard-title-weight: 300;
+}
+
+/* ── Navigation refinement ── */
+
+.font-navigation,
+.header__menu a,
+.menu-drawer__item-link {
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+/* ── Hero headings: larger tracking ── */
+
+.section-page-hero__heading,
+.rv-hero__heading,
+.rv-vibe-hero__heading,
+.rv-brand-hero__heading,
+.slideshow__subheading,
+.banner__heading,
+h1.h0,
+h1.h1 {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Ensure body inherits correctly ── */
+
+body {
+  font-family: 'RH Sans', sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -1,0 +1,102 @@
+{%- comment -%}
+  snippets/pdp-override-resolver.liquid
+  ──────────────────────────────────────
+  Resolves display values with override priority:
+    override.X  →  taxonomy.X  →  specs.X  →  fallback
+
+  Sets variables that other snippets/blocks can reference.
+  Must be rendered early in the product info column.
+
+  Usage:
+    {% render 'pdp-override-resolver', product: product %}
+    Then use: pdp_title, pdp_color, pdp_category, pdp_end_use
+
+  Note: Liquid `render` creates an isolated scope, so this snippet
+  outputs the resolved values as data attributes on a hidden div.
+  Product blocks read these via product metafields directly.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Title resolution
+  endcomment
+  assign _title = product.metafields.override.title.value
+  if _title == blank
+    assign _title = product.title
+  endif
+
+  comment
+    Color family resolution
+  endcomment
+  assign _color = product.metafields.override.color_family.value
+  if _color == blank
+    assign _color = product.metafields.taxonomy.color_family.value
+  endif
+  if _color == blank
+    assign _color = product.metafields.specs.color.value
+  endif
+
+  comment
+    Category resolution
+  endcomment
+  assign _category = product.metafields.override.category.value
+  if _category == blank
+    assign _category = product.type
+  endif
+
+  comment
+    End use resolution
+  endcomment
+  assign _end_use = product.metafields.override.end_use.value
+  if _end_use == blank
+    assign _end_use = product.metafields.taxonomy.end_use.value
+  endif
+-%}
+
+{%- comment -%} Hidden data element for JS access if needed {%- endcomment -%}
+<div class="pdp-resolved-data" style="display:none"
+  data-title="{{ _title | escape }}"
+  data-color="{{ _color | escape }}"
+  data-category="{{ _category | escape }}"
+  data-end-use="{{ _end_use | escape }}"
+  aria-hidden="true">
+</div>
+
+{%- comment -%}
+  Render the color chip inline using product image as indicator
+{%- endcomment -%}
+{%- if _color != blank -%}
+  <div class="pdp-color-chip">
+    {%- if product.featured_image != blank -%}
+      <img class="pdp-color-chip__dot" src="{{ product.featured_image | image_url: width: 64 }}" alt="{{ _color | escape }}" width="32" height="32" loading="lazy">
+    {%- endif -%}
+    <span class="pdp-color-chip__label">{{ _color }}</span>
+  </div>
+{%- endif -%}
+
+{%- comment -%}
+  Show other color variants if the product has multiple variants with images
+{%- endcomment -%}
+{%- if product.variants.size > 1 -%}
+  {%- assign _has_variant_images = false -%}
+  {%- for variant in product.variants -%}
+    {%- if variant.image != blank -%}
+      {%- assign _has_variant_images = true -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if _has_variant_images -%}
+    <div class="pdp-color-variants">
+      {%- for variant in product.variants -%}
+        {%- if variant.image != blank -%}
+          <a href="{{ product.url }}?variant={{ variant.id }}"
+             class="pdp-color-variants__swatch{% if variant.id == product.selected_or_first_available_variant.id %} is-active{% endif %}"
+             title="{{ variant.title | escape }}">
+            <img src="{{ variant.image | image_url: width: 96 }}" alt="{{ variant.title | escape }}" width="40" height="40" loading="lazy">
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+{%- endif -%}

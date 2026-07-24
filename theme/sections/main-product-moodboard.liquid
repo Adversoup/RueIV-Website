@@ -1,0 +1,181 @@
+{%- comment -%}
+  Main Product – Moodboard template
+  Lookbook-style hierarchical image grid + variant picker + ATC
+{%- endcomment -%}
+
+{{ 'moodboard-pdp.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'MoodboardForm-' | append: section.id
+-%}
+
+<div class="moodboard section section--padding" style="--section-padding-top: {{ section.settings.padding_top }}px; --section-padding-bottom: {{ section.settings.padding_bottom }}px;">
+
+  {%- comment -%}── Header ──{%- endcomment -%}
+  <div class="moodboard__header">
+    <h1 class="moodboard__title">{{ product.title }}</h1>
+    {%- if product.description != blank -%}
+      <div class="moodboard__description rte">{{ product.description }}</div>
+    {%- endif -%}
+    {%- if product.tags.size > 0 -%}
+      <div class="moodboard__tags">
+        {%- for tag in product.tags -%}
+          {%- unless tag contains '_' or tag contains ':' -%}
+            <span class="moodboard__tag">{{ tag }}</span>
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%}── Lookbook Grid ──{%- endcomment -%}
+  {%- if product.media.size > 0 -%}
+    {%- assign img_count = product.media.size -%}
+    {%- if img_count > 10 -%}{%- assign img_count = 10 -%}{%- endif -%}
+    <div class="moodboard__grid" data-count="{{ img_count }}">
+      {%- for media in product.media limit: 10 -%}
+        <div class="moodboard__cell">
+          {%- if media.media_type == 'image' -%}
+            {{ media | image_url: width: 1200 | image_tag:
+              loading: 'lazy',
+              widths: '400,600,800,1000,1200',
+              sizes: '(max-width: 749px) 50vw, 33vw',
+              alt: media.alt | default: product.title
+            }}
+          {%- elsif media.media_type == 'video' or media.media_type == 'external_video' -%}
+            {{ media | media_tag: autoplay: true, loop: true, muted: true, controls: false }}
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%}── Purchase Section ──{%- endcomment -%}
+  <div class="moodboard__purchase">
+    {%- comment -%} Variant Picker {%- endcomment -%}
+    {%- unless product.has_only_default_variant -%}
+      <div class="moodboard__variants">
+        {%- for option in product.options_with_values -%}
+          <div class="moodboard__variant-group" data-option-index="{{ forloop.index0 }}">
+            <span class="moodboard__variant-label">{{ option.name }}</span>
+            <div class="moodboard__variant-options">
+              {%- for value in option.values -%}
+                <button
+                  type="button"
+                  class="moodboard__variant-btn{% if option.selected_value == value %} is-active{% endif %}"
+                  data-option-value="{{ value | escape }}"
+                  data-option-index="{{ forloop.parentloop.index0 }}"
+                >
+                  {{ value }}
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endunless -%}
+
+    {%- comment -%} Add to Cart Form {%- endcomment -%}
+    {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+      <input type="hidden" name="id" value="{{ current_variant.id }}" data-moodboard-variant-id>
+      <input type="hidden" name="quantity" value="1">
+      <button
+        type="submit"
+        name="add"
+        class="moodboard__atc"
+        {% if current_variant.available == false %}disabled{% endif %}
+      >
+        {%- if current_variant.available -%}
+          Add to Cart
+        {%- else -%}
+          Sold Out
+        {%- endif -%}
+      </button>
+    {%- endform -%}
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var variants = {{ product.variants | json }};
+  var options = [];
+  {% for option in product.options_with_values %}
+    options.push("{{ option.selected_value | escape }}");
+  {% endfor %}
+
+  var btns = document.querySelectorAll('.moodboard__variant-btn');
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var idx = parseInt(this.dataset.optionIndex);
+      options[idx] = this.dataset.optionValue;
+
+      // Update active states for this group
+      this.closest('.moodboard__variant-options')
+        .querySelectorAll('.moodboard__variant-btn')
+        .forEach(function (b) { b.classList.remove('is-active'); });
+      this.classList.add('is-active');
+
+      // Find matching variant
+      var match = variants.find(function (v) {
+        return v.options.every(function (o, i) { return o === options[i]; });
+      });
+
+      if (match) {
+        document.querySelector('[data-moodboard-variant-id]').value = match.id;
+        var priceEl = document.querySelector('[data-moodboard-price]');
+        var atcBtn = document.querySelector('.moodboard__atc');
+        var priceHtml = '';
+        if (match.compare_at_price && match.compare_at_price > match.price) {
+          priceHtml += '<s>' + formatMoney(match.compare_at_price) + '</s> ';
+        }
+        priceHtml += formatMoney(match.price);
+        priceEl.innerHTML = priceHtml;
+        atcBtn.disabled = !match.available;
+        atcBtn.textContent = match.available ? 'Add to Cart' : 'Sold Out';
+
+        // Update URL
+        var url = new URL(window.location);
+        url.searchParams.set('variant', match.id);
+        window.history.replaceState({}, '', url);
+      }
+    });
+  });
+
+  function formatMoney(cents) {
+    return (cents / 100).toLocaleString('en-US', {
+      style: 'currency',
+      currency: {{ shop.currency | json }}
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Moodboard Product",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,110 @@
+{
+  "version": "2.0.0",
+  "description": "Smart filter taxonomy — filters adapt per product category",
+
+  "filter_groups": {
+    "material": {
+      "label": "Material",
+      "metafield": "taxonomy.material_type",
+      "tag_prefix": "material:",
+      "values_by_category": {
+        "Fabric":    ["Linen", "Cotton", "Silk", "Velvet", "Wool", "Performance", "Leather"],
+        "Wallpaper": ["Paper", "Vinyl", "Natural", "Grasscloth", "Textile"],
+        "Furniture": ["Wood", "Metal", "Upholstered", "Leather", "Stone", "Glass"],
+        "Lighting":  ["Metal", "Glass", "Ceramic", "Natural", "Fabric"],
+        "Rug":       ["Wool", "Natural Fiber", "Flatweave", "Hand Knotted", "Synthetic"],
+        "Accessory": ["Stone", "Metal", "Glass", "Mixed Media", "Ceramic", "Wood"]
+      },
+      "applies_to": ["Fabric", "Wallpaper", "Furniture", "Lighting", "Rug", "Accessory"]
+    },
+    "color_family": {
+      "label": "Color",
+      "metafield": "taxonomy.color_family_group",
+      "tag_prefix": "color-family:",
+      "values": ["Neutrals", "Warm", "Cool", "Dark", "Patterned"],
+      "note": "Consolidated from 24 granular colors into 5 browsing families",
+      "mapping": {
+        "Neutrals":  ["White", "Ivory", "Cream", "Beige", "Taupe", "Grey", "Natural"],
+        "Warm":      ["Camel", "Gold", "Terracotta", "Rust", "Orange", "Blush", "Red"],
+        "Cool":      ["Blue", "Navy", "Teal", "Green", "Sage", "Indigo", "Forest"],
+        "Dark":      ["Charcoal", "Black", "Burgundy"],
+        "Patterned": ["Multi"]
+      },
+      "applies_to": ["Fabric", "Wallpaper", "Rug"]
+    },
+    "design": {
+      "label": "Pattern / Design",
+      "metafield": "taxonomy.design",
+      "tag_prefix": "design:",
+      "values": [
+        "Florals", "Geometric", "Textures", "Scenic",
+        "Animal", "Abstract", "Solid", "Stripe"
+      ],
+      "applies_to": ["Fabric", "Wallpaper"]
+    },
+    "room": {
+      "label": "Room",
+      "metafield": "taxonomy.room",
+      "tag_prefix": "room:",
+      "values": ["Living Room", "Dining", "Bedroom", "Office"],
+      "applies_to": ["Furniture", "Rug", "Accessory"]
+    },
+    "furniture_type": {
+      "label": "Type",
+      "metafield": "taxonomy.subcategory",
+      "tag_prefix": "subcat:",
+      "values_by_category": {
+        "Furniture": ["Sofa", "Lounge Chair", "Dining Chair", "Table", "Casegood", "Bench", "Ottoman"],
+        "Lighting":  ["Table Lamp", "Floor Lamp", "Wall Light", "Ceiling Light", "Pendant", "Chandelier"],
+        "Accessory": ["Object", "Sculpture", "Frame", "Tray", "Bowl", "Decorative Piece"]
+      },
+      "applies_to": ["Furniture", "Lighting", "Accessory"]
+    },
+    "style": {
+      "label": "Style",
+      "metafield": "taxonomy.style",
+      "tag_prefix": "style:",
+      "values": ["Modern", "Traditional", "Sculptural", "Architectural", "Transitional", "Organic"],
+      "applies_to": ["Lighting", "Furniture"]
+    },
+    "size": {
+      "label": "Size",
+      "metafield": "taxonomy.size_group",
+      "tag_prefix": "size:",
+      "values": ["Small", "Medium", "Large", "Oversize"],
+      "applies_to": ["Rug"]
+    },
+    "lead_time": {
+      "label": "Lead Time",
+      "metafield": "taxonomy.lead_time",
+      "tag_prefix": "lead-time:",
+      "values": ["Quick Ship", "Standard"],
+      "applies_to": ["Furniture", "Lighting", "Rug", "Accessory"]
+    },
+    "designer": {
+      "label": "Designer",
+      "source": "vendor",
+      "display": "searchable_dropdown",
+      "sort": "alphabetical",
+      "searchable_threshold": 25,
+      "note": "Always last filter. Never in main navigation.",
+      "applies_to": ["Fabric", "Wallpaper", "Furniture", "Lighting", "Rug", "Accessory"]
+    }
+  },
+
+  "category_filter_order": {
+    "Fabric":    ["material", "design", "color_family", "designer"],
+    "Wallpaper": ["material", "design", "color_family", "designer"],
+    "Furniture": ["room", "furniture_type", "material", "style", "lead_time", "designer"],
+    "Lighting":  ["furniture_type", "style", "lead_time", "designer"],
+    "Rug":       ["size", "material", "color_family", "designer"],
+    "Accessory": ["furniture_type", "material", "designer"]
+  },
+
+  "notes": {
+    "designer_filter": "Rendered as collapsed, alphabetical, searchable dropdown. Sourced from product.vendor.",
+    "color_consolidation": "24 granular colors consolidated into 5 families for browsing. Granular values kept in taxonomy.color_family for PDP display.",
+    "smart_filtering": "Collection pages detect product_type from collection title or first product and render only applicable filters.",
+    "quick_ship": "Cross-cutting concern. Tag-based smart collection + filter value + mega menu links."
+  }
+}

@@ -1,0 +1,81 @@
+<section class="rueiv-section rueiv-newsletter">
+  {%- comment -%} Background image {%- endcomment -%}
+  {%- if section.settings.background_image != blank -%}
+    <div class="rueiv-newsletter__bg">
+      {{ section.settings.background_image | image_url: width: 2400 | image_tag:
+         loading: 'lazy', class: 'rueiv-newsletter__bg-img', alt: section.settings.heading }}
+    </div>
+  {%- elsif section.settings.image == blank -%}
+    <div class="rueiv-newsletter__bg">
+      <img src="{{ 'newsletter-bg.png' | asset_url }}" alt="{{ section.settings.heading }}" class="rueiv-newsletter__bg-img" loading="lazy">
+    </div>
+  {%- endif -%}
+
+  <div class="rueiv-newsletter__layout{% unless section.settings.image %} rueiv-newsletter__layout--centered{% endunless %}">
+    {%- if section.settings.image != blank -%}
+      <div class="rueiv-newsletter__image-col">
+        {{ section.settings.image | image_url: width: 1000 | image_tag:
+           loading: 'lazy', alt: section.settings.heading }}
+      </div>
+    {%- endif -%}
+    <div class="rueiv-newsletter__content">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="rueiv-section-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <div class="rueiv-newsletter__desc">
+          {{ section.settings.description }}
+        </div>
+      {%- endif -%}
+
+      {%- form 'customer', id: 'rueiv-newsletter-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="rueiv-newsletter__form">
+          <input
+            type="email"
+            name="contact[email]"
+            class="rueiv-newsletter__input"
+            placeholder="{{ section.settings.placeholder | default: 'Your email address' }}"
+            required
+            autocomplete="email"
+            aria-label="Email"
+          >
+          <button type="submit" class="rueiv-btn rueiv-btn--primary">
+            {{ section.settings.button_label | default: 'Subscribe' }}
+          </button>
+        </div>
+
+        {%- if form.posted_successfully? -%}
+          <p class="rueiv-newsletter__success">{{ section.settings.success_message | default: 'Thank you for subscribing.' }}</p>
+        {%- endif -%}
+        {%- if form.errors -%}
+          <p class="rueiv-newsletter__error">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</p>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV — Newsletter",
+  "tag": "div",
+  "settings": [
+    { "type": "image_picker", "id": "background_image", "label": "Background Image" },
+    { "type": "image_picker", "id": "image", "label": "Lifestyle Image (optional)" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The Vibe List" },
+    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Inside the Vibe. New launches. Designer moments. Events worth attending.</p>" },
+    { "type": "text", "id": "placeholder", "label": "Input Placeholder", "default": "Your email address" },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "Subscribe" },
+    { "type": "text", "id": "success_message", "label": "Success Message", "default": "Thank you for subscribing." }
+  ],
+  "presets": [
+    {
+      "name": "RueIV — Newsletter",
+      "settings": {
+        "heading": "The Vibe List"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,241 @@
+{%- comment -%}
+  ============================================================================
+  RueIV Mega v2 — RH-style 4-column mega menu for "Shop"
+  ============================================================================
+  Layout:
+  ┌──────────────┬──────────────┬──────────────┬──────────────┐
+  │  [TILE IMG]  │  [TILE IMG]  │  [TILE IMG]  │  [TILE IMG]  │
+  │ SHOP BY      │ SHOP BY      │ SHOP BY      │ SHOP BY      │
+  │ CATEGORY     │ ROOM         │ BRANDS       │ COLOR        │
+  ├──────────────┼──────────────┼──────────────┼──────────────┤
+  │ Fabric       │ Living Room  │ Arte         │ White        │
+  │ Wallpaper    │ Bedroom      │ Fabricut     │ Ivory        │
+  │ Furniture    │ Dining Room  │ Verellen     │ Grey         │
+  │ …            │ …            │ …            │ …            │
+  └──────────────┴──────────────┴──────────────┴──────────────┘
+
+  Data: menu_category, menu_room, menu_brands, menu_color
+  Images: tile settings OR auto-fallback from first collection image
+{%- endcomment -%}
+
+{%- liquid
+  assign menu_category = block.settings.menu_category | default: 'shop-by-category'
+  assign menu_category = linklists[menu_category]
+
+  assign menu_room = block.settings.menu_room | default: 'shop-by-room'
+  assign menu_room = linklists[menu_room]
+
+  assign menu_brands = block.settings.menu_brands | default: 'shop-by-brand'
+  assign menu_brands = linklists[menu_brands]
+
+  assign menu_color = block.settings.menu_color | default: 'shop-by-color'
+  assign menu_color = linklists[menu_color]
+
+  assign tile_img_products = block.settings.tile_image_products
+  assign tile_img_rooms    = block.settings.tile_image_rooms
+  assign tile_img_brands   = block.settings.tile_image_brands
+  assign tile_img_color    = block.settings.tile_image_color
+
+  assign tile_link_products = block.settings.tile_link_products
+  assign tile_link_rooms    = block.settings.tile_link_rooms
+  assign tile_link_brands   = block.settings.tile_link_brands
+  assign tile_link_color    = block.settings.tile_link_color
+
+  assign viewall_products = block.settings.viewall_products
+  assign viewall_brands   = block.settings.viewall_brands
+-%}
+
+{%- comment -%} ── Auto-fallback: pull collection image from first link in each menu ── {%- endcomment -%}
+{%- liquid
+  if tile_img_products == blank and menu_category != blank
+    for _link in menu_category.links
+      assign _parts = _link.url | split: '/collections/'
+      if _parts.size > 1
+        assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+        assign _col = collections[_handle]
+        if _col.image != blank
+          assign tile_img_products = _col.image
+          break
+        elsif _col.products.first.featured_image != blank
+          assign tile_img_products = _col.products.first.featured_image
+          break
+        endif
+      endif
+    endfor
+  endif
+
+  if tile_img_rooms == blank and menu_room != blank
+    for _link in menu_room.links
+      assign _parts = _link.url | split: '/collections/'
+      if _parts.size > 1
+        assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+        assign _col = collections[_handle]
+        if _col.image != blank
+          assign tile_img_rooms = _col.image
+          break
+        elsif _col.products.first.featured_image != blank
+          assign tile_img_rooms = _col.products.first.featured_image
+          break
+        endif
+      endif
+    endfor
+  endif
+
+  if tile_img_brands == blank and menu_brands != blank
+    for _link in menu_brands.links
+      assign _parts = _link.url | split: '/collections/'
+      if _parts.size > 1
+        assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+        assign _col = collections[_handle]
+        if _col.image != blank
+          assign tile_img_brands = _col.image
+          break
+        elsif _col.products.first.featured_image != blank
+          assign tile_img_brands = _col.products.first.featured_image
+          break
+        endif
+      endif
+    endfor
+  endif
+
+  if tile_img_color == blank and menu_color != blank
+    for _link in menu_color.links
+      assign _parts = _link.url | split: '/collections/'
+      if _parts.size > 1
+        assign _handle = _parts[1] | split: '/' | first | split: '?' | first
+        assign _col = collections[_handle]
+        if _col.image != blank
+          assign tile_img_color = _col.image
+          break
+        elsif _col.products.first.featured_image != blank
+          assign tile_img_color = _col.products.first.featured_image
+          break
+        endif
+      endif
+    endfor
+  endif
+-%}
+
+<link rel="stylesheet" href="{{ 'rueiv-mega-v2.css' | asset_url }}" media="print" fetchpriority="low" onload="this.media='all'">
+
+<details
+  id="RueivMegaV2-{{ block.id }}"
+  is="details-mega"
+  trigger="{{ section.settings.menu_trigger }}"
+  level="top"
+  data-rv2-mega
+  {{ block.shopify_attributes }}
+>
+  <summary data-link="{{ link.url }}" class="z-2 font-navigation">
+    <span class="menu__item flex items-center relative">
+      <span class="reversed-link flex items-center">
+        {{- link.title | escape }}
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9.75 4.5L6 8.25L2.25 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </span>
+  </summary>
+
+  <div class="mega-menu v-scrollable">
+    <div class="mega-menu__container">
+      <div class="page-width mega-menu__wrapper">
+        <div class="rv2-grid" data-rv2-grid>
+
+          {%- comment -%} ── COLUMN 1: Shop by Category ── {%- endcomment -%}
+          <div class="rv2-col mega-menu__item">
+            <div class="rv2-tile">
+              {%- if tile_link_products != blank -%}<a href="{{ tile_link_products }}" class="rv2-tile__link">{%- endif -%}
+              {%- if tile_img_products != blank -%}
+                <div class="rv2-tile__img-wrap">
+                  {{ tile_img_products | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'rv2-tile__img', alt: 'Shop by Category' }}
+                </div>
+              {%- endif -%}
+              <span class="rv2-tile__title">Shop by Category</span>
+              {%- if tile_link_products != blank -%}</a>{%- endif -%}
+            </div>
+            {%- if menu_category != blank and menu_category.links.size > 0 -%}
+              <ul class="rv2-links" role="list">
+                {%- for cat_link in menu_category.links -%}
+                  <li><a href="{{ cat_link.url }}" class="rv2-link reversed-link">{{ cat_link.title | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+              {%- if viewall_products != blank -%}
+                <a href="{{ viewall_products }}" class="rv2-viewall reversed-link">View all products</a>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} ── COLUMN 2: Shop By Room ── {%- endcomment -%}
+          <div class="rv2-col mega-menu__item">
+            <div class="rv2-tile">
+              {%- if tile_link_rooms != blank -%}<a href="{{ tile_link_rooms }}" class="rv2-tile__link">{%- endif -%}
+              {%- if tile_img_rooms != blank -%}
+                <div class="rv2-tile__img-wrap">
+                  {{ tile_img_rooms | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'rv2-tile__img', alt: 'Shop By Room' }}
+                </div>
+              {%- endif -%}
+              <span class="rv2-tile__title">Shop By Room</span>
+              {%- if tile_link_rooms != blank -%}</a>{%- endif -%}
+            </div>
+            {%- if menu_room != blank and menu_room.links.size > 0 -%}
+              <ul class="rv2-links" role="list">
+                {%- for room_link in menu_room.links -%}
+                  <li><a href="{{ room_link.url }}" class="rv2-link reversed-link">{{ room_link.title | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} ── COLUMN 3: Shop by Brands ── {%- endcomment -%}
+          <div class="rv2-col mega-menu__item">
+            <div class="rv2-tile">
+              {%- if tile_link_brands != blank -%}<a href="{{ tile_link_brands }}" class="rv2-tile__link">{%- endif -%}
+              {%- if tile_img_brands != blank -%}
+                <div class="rv2-tile__img-wrap">
+                  {{ tile_img_brands | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'rv2-tile__img', alt: 'Shop by Brands' }}
+                </div>
+              {%- endif -%}
+              <span class="rv2-tile__title">Shop by Brands</span>
+              {%- if tile_link_brands != blank -%}</a>{%- endif -%}
+            </div>
+            {%- if menu_brands != blank and menu_brands.links.size > 0 -%}
+              <ul class="rv2-links" role="list">
+                {%- for brand_link in menu_brands.links -%}
+                  <li><a href="{{ brand_link.url }}" class="rv2-link reversed-link">{{ brand_link.title | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+              {%- if viewall_brands != blank -%}
+                <a href="{{ viewall_brands }}" class="rv2-viewall reversed-link">View all brands</a>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} ── COLUMN 5: Shop By Color ── {%- endcomment -%}
+          <div class="rv2-col mega-menu__item">
+            <div class="rv2-tile">
+              {%- if tile_link_color != blank -%}<a href="{{ tile_link_color }}" class="rv2-tile__link">{%- endif -%}
+              {%- if tile_img_color != blank -%}
+                <div class="rv2-tile__img-wrap">
+                  {{ tile_img_color | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'rv2-tile__img', alt: 'Shop By Color' }}
+                </div>
+              {%- endif -%}
+              <span class="rv2-tile__title">Shop By Color</span>
+              {%- if tile_link_color != blank -%}</a>{%- endif -%}
+            </div>
+            {%- if menu_color != blank and menu_color.links.size > 0 -%}
+              <ul class="rv2-links rv2-links--color" role="list">
+                {%- for color_link in menu_color.links -%}
+                  <li><a href="{{ color_link.url }}" class="rv2-link reversed-link">{{ color_link.title | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+
+        </div><!-- .rv2-grid -->
+      </div>
+    </div>
+  </div>
+</details>
+
+<script src="{{ 'rueiv-mega-v2.js' | asset_url }}" defer></script>

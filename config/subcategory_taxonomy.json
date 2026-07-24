@@ -1,0 +1,34 @@
+{
+  "version": "1.0.0",
+  "furniture": [
+    { "name": "Bed", "slug": "bed", "keywords": ["bed", "king bed", "queen bed"] },
+    { "name": "Sofa", "slug": "sofa", "keywords": ["sofa", "couch", "settee"] },
+    { "name": "Chair", "slug": "chair", "keywords": ["chair", "armchair", "lounge chair", "dining chair", "armless chair", "club chair"] },
+    { "name": "Ottoman", "slug": "ottoman", "keywords": ["ottoman", "pouf", "footstool"] },
+    { "name": "Banquette", "slug": "banquette", "keywords": ["banquette", "bench", "settee"] },
+    { "name": "Table", "slug": "table", "keywords": ["table", "coffee table", "side table", "console", "desk", "dining table", "cocktail table"] },
+    { "name": "Storage", "slug": "storage", "keywords": ["cabinet", "bookcase", "shelving", "dresser", "armoire", "etagere"] },
+    { "name": "Daybed", "slug": "daybed", "keywords": ["daybed", "day bed", "chaise"] }
+  ],
+  "lighting": [
+    { "name": "Table Lamp", "slug": "table-lamp", "keywords": ["table lamp", "lamp", "desk lamp"] },
+    { "name": "Wall Light", "slug": "wall-light", "keywords": ["wall light", "sconce", "wall lamp", "wall sconce"] },
+    { "name": "Ceiling Light", "slug": "ceiling-light", "keywords": ["ceiling light", "chandelier", "pendant", "flush mount"] },
+    { "name": "Floor Lamp", "slug": "floor-lamp", "keywords": ["floor lamp", "standing lamp", "torchiere"] }
+  ],
+  "wallpaper": [
+    { "name": "Botanical", "slug": "botanical", "keywords": ["floral", "botanical", "flower", "garden", "leaf", "foliage"] },
+    { "name": "Abstract", "slug": "abstract", "keywords": ["abstract", "geometric", "modern", "contemporary"] },
+    { "name": "Scenic", "slug": "scenic", "keywords": ["scenic", "landscape", "mural", "panorama", "toile"] },
+    { "name": "Textured", "slug": "textured", "keywords": ["textured", "grasscloth", "silk", "linen-look", "plain"] },
+    { "name": "Striped", "slug": "striped", "keywords": ["stripe", "striped", "linear"] }
+  ],
+  "fabric": [
+    { "name": "Print", "slug": "print", "keywords": ["print", "printed", "digital print"] },
+    { "name": "Solid", "slug": "solid", "keywords": ["solid", "plain", "self-tone", "tone-on-tone"] },
+    { "name": "Velvet", "slug": "velvet", "keywords": ["velvet", "velour", "velours"] },
+    { "name": "Bouclé", "slug": "boucle", "keywords": ["bouclé", "boucle", "textured weave"] },
+    { "name": "Jacquard", "slug": "jacquard", "keywords": ["jacquard", "damask", "brocade"] },
+    { "name": "Outdoor", "slug": "outdoor", "keywords": ["outdoor", "indoor/outdoor", "marine"] }
+  ]
+}

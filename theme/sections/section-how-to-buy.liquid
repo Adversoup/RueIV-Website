@@ -1,0 +1,331 @@
+{%- comment -%}
+  RueIV How to Buy — Step-by-step purchasing guide.
+  Embedded in the Contact page or standalone.
+{%- endcomment -%}
+
+<style>
+  .rv-htb { padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px; position: relative; overflow: hidden; }
+  .rv-htb--has-bg { color: #fff; }
+  .rv-htb--has-bg .rv-htb__title,
+  .rv-htb--has-bg .rv-htb__eyebrow,
+  .rv-htb--has-bg .rv-htb__subtitle,
+  .rv-htb--has-bg .rv-htb__step-title,
+  .rv-htb--has-bg .rv-htb__step-desc,
+  .rv-htb--has-bg .rv-htb__step-num { color: #fff; }
+  .rv-htb__bg {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .rv-htb__bg img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .rv-htb__bg::after {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(0,0,0,0.40);
+  }
+  .rv-htb > .page-width { position: relative; z-index: 1; }
+  .rv-htb__header { text-align: center; margin: 0; padding-bottom: 50px; }
+  .rv-htb__eyebrow {
+    font-size: 30px; letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.6; margin-bottom: 8px;
+  }
+  .rv-htb__title {
+    font-family: var(--font-heading-family); font-size: {{ section.settings.heading_size | default: 30 }}px; color: #fff; margin: 0; font-weight: 700;
+  }
+  .rv-htb__subtitle { font-size: 16px; max-width: 560px; margin: 16px auto 0; line-height: 1.6; opacity: 0.75; text-transform: uppercase; }
+
+  .rv-htb__pillars {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; margin: 24px auto 0; max-width: 560px;
+  }
+  .rv-htb__pillar {
+    font-family: var(--font-heading-family); font-size: 15px; font-weight: 300;
+    letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.9;
+  }
+  .rv-htb__body-copy {
+    font-size: 14px; line-height: 1.8; max-width: 560px; margin: 24px auto 0;
+    opacity: 0.7; font-style: italic; text-transform: uppercase;
+  }
+  .rv-htb__hiw-copy {
+    text-align: center; font-size: 15px; line-height: 1.8;
+    max-width: 640px; margin: 40px auto 0; opacity: 0.75;
+  }
+  .rv-htb__disclaimer {
+    text-align: center; font-size: 14px; line-height: 1.7;
+    font-style: italic; opacity: 0.45; max-width: 720px;
+    margin: 48px auto 0;
+  }
+
+  .rv-htb__steps {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0; counter-reset: htb-step;
+  }
+  .rv-htb__step {
+    text-align: center; counter-increment: htb-step;
+    padding: 40px 24px;
+  }
+  .rv-htb__step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 2px solid var(--color-foreground);
+    font-family: var(--font-heading-family); font-size: 18px; font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .rv-htb__step-num::after { content: counter(htb-step); }
+  .rv-htb__step-title {
+    font-family: var(--font-heading-family); font-size: 18px; font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .rv-htb__step-desc { font-size: 15px; line-height: 1.7; opacity: 0.8; }
+  .rv-htb--has-bg .rv-htb__step-num { border-color: #fff; }
+  .rv-htb--has-bg .rv-htb__eyebrow,
+  .rv-htb--has-bg .rv-htb__step-desc { opacity: 0.85; }
+  .rv-htb--has-bg .rv-htb__subtitle { opacity: 0.85; }
+
+  .rv-htb__cta { text-align: center; margin: 0; padding-top: 50px; }
+
+  /* CTA button — white outline style */
+  .rv-htb__cta-btn {
+    display: inline-block;
+    border: 1px solid #fff;
+    color: #fff;
+    background: transparent;
+    padding: 16px 48px;
+    font-family: var(--font-heading-family);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+  }
+  .rv-htb__cta-btn:hover {
+    background: #fff;
+    color: #1a1a1a;
+  }
+</style>
+
+{%- assign htb_has_bg = false -%}
+{%- if section.settings.bg_image != blank or section.settings.bg_asset != blank -%}
+  {%- assign htb_has_bg = true -%}
+{%- endif -%}
+<section class="rv-htb{% if htb_has_bg %} rv-htb--has-bg{% endif %} color-{{ section.settings.color_scheme }}">
+  {%- if section.settings.bg_image != blank -%}
+    <div class="rv-htb__bg">
+      {{ section.settings.bg_image | image_url: width: 2000 | image_tag:
+          loading: 'eager',
+          sizes: '100vw',
+          widths: '800,1200,1600,2000'
+      }}
+    </div>
+  {%- elsif section.settings.bg_asset != blank -%}
+    <div class="rv-htb__bg">
+      <img src="{{ section.settings.bg_asset | asset_url }}" alt="" loading="eager">
+    </div>
+  {%- endif -%}
+  <div class="page-width">
+    <div class="rv-htb__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="rv-htb__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="rv-htb__title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subtitle != blank -%}
+        <p class="rv-htb__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.pillar_1 != blank or section.settings.pillar_2 != blank or section.settings.pillar_3 != blank -%}
+        <div class="rv-htb__pillars">
+          {%- if section.settings.pillar_1 != blank -%}<span class="rv-htb__pillar">{{ section.settings.pillar_1 }}</span>{%- endif -%}
+          {%- if section.settings.pillar_2 != blank -%}<span class="rv-htb__pillar">{{ section.settings.pillar_2 }}</span>{%- endif -%}
+          {%- if section.settings.pillar_3 != blank -%}<span class="rv-htb__pillar">{{ section.settings.pillar_3 }}</span>{%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.body_copy != blank -%}
+        <p class="rv-htb__body-copy">{{ section.settings.body_copy }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="rv-htb__steps">
+      {%- for block in section.blocks -%}
+        <div class="rv-htb__step" {{ block.shopify_attributes }}>
+          <div class="rv-htb__step-num"></div>
+          {%- if block.settings.title != blank -%}
+            <div class="rv-htb__step-title">{{ block.settings.title }}</div>
+          {%- endif -%}
+          {%- if block.settings.description != blank -%}
+            <div class="rv-htb__step-desc">{{ block.settings.description }}</div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="rv-htb__cta">
+        <a href="{{ section.settings.cta_link | default: '#' }}" class="rv-htb__cta-btn">
+          {{ section.settings.cta_label }}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.hiw_copy != blank -%}
+      <p class="rv-htb__hiw-copy">{{ section.settings.hiw_copy }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.disclaimer != blank -%}
+      <p class="rv-htb__disclaimer">{{ section.settings.disclaimer }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "RueIV How to Buy",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "bg_asset",
+      "label": "Background Asset Filename",
+      "info": "Fallback: filename from theme assets (e.g. thevibestudio01.png)"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Getting Started"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How to Buy"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Whether you're a homeowner or a trade professional, our process is simple."
+    },
+    {
+      "type": "text",
+      "id": "pillar_1",
+      "label": "Pillar 1",
+      "default": "No endless scrolling."
+    },
+    {
+      "type": "text",
+      "id": "pillar_2",
+      "label": "Pillar 2",
+      "default": "No guesswork."
+    },
+    {
+      "type": "text",
+      "id": "pillar_3",
+      "label": "Pillar 3",
+      "default": "Just intentional sourcing."
+    },
+    {
+      "type": "textarea",
+      "id": "body_copy",
+      "label": "Body Copy (under pillars)",
+      "default": "Curated sourcing selections are delivered within 24–48 business hours from submission. Trade-only service."
+    },
+    {
+      "type": "textarea",
+      "id": "hiw_copy",
+      "label": "How It Works Copy (below steps)"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Disclaimer"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA Button Label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA Button Link"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Font Size",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 400,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 400,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Browse & Discover"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Explore our curated collections of premium fabrics, furniture, lighting, and wallpaper."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RueIV How to Buy",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Browse & Discover", "description": "Explore our curated collections of premium fabrics, furniture, lighting, and wallpaper." } },
+        { "type": "step", "settings": { "title": "Request a Quote", "description": "Add items to your project list and submit a quote request — or call us directly." } },
+        { "type": "step", "settings": { "title": "Consult & Confirm", "description": "Our design team reviews your selections, confirms availability, and provides pricing." } },
+        { "type": "step", "settings": { "title": "Order & Delivery", "description": "Once approved, we handle procurement, shipping, and white-glove delivery." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

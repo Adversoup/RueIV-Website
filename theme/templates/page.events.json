@@ -1,0 +1,91 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "section-page-hero",
+      "settings": {
+        "eyebrow": "Rue IV",
+        "title": "Events",
+        "intro": "<p>Design shows, trade days, and exclusive previews — join us.</p>",
+        "overlay_opacity": 30,
+        "desktop_ratio": "21/9",
+        "mobile_ratio": "4/3",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "gallery": {
+      "type": "section-event-gallery",
+      "blocks": {
+        "ph_1": { "type": "photo", "settings": { "caption": "Spring Design Preview 2026", "sub_caption": "New York, NY" } },
+        "ph_2": { "type": "photo", "settings": { "caption": "Trade Day at the Showroom", "sub_caption": "By Appointment" } },
+        "ph_3": { "type": "photo", "settings": { "caption": "Summer Collection Launch", "sub_caption": "New York, NY" } },
+        "ph_4": { "type": "photo", "settings": { "caption": "Design Week After Party", "sub_caption": "Brooklyn, NY" } }
+      },
+      "block_order": ["ph_1", "ph_2", "ph_3", "ph_4"],
+      "settings": {
+        "eyebrow": "Highlights",
+        "heading": "Event Gallery",
+        "layout": "scroll",
+        "scroll_card_width": 340,
+        "gap": 16,
+        "image_ratio": "4/3",
+        "padding_top": 52,
+        "padding_bottom": 36
+      }
+    },
+    "events": {
+      "type": "section-event-list",
+      "blocks": {
+        "ev_1": { "type": "event", "settings": { "date_month": "MAR", "date_day": "15", "name": "Spring Design Preview", "location": "New York, NY", "description": "Exclusive first look at our Spring 2026 collections.", "cta_label": "RSVP" } },
+        "ev_2": { "type": "event", "settings": { "date_month": "APR", "date_day": "08", "name": "Trade Professional Day", "location": "By Appointment", "description": "Private showroom access for trade professionals.", "cta_label": "Register" } },
+        "ev_3": { "type": "event", "settings": { "date_month": "MAY", "date_day": "22", "name": "Summer Collection Launch", "location": "New York, NY", "description": "Celebrate the arrival of our summer collections with cocktails and live styling.", "cta_label": "RSVP" } }
+      },
+      "block_order": ["ev_1", "ev_2", "ev_3"],
+      "settings": {
+        "eyebrow": "Upcoming",
+        "heading": "Events & Happenings",
+        "subtitle": "We host intimate gatherings for design lovers and trade professionals alike.",
+        "padding_top": 36,
+        "padding_bottom": 52
+      }
+    },
+    "testimonials": {
+      "type": "section-testimonials",
+      "blocks": {
+        "t_1": { "type": "testimonial", "settings": { "quote": "The Spring Preview event was incredible — seeing fabrics in person completely changed our direction.", "name": "Sarah M.", "role": "Interior Designer", "stars": 5 } },
+        "t_2": { "type": "testimonial", "settings": { "quote": "Rue IV's trade days are a must. Curated, intimate, and always inspiring.", "name": "David K.", "role": "Architect", "stars": 5 } },
+        "t_3": { "type": "embed", "settings": {} }
+      },
+      "block_order": ["t_1", "t_2", "t_3"],
+      "settings": {
+        "eyebrow": "From Our Community",
+        "heading": "What People Are Saying",
+        "columns": 3,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "subheading": "Never Miss an Event",
+        "heading": "Join The Vibe List",
+        "heading_size": "h2",
+        "description": "<p>Be the first to hear about upcoming events and exclusive invitations.</p>",
+        "alignment": "center",
+        "padding_top": 36,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": ["hero", "gallery", "events", "testimonials", "newsletter"]
+}

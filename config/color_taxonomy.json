@@ -1,0 +1,252 @@
+{
+  "version": "1.0.0",
+  "families": [
+    {
+      "name": "White",
+      "slug": "white",
+      "hex": "#FFFFFF",
+      "keywords": ["white", "snow", "chalk", "plaster", "plaster white", "blanc"],
+      "synonyms": ["snowflake", "alabaster", "pearl white"]
+    },
+    {
+      "name": "Ivory",
+      "slug": "ivory",
+      "hex": "#FFFFF0",
+      "keywords": ["ivory", "off-white", "off white", "eggshell", "cream-white", "ecru"],
+      "synonyms": ["bone", "parchment", "vanilla white", "antique white"]
+    },
+    {
+      "name": "Cream",
+      "slug": "cream",
+      "hex": "#FFFDD0",
+      "keywords": ["cream", "vanilla", "butter", "buttercream", "crème"],
+      "synonyms": ["custard", "cornsilk", "champagne"]
+    },
+    {
+      "name": "Beige",
+      "slug": "beige",
+      "hex": "#D4C5A9",
+      "keywords": ["beige", "sand", "oat", "linen", "wheat", "spicy beige"],
+      "synonyms": ["fawn", "biscuit", "pebble", "dune", "straw"]
+    },
+    {
+      "name": "Taupe",
+      "slug": "taupe",
+      "hex": "#8B7D6B",
+      "keywords": ["taupe", "mushroom", "stone", "elephant", "grey-brown"],
+      "synonyms": ["mole", "putty", "greige", "truffle"]
+    },
+    {
+      "name": "Camel",
+      "slug": "camel",
+      "hex": "#C19A6B",
+      "keywords": ["camel", "tan", "tobacco", "caramel", "khaki", "mephisto tobacco", "cloth"],
+      "synonyms": ["buff", "toffee", "butterscotch", "cognac", "biscotti"]
+    },
+    {
+      "name": "Grey",
+      "slug": "grey",
+      "hex": "#808080",
+      "keywords": ["grey", "gray", "silver", "ash", "fog"],
+      "synonyms": ["pewter", "steel", "graphite", "dove", "platinum"]
+    },
+    {
+      "name": "Charcoal",
+      "slug": "charcoal",
+      "hex": "#36454F",
+      "keywords": ["charcoal", "anthracite", "slate", "smoke", "dark grey", "dark gray"],
+      "synonyms": ["gunmetal", "carbon", "lead"]
+    },
+    {
+      "name": "Black",
+      "slug": "black",
+      "hex": "#000000",
+      "keywords": ["black", "onyx", "jet", "ebony", "noir"],
+      "synonyms": ["raven", "obsidian", "midnight black"]
+    },
+    {
+      "name": "Blush",
+      "slug": "blush",
+      "hex": "#DE5D83",
+      "keywords": ["blush", "rose", "pink", "petal", "mauve", "dusty rose"],
+      "synonyms": ["coral", "salmon", "peach", "flamingo"]
+    },
+    {
+      "name": "Red",
+      "slug": "red",
+      "hex": "#B22222",
+      "keywords": ["red", "crimson", "scarlet", "vermilion", "ponceau", "ruby"],
+      "synonyms": ["cherry", "garnet", "cardinal", "poppy"]
+    },
+    {
+      "name": "Burgundy",
+      "slug": "burgundy",
+      "hex": "#800020",
+      "keywords": ["burgundy", "wine", "merlot", "oxblood", "claret", "maroon"],
+      "synonyms": ["bordeaux", "mulberry", "plum-red"]
+    },
+    {
+      "name": "Orange",
+      "slug": "orange",
+      "hex": "#CC5500",
+      "keywords": ["orange", "spice", "paprika", "cinnamon", "orange / spice"],
+      "synonyms": ["tangerine", "pumpkin", "burnt orange"]
+    },
+    {
+      "name": "Terracotta",
+      "slug": "terracotta",
+      "hex": "#CC4E2C",
+      "keywords": ["terracotta", "clay", "brick", "burnt", "stone terracotta"],
+      "synonyms": ["sienna", "adobe", "burnt sienna", "burnt stone"]
+    },
+    {
+      "name": "Gold",
+      "slug": "gold",
+      "hex": "#CFB53B",
+      "keywords": ["gold", "amber", "ochre", "honey", "saffron", "autumn gold", "okra"],
+      "synonyms": ["mustard", "goldenrod", "marigold", "harvest"]
+    },
+    {
+      "name": "Rust",
+      "slug": "rust",
+      "hex": "#B7410E",
+      "keywords": ["rust", "cider", "harvest linen rust", "chestnut"],
+      "synonyms": ["copper-red", "paprika-brown", "cayenne"]
+    },
+    {
+      "name": "Green",
+      "slug": "green",
+      "hex": "#228B22",
+      "keywords": ["green", "emerald", "olive", "leaf", "light green"],
+      "synonyms": ["fern", "jade", "lime", "chartreuse"]
+    },
+    {
+      "name": "Forest",
+      "slug": "forest",
+      "hex": "#013220",
+      "keywords": ["forest", "forest green", "pine", "myrtle", "hunter"],
+      "synonyms": ["evergreen", "bottle green", "dark green", "juniper"]
+    },
+    {
+      "name": "Sage",
+      "slug": "sage",
+      "hex": "#BCB88A",
+      "keywords": ["sage", "moss", "lichen", "celadon", "verdigris"],
+      "synonyms": ["eucalyptus", "seafoam", "pistachio", "laurel"]
+    },
+    {
+      "name": "Blue",
+      "slug": "blue",
+      "hex": "#4169E1",
+      "keywords": ["blue", "sky", "cobalt", "azure", "cornflower"],
+      "synonyms": ["sapphire", "cerulean", "denim", "baby blue"]
+    },
+    {
+      "name": "Navy",
+      "slug": "navy",
+      "hex": "#000080",
+      "keywords": ["navy", "midnight", "marine", "admiral", "blue, navy"],
+      "synonyms": ["dark blue", "ink", "maritime"]
+    },
+    {
+      "name": "Teal",
+      "slug": "teal",
+      "hex": "#008080",
+      "keywords": ["teal", "turquoise", "aqua", "peacock"],
+      "synonyms": ["cyan", "ocean", "lagoon", "caribbean"]
+    },
+    {
+      "name": "Indigo",
+      "slug": "indigo",
+      "hex": "#3F00FF",
+      "keywords": ["indigo", "violet", "purple", "plum", "amethyst"],
+      "synonyms": ["lavender", "lilac", "aubergine", "wisteria"]
+    },
+    {
+      "name": "Natural",
+      "slug": "natural",
+      "hex": "#C4A882",
+      "keywords": ["natural", "raw", "undyed", "organic", "neutral natural tones", "morning light"],
+      "synonyms": ["hemp", "jute", "sisal", "unbleached"]
+    },
+    {
+      "name": "Multi",
+      "slug": "multi",
+      "hex": "#GRADIENT",
+      "keywords": ["multi", "multicolor", "rainbow", "varied"],
+      "synonyms": ["polychrome", "kaleidoscope"]
+    },
+    {
+      "name": "Metallic",
+      "slug": "metallic",
+      "hex": "#C0C0C0",
+      "keywords": ["metallic", "bronze", "copper", "brass", "gilt", "bronzed", "bronzé", "sprottle & gold"],
+      "synonyms": ["chrome", "nickel", "antique brass", "patina", "verdigris-metal"]
+    }
+  ],
+  "known_mappings": {
+    "Linen, Off White / Ivory": "Ivory",
+    "Blue, Navy": "Navy",
+    "Blue, Metallic, Green": "Teal",
+    "Forest Green": "Forest",
+    "Forest": "Forest",
+    "Autumn Gold": "Gold",
+    "Bronzed": "Metallic",
+    "Bronzé": "Metallic",
+    "Burnt Stone": "Terracotta",
+    "Camel": "Camel",
+    "Chestnut": "Rust",
+    "Cider": "Rust",
+    "Cinnamon": "Orange",
+    "Cloth": "Beige",
+    "Eggshell": "Ivory",
+    "Elephant": "Taupe",
+    "Grey": "Grey",
+    "Grey, Beige": "Taupe",
+    "Grey, Linen": "Grey",
+    "Indigo": "Indigo",
+    "Light Green": "Green",
+    "Mephisto Tobacco": "Camel",
+    "Morning Light": "Natural",
+    "Natural": "Natural",
+    "Neutral natural tones": "Natural",
+    "Oat": "Beige",
+    "Ochre": "Gold",
+    "Off-white": "Ivory",
+    "Okra": "Gold",
+    "Orange / Spice": "Orange",
+    "Plaster White": "White",
+    "Red": "Red",
+    "Red Foliage": "Red",
+    "Safari": "Camel",
+    "Spicy Beige": "Beige",
+    "Stone Terracotta": "Terracotta",
+    "Verdigris": "Sage",
+    "Vermilion": "Red",
+    "Amber": "Gold",
+    "Bister": "Camel",
+    "dead flat walnut": "Camel",
+    "Dark King Copper and King Copper": "Metallic",
+    "Light New Bronze and Bright Gold": "Metallic",
+    "New Bronze and Distressed Gold": "Metallic",
+    "Anziano White or Gilted Verdigris": "White",
+    "Sprottle & Gold": "Metallic",
+    "Harvest Linen Rust": "Rust",
+    "Crème Brûlée, Safari": "Cream",
+    "Almond, Pudding, Myrtle, Safari": "Multi",
+    "Capri, Myrtle, Safari": "Multi",
+    "Myrtle, Almond, Pudding": "Multi",
+    "Ponceau, Ombre, Autumn Gold": "Multi",
+    "887, 883, 880": "Multi",
+    "Anne's Garden": "Natural",
+    "Hand-painted": "Multi"
+  },
+  "unmappable_flags": [
+    "Various colors available",
+    "Varies due to natural characteristics",
+    "Varies with fabric and leather selection",
+    "Unique variations due to natural characteristics",
+    "unique variations in color",
+    "natural variations in color, grain, and banding"
+  ]
+}
