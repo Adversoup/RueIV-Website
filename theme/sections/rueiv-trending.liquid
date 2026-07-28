@@ -1,6 +1,28 @@
 <style>
-  .rueiv-trending-wrap { background: #f5f3f0; }
-  .rueiv-trending-wrap .rueiv-trending { margin-block-start: 0 !important; padding-block: var(--rueiv-gap); }
+  .rueiv-trending-wrap { position: relative; background: #f5f3f0; min-height: 100vh; display: flex; align-items: center; padding: 80px 0; }
+  .rueiv-trending-wrap .rueiv-trending { margin-block-start: 0 !important; width: 100%; }
+
+  .rueiv-trending__slider { position: relative; overflow: hidden; padding: 0 60px; }
+  .rueiv-trending__track { display: flex; gap: 20px; transition: transform 0.5s ease; }
+  .rueiv-trending__card { flex: 0 0 calc(33.333% - 14px); text-decoration: none; color: inherit; }
+  .rueiv-trending__img-wrap { aspect-ratio: 3/4; overflow: hidden; background: #e8e5e0; }
+  .rueiv-trending__img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+  .rueiv-trending__card:hover .rueiv-trending__img-wrap img { transform: scale(1.04); }
+  .rueiv-trending__info { padding-top: 16px; }
+  .rueiv-trending__vendor { font-size: 14px; opacity: 0.4; letter-spacing: 0.16em; text-transform: uppercase; margin: 0 0 6px; }
+  .rueiv-trending__title { font-size: 15px; line-height: 1.45; margin: 0; }
+
+  .rueiv-trending__counter { display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-family: var(--font-heading-family); font-size: 14px; letter-spacing: 0.14em; margin-bottom: 16px; padding-right: 60px; }
+  .rueiv-trending__counter button { background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px 8px; color: #1a1a1a; opacity: 0.5; transition: opacity 0.2s; }
+  .rueiv-trending__counter button:hover { opacity: 1; }
+  .rueiv-trending__counter button:disabled { opacity: 0.2; cursor: default; }
+  .rueiv-trending__counter span { opacity: 0.5; }
+
+  @media (max-width: 767px) {
+    .rueiv-trending__slider { padding: 0 20px; }
+    .rueiv-trending__card { flex: 0 0 calc(50% - 10px); }
+    .rueiv-trending__counter { right: 20px; }
+  }
 </style>
 <div class="rueiv-trending-wrap">
 <section class="rueiv-section rueiv-trending">
@@ -14,54 +36,71 @@
       {%- endif -%}
 
       {%- assign coll = collections[section.settings.collection] -%}
-      {%- assign limit = section.settings.products_to_show | default: 4 -%}
-
-      <div class="rueiv-rail__grid">
-        {%- if coll != blank -%}
-          {%- for product in coll.products limit: limit -%}
-            <a href="{{ product.url }}" class="rueiv-pcard">
-              <div class="rueiv-pcard__img-wrap">
-                {%- if product.featured_image != blank -%}
-                  {{ product.featured_image | image_url: width: 700 | image_tag:
-                     loading: 'lazy', class: 'rueiv-pcard__img',
-                     alt: product.title }}
-                {%- else -%}
-                  <div class="rueiv-pcard__placeholder"></div>
-                {%- endif -%}
-              </div>
-              <div class="rueiv-pcard__info">
-                {%- if section.settings.show_vendor and product.vendor != blank -%}
-                  <p class="rueiv-pcard__vendor">{{ product.vendor }}</p>
-                {%- endif -%}
-                <h4 class="rueiv-pcard__title">{{ product.title }}</h4>
-              </div>
-            </a>
-          {%- endfor -%}
-        {%- else -%}
-          {%- for i in (1..4) -%}
-            <div class="rueiv-pcard">
-              <div class="rueiv-pcard__img-wrap">
-                <div class="rueiv-pcard__placeholder"></div>
-              </div>
-              <div class="rueiv-pcard__info">
-                <h4 class="rueiv-pcard__title">Trending Item {{ i }}</h4>
-              </div>
-            </div>
-          {%- endfor -%}
-        {%- endif -%}
-      </div>
-
-      {%- if section.settings.button_label != blank -%}
-        <div class="rueiv-section-footer">
-          <a href="{{ section.settings.button_url | default: coll.url }}" class="rueiv-btn rueiv-btn--outline">
-            {{ section.settings.button_label }}
-          </a>
+      {%- if coll != blank -%}
+        <div class="rueiv-trending__counter">
+          <button data-trending-prev aria-label="Previous">&lsaquo;</button>
+          <span data-trending-current>1</span>
+          <span>/</span>
+          <span data-trending-total>1</span>
+          <button data-trending-next aria-label="Next">&rsaquo;</button>
         </div>
+        <div class="rueiv-trending__slider" data-trending-slider>
+          <div class="rueiv-trending__track" data-trending-track>
+            {%- for product in coll.products limit: 15 -%}
+              <a href="{{ product.url }}" class="rueiv-trending__card" data-trending-slide>
+                <div class="rueiv-trending__img-wrap">
+                  {%- if product.featured_image != blank -%}
+                    {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
+                  {%- else -%}
+                    <div class="rueiv-pcard__placeholder"></div>
+                  {%- endif -%}
+                </div>
+                <div class="rueiv-trending__info">
+                  {%- if section.settings.show_vendor and product.vendor != blank -%}
+                    <p class="rueiv-trending__vendor">{{ product.vendor }}</p>
+                  {%- endif -%}
+                  <p class="rueiv-trending__title">{{ product.title }}</p>
+                </div>
+              </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- else -%}
+        <p>Select a collection in the theme editor.</p>
       {%- endif -%}
     </div>
   </div>
 </section>
 </div>
+
+<script>
+(function(){
+  var slider = document.querySelector('[data-trending-slider]');
+  if (!slider) return;
+  var track = slider.querySelector('[data-trending-track]');
+  var cards = slider.querySelectorAll('[data-trending-slide]');
+  var prevBtn = document.querySelector('[data-trending-prev]');
+  var nextBtn = document.querySelector('[data-trending-next]');
+  var curEl = document.querySelector('[data-trending-current]');
+  var totalEl = document.querySelector('[data-trending-total]');
+  var index = 0;
+  var total = cards.length;
+  totalEl.textContent = total;
+  curEl.textContent = 1;
+
+  function update() {
+    var cardW = cards[0] ? cards[0].offsetWidth + 20 : 0; // width + gap
+    track.style.transform = 'translateX(-' + (index * cardW) + 'px)';
+    curEl.textContent = index + 1;
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index >= total - 3;
+  }
+
+  prevBtn.addEventListener('click', function(){ if (index > 0) { index--; update(); } });
+  nextBtn.addEventListener('click', function(){ if (index < total - 3) { index++; update(); } });
+  window.addEventListener('resize', update);
+})();
+</script>
 
 {% schema %}
 {
@@ -71,19 +110,12 @@
     { "type": "text", "id": "heading", "label": "Heading", "default": "Trending in the Showroom" },
     { "type": "text", "id": "description", "label": "Description", "default": "Discover the pieces designers are sourcing right now." },
     { "type": "collection", "id": "collection", "label": "Collection" },
-    { "type": "range", "id": "products_to_show", "min": 4, "max": 12, "step": 4, "default": 4, "label": "Products to show" },
-    { "type": "checkbox", "id": "show_vendor", "default": true, "label": "Show vendor" },
-    { "type": "text", "id": "button_label", "label": "Button Label", "default": "View All Trending" },
-    { "type": "url", "id": "button_url", "label": "Button Link" }
+    { "type": "checkbox", "id": "show_vendor", "default": true, "label": "Show vendor" }
   ],
   "presets": [
     {
       "name": "RueIV — Trending",
-      "settings": {
-        "heading": "Trending in the Showroom",
-        "description": "Discover the pieces designers are sourcing right now.",
-        "button_label": "View All Trending"
-      }
+      "settings": { "heading": "Trending in the Showroom" }
     }
   ]
 }

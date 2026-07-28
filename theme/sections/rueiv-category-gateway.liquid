@@ -1,32 +1,6 @@
 <section class="rueiv-section rueiv-gateway" id="rueiv-gateway">
-  {%- comment -%} Full-width wall background — synced with hero slide {%- endcomment -%}
+  {%- comment -%} No background image — warm white CSS background {%- endcomment -%}
   <div class="rueiv-gateway__wall">
-    {%- comment -%} Slide-synced backgrounds (one per hero slide) {%- endcomment -%}
-    {%- assign has_synced_bg = false -%}
-    {%- for i in (1..5) -%}
-      {%- assign bg_key = 'background_image_slide_' | append: i -%}
-      {%- assign bg_img = section.settings[bg_key] -%}
-      {%- if bg_img != blank -%}
-        {%- assign has_synced_bg = true -%}
-        {%- assign slide_index = i | minus: 1 -%}
-        {{ bg_img | image_url: width: 2400 | image_tag:
-           loading: 'lazy',
-           class: 'rueiv-gateway__wall-img rueiv-gateway__wall-img--synced',
-           alt: 'Showroom wall',
-           data-for-slide: slide_index }}
-      {%- endif -%}
-    {%- endfor -%}
-    {%- comment -%} Fallback: original single background (shown when no synced images configured) {%- endcomment -%}
-    {%- unless has_synced_bg -%}
-      {%- if section.settings.background_image != blank -%}
-        {{ section.settings.background_image | image_url: width: 2400 | image_tag:
-           loading: 'lazy', class: 'rueiv-gateway__wall-img',
-           alt: 'Showroom wall' }}
-      {%- else -%}
-        <img src="{{ 'wall-background.png' | asset_url }}" loading="lazy"
-             class="rueiv-gateway__wall-img" alt="Showroom wall">
-      {%- endif -%}
-    {%- endunless -%}
 
     <div class="rueiv-gateway__wall-inner">
       {%- if section.settings.heading != blank -%}

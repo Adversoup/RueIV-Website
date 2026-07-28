@@ -278,89 +278,68 @@
         "heading": "Trending in the Showroom",
         "description": "Discover the pieces designers are sourcing right now.",
         "collection": "lighting",
-        "products_to_show": 4,
-        "show_vendor": true,
-        "button_label": "View All Trending",
-        "button_url": ""
+        "show_vendor": true
       }
     },
     "rueiv_ready": {
       "type": "rueiv-project-ready",
       "blocks": {
-        "cat_furniture": {
+        "qs_furniture": {
           "type": "category",
-          "settings": {
-            "image": "shopify://shop_images/Altura-Furniture-Timbre-Console-VEv1_cd8e62ff-ad79-44d5-a02d-230e4a7b20e1.jpg",
-            "title": "Furniture",
-            "description": "",
-            "link": "/collections/quick-ship-furniture"
-          }
+          "settings": { "image": "", "title": "Furniture", "link": "/collections/quick-ship-furniture" }
         },
-        "cat_lighting": {
+        "qs_seating": {
           "type": "category",
-          "settings": {
-            "image": "shopify://shop_images/Powell-and-Bonnell-lighting-9542-Phantom-Chandelier-2.jpg",
-            "title": "Lighting",
-            "description": "",
-            "link": "/collections/quick-ship-lighting"
-          }
+          "settings": { "image": "", "title": "Seating", "link": "/collections/quick-ship-seating" }
         },
-        "cat_rugs": {
+        "qs_tables": {
           "type": "category",
-          "settings": {
-            "image": "shopify://shop_images/DOUBLE_ALPACA_RUG_DETAIL_002_2000x_34d6a158-ba68-47c0-9ef6-d7036a4dec2a.jpg",
-            "title": "Rugs",
-            "description": "",
-            "link": "/collections/quick-ship-rugs"
-          }
+          "settings": { "image": "", "title": "Tables", "link": "/collections/quick-ship-tables" }
+        },
+        "qs_casegoods": {
+          "type": "category",
+          "settings": { "image": "", "title": "Case Goods", "link": "/collections/quick-ship-case-goods" }
+        },
+        "qs_rugs": {
+          "type": "category",
+          "settings": { "image": "", "title": "Rugs", "link": "/collections/quick-ship-rugs" }
+        },
+        "qs_lighting": {
+          "type": "category",
+          "settings": { "image": "", "title": "Lighting", "link": "/collections/quick-ship-lighting" }
+        },
+        "qs_lamps": {
+          "type": "category",
+          "settings": { "image": "", "title": "Lamps", "link": "/collections/quick-ship-lamps" }
+        },
+        "qs_pendants": {
+          "type": "category",
+          "settings": { "image": "", "title": "Pendants", "link": "/collections/quick-ship-pendants" }
+        },
+        "qs_walllights": {
+          "type": "category",
+          "settings": { "image": "", "title": "Wall Lights", "link": "/collections/quick-ship-wall-lights" }
+        },
+        "qs_mirrors": {
+          "type": "category",
+          "settings": { "image": "", "title": "Mirrors", "link": "/collections/quick-ship-mirrors" }
+        },
+        "qs_accessories": {
+          "type": "category",
+          "settings": { "image": "", "title": "Accessories", "link": "/collections/quick-ship-accessories" }
+        },
+        "qs_floordisplay": {
+          "type": "category",
+          "settings": { "image": "", "title": "Floor Display", "link": "/collections/quick-ship-floor-display" }
         }
       },
       "block_order": [
-        "cat_furniture",
-        "cat_lighting",
-        "cat_rugs"
+        "qs_furniture", "qs_seating", "qs_tables", "qs_casegoods",
+        "qs_rugs", "qs_lighting", "qs_lamps", "qs_pendants",
+        "qs_walllights", "qs_mirrors", "qs_accessories", "qs_floordisplay"
       ],
       "settings": {
-        "heading": "Quick Ship",
-        "button_label": "",
-        "button_url": ""
-      }
-    },
-    "rueiv_testimonials": {
-      "type": "rueiv-testimonials",
-      "blocks": {
-        "q_1": {
-          "type": "quote",
-          "settings": {
-            "quote": "A sourcing platform that actually understands our workflow. Exactly what the industry needed.",
-            "author": "Sarah C.",
-            "role": "Interior Designer, NYC"
-          }
-        },
-        "q_2": {
-          "type": "quote",
-          "settings": {
-            "quote": "The Vibe Studio concept is genius. Submit a mood, receive a curated pull — it saves hours.",
-            "author": "Marcus T.",
-            "role": "Design Director, LA"
-          }
-        },
-        "q_3": {
-          "type": "quote",
-          "settings": {
-            "quote": "Finally, a trade platform that feels as premium as the product it carries.",
-            "author": "Rachel M.",
-            "role": "Principal, RM Interiors"
-          }
-        }
-      },
-      "block_order": [
-        "q_1",
-        "q_2",
-        "q_3"
-      ],
-      "settings": {
-        "heading": "In Your Words"
+        "heading": "Quick Ship"
       }
     },
     "rueiv_newsletter": {
@@ -388,10 +367,9 @@
     "rueiv_gateway",
     "rueiv_video",
     "rueiv_vibe",
-    "rueiv_spotlight",
     "rueiv_trending",
+    "rueiv_spotlight",
     "rueiv_ready",
-    "rueiv_testimonials",
     "rueiv_newsletter",
     "rueiv_banner"
   ]

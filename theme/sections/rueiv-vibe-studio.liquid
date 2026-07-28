@@ -1,16 +1,18 @@
 <section class="rueiv-section rueiv-vibe">
-  {%- comment -%} Full-bleed background hero with text overlay {%- endcomment -%}
+  {%- comment -%} 2-column split: flat lay image left, copy right on cream background {%- endcomment -%}
   <div class="rueiv-vibe__hero">
-    {%- if section.settings.image != blank -%}
-      {{ section.settings.image | image_url: width: 2400 | image_tag:
-         loading: 'eager', class: 'rueiv-vibe__hero-img', alt: section.settings.heading }}
-    {%- else -%}
-      <img src="{{ 'thevibestudio01.png' | asset_url }}" alt="{{ section.settings.heading }}" class="rueiv-vibe__hero-img" loading="eager">
-    {%- endif -%}
+    <div class="rueiv-vibe__hero-img-col">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1200 | image_tag:
+           loading: 'eager', class: 'rueiv-vibe__hero-img', alt: section.settings.heading }}
+      {%- else -%}
+        <img src="{{ 'thevibestudio-homepage-img.jpg' | asset_url }}" alt="The Vibe Studio" class="rueiv-vibe__hero-img" loading="eager">
+      {%- endif -%}
+    </div>
     <div class="rueiv-vibe__hero-overlay">
       <div class="rueiv-vibe__hero-content">
         {%- if section.settings.heading != blank -%}
-          <h1 class="rueiv-vibe__hero-title">{{ section.settings.heading }}</h1>
+          <h1 class="rueiv-vibe__hero-title">Introducing<br>THE VIBE STUDIO</h1>
         {%- endif -%}
         {%- if section.settings.kicker != blank -%}
           <p class="rueiv-vibe__hero-subtitle">{{ section.settings.kicker }}</p>
