@@ -19,6 +19,9 @@ node_modules/
 .env.*
 !.env.example
 
+# Local command transcript / sensitive history
+typescript
+
 # Import output
 out/
 
