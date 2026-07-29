@@ -5,6 +5,7 @@
 {%- endcomment -%}
 
 {%- assign brand_collection = collections[section.settings.collection] -%}
+{%- assign show_header_image = section.settings.show_header_image -%}
 
 <style>
   #shopify-section-{{ section.id }} {
@@ -36,7 +37,7 @@
     position: relative; z-index: 2;
     width: 100%; max-width: 800px;
     padding: 2.5rem 0;
-    color: {{ section.settings.text_color | default: '#ffffff' }};
+    color: {% if show_header_image %}{{ section.settings.text_color | default: '#ffffff' }}{% else %}rgb(var(--color-foreground)){% endif %};
   }
   .rv-brand-hero__logo {
     max-width: {{ section.settings.logo_width | default: 200 }}px;
@@ -69,14 +70,80 @@
   }
   .rv-brand-hero__btn--primary:hover { background: #f0ece6; }
   .rv-brand-hero__btn--secondary {
-    background: transparent; color: #fff;
-    border: 1px solid rgba(255,255,255,0.5);
+    background: transparent;
+    color: {% if show_header_image %}#fff{% else %}currentColor{% endif %};
+    border: 1px solid {% if show_header_image %}rgba(255,255,255,0.5){% else %}currentColor{% endif %};
   }
-  .rv-brand-hero__btn--secondary:hover { border-color: #fff; }
+  .rv-brand-hero__btn--secondary:hover { border-color: currentColor; }
   .rv-brand-hero__meta {
     margin-top: 1.5rem;
     font-size: 1.2rem; opacity: 0.6;
     letter-spacing: 0.04em;
+  }
+  .collection-breaker {
+    grid-column: 1 / -1;
+    position: relative;
+    inline-size: 73%;
+    max-inline-size: 73%;
+    min-height: 260px;
+    block-size: 100%;
+    margin-inline: auto;
+    overflow: hidden;
+    background: #f3f0eb;
+  }
+  .collection-breaker__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+    object-fit: cover;
+  }
+  .collection-breaker__placeholder {
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #d8d0c5, #eee9e1 48%, #b9aa98);
+    color: #fff;
+    font-size: clamp(18px, 2.5vw, 32px);
+    letter-spacing: .12em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .collection-breaker__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.42));
+  }
+  .collection-breaker__title,
+  .collection-breaker__subtitle {
+    margin: 0;
+    color: inherit;
+  }
+  .collection-breaker__title {
+    font-size: clamp(24px, 3vw, 42px);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .collection-breaker__subtitle {
+    max-width: 560px;
+    margin-top: 10px;
+    font-size: 15px;
+  }
+  .collection-breaker__cta {
+    margin-top: 18px;
+  }
+  .rv-brand-breakers {
+    margin-top: 2.4rem;
+    display: grid;
+    gap: 2.4rem;
   }
   @media (max-width: 749px) {
     .rv-brand-hero {
@@ -85,27 +152,33 @@
     }
     .rv-brand-hero__logo { max-width: 140px; }
     .rv-brand-hero__content { padding: 1.5rem 0; }
+    .collection-breaker {
+      inline-size: 100%;
+      max-inline-size: 100%;
+    }
   }
 </style>
 
 <section class="rv-brand-hero color-{{ section.settings.color_scheme }}">
   {%- comment -%} Background image {%- endcomment -%}
-  <div class="rv-brand-hero__media">
-    {%- if section.settings.cover_image != blank -%}
-      {{ section.settings.cover_image | image_url: width: 2400 | image_tag:
-          loading: 'eager', sizes: '100vw',
-          widths: '600,900,1200,1600,2000,2400'
-      }}
-    {%- elsif brand_collection != blank and brand_collection.image != blank -%}
-      {{ brand_collection.image | image_url: width: 2400 | image_tag:
-          loading: 'eager', sizes: '100vw',
-          widths: '600,900,1200,1600,2000,2400'
-      }}
-    {%- else -%}
-      <div style="background:#e8e4df;width:100%;height:100%;"></div>
-    {%- endif -%}
-    <div class="rv-brand-hero__overlay"></div>
-  </div>
+  {%- if show_header_image -%}
+    <div class="rv-brand-hero__media">
+      {%- if section.settings.cover_image != blank -%}
+        {{ section.settings.cover_image | image_url: width: 2400 | image_tag:
+            loading: 'eager', sizes: '100vw',
+            widths: '600,900,1200,1600,2000,2400'
+        }}
+      {%- elsif brand_collection != blank and brand_collection.image != blank -%}
+        {{ brand_collection.image | image_url: width: 2400 | image_tag:
+            loading: 'eager', sizes: '100vw',
+            widths: '600,900,1200,1600,2000,2400'
+        }}
+      {%- else -%}
+        <div style="background:#e8e4df;width:100%;height:100%;"></div>
+      {%- endif -%}
+      <div class="rv-brand-hero__overlay"></div>
+    </div>
+  {%- endif -%}
 
   {%- comment -%} Content {%- endcomment -%}
   <div class="page-width">
@@ -161,6 +234,49 @@
         <div class="rv-brand-hero__meta">{{ section.settings.meta_text }}</div>
       {%- endif -%}
     </div>
+
+    {%- assign has_breaker_1 = false -%}
+    {%- if section.settings.break_1_image != blank or section.settings.break_1_title != blank or section.settings.break_1_subtitle != blank -%}
+      {%- assign has_breaker_1 = true -%}
+    {%- endif -%}
+    {%- assign has_breaker_2 = false -%}
+    {%- if section.settings.break_2_image != blank or section.settings.break_2_title != blank or section.settings.break_2_subtitle != blank -%}
+      {%- assign has_breaker_2 = true -%}
+    {%- endif -%}
+
+    {%- if has_breaker_1 or has_breaker_2 -%}
+      <div class="rv-brand-breakers">
+        {%- if has_breaker_1 -%}
+          <div class="collection-breaker">
+            {%- if section.settings.break_1_image != blank -%}
+              {{ section.settings.break_1_image | image_url: width: 1440 | image_tag: loading: 'lazy', class: 'collection-breaker__img' }}
+            {%- else -%}
+              <div class="collection-breaker__placeholder"><span>Brand Breaker 1</span></div>
+            {%- endif -%}
+            <div class="collection-breaker__overlay">
+              {%- if section.settings.break_1_title != blank -%}<h3 class="collection-breaker__title">{{ section.settings.break_1_title }}</h3>{%- endif -%}
+              {%- if section.settings.break_1_subtitle != blank -%}<p class="collection-breaker__subtitle">{{ section.settings.break_1_subtitle }}</p>{%- endif -%}
+              {%- if section.settings.break_1_cta != blank and section.settings.break_1_link != blank -%}<a class="btn btn--secondary collection-breaker__cta" href="{{ section.settings.break_1_link }}">{{ section.settings.break_1_cta }}</a>{%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if has_breaker_2 -%}
+          <div class="collection-breaker">
+            {%- if section.settings.break_2_image != blank -%}
+              {{ section.settings.break_2_image | image_url: width: 1440 | image_tag: loading: 'lazy', class: 'collection-breaker__img' }}
+            {%- else -%}
+              <div class="collection-breaker__placeholder"><span>Brand Breaker 2</span></div>
+            {%- endif -%}
+            <div class="collection-breaker__overlay">
+              {%- if section.settings.break_2_title != blank -%}<h3 class="collection-breaker__title">{{ section.settings.break_2_title }}</h3>{%- endif -%}
+              {%- if section.settings.break_2_subtitle != blank -%}<p class="collection-breaker__subtitle">{{ section.settings.break_2_subtitle }}</p>{%- endif -%}
+              {%- if section.settings.break_2_cta != blank and section.settings.break_2_link != blank -%}<a class="btn btn--secondary collection-breaker__cta" href="{{ section.settings.break_2_link }}">{{ section.settings.break_2_cta }}</a>{%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -201,6 +317,12 @@
       "id": "cover_image",
       "label": "Cover Image",
       "info": "Full-width background. Falls back to collection image."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header_image",
+      "label": "Show Header Image",
+      "default": true
     },
     {
       "type": "image_picker",
@@ -259,6 +381,64 @@
       "id": "meta_text",
       "label": "Meta Line",
       "info": "e.g. 'Since 1865 · Made in Italy · 200+ Collections'"
+    },
+    {
+      "type": "header",
+      "content": "Breaker 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "break_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "break_1_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "break_1_subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "break_1_cta",
+      "label": "CTA label"
+    },
+    {
+      "type": "url",
+      "id": "break_1_link",
+      "label": "CTA link"
+    },
+    {
+      "type": "header",
+      "content": "Breaker 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "break_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "break_2_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "break_2_subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "break_2_cta",
+      "label": "CTA label"
+    },
+    {
+      "type": "url",
+      "id": "break_2_link",
+      "label": "CTA link"
     },
     {
       "type": "header",

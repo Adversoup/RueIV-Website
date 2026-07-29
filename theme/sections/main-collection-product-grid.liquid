@@ -8,6 +8,7 @@
   assign columns_tablet = 3
   assign columns_tablet_large = 3
   assign columns_mobile = section.settings.columns_mobile | times: 1
+  assign brand_break_interval = columns_desktop | times: 5
 
   assign break_1_after = 15
   assign break_2_after = 33
@@ -45,7 +46,25 @@
   assign breaker_2_subtitle = section.settings.break_2_subtitle
   assign breaker_2_cta = section.settings.break_2_cta
   assign breaker_2_link = section.settings.break_2_link
+  assign breaker_title_color = '#ffffff'
+  assign breaker_subtitle_color = '#ffffff'
+  assign breaker_title_size = 42
+  assign breaker_subtitle_size = 15
+  assign breaker_overlay_opacity = 42
   assign has_category_breaker = false
+  assign has_brand_breaker = false
+  assign matched_brand_breaker_block = false
+  assign is_vendor_collection = false
+  assign brand_breaker_image = blank
+  assign brand_breaker_title = blank
+  assign brand_breaker_subtitle = blank
+  assign brand_breaker_cta = blank
+  assign brand_breaker_link = blank
+  assign brand_breaker_title_color = '#ffffff'
+  assign brand_breaker_subtitle_color = '#ffffff'
+  assign brand_breaker_title_size = 42
+  assign brand_breaker_subtitle_size = 15
+  assign brand_breaker_overlay_opacity = 42
   assign parent_collection_handle = collection.handle
   if collection.handle == 'textiles' or collection.handle == 'fabric' or collection.handle contains 'textiles-'
     assign parent_collection_handle = 'textiles'
@@ -74,8 +93,45 @@
       assign breaker_2_subtitle = breaker_block.settings.break_2_subtitle
       assign breaker_2_cta = breaker_block.settings.break_2_cta
       assign breaker_2_link = breaker_block.settings.break_2_link
+      assign breaker_title_color = breaker_block.settings.title_color | default: '#ffffff'
+      assign breaker_subtitle_color = breaker_block.settings.subtitle_color | default: '#ffffff'
+      assign breaker_title_size = breaker_block.settings.title_size | default: 42
+      assign breaker_subtitle_size = breaker_block.settings.subtitle_size | default: 15
+      assign breaker_overlay_opacity = breaker_block.settings.overlay_opacity | default: 42
+    elsif breaker_block.type == 'brand_breaker' and breaker_block.settings.collection != blank and breaker_block.settings.collection.handle == collection.handle
+      assign has_brand_breaker = true
+      assign matched_brand_breaker_block = true
+      assign brand_breaker_image = breaker_block.settings.break_image
+      assign brand_breaker_title = breaker_block.settings.break_title
+      assign brand_breaker_subtitle = breaker_block.settings.break_subtitle
+      assign brand_breaker_cta = breaker_block.settings.break_cta
+      assign brand_breaker_link = breaker_block.settings.break_link
+      assign brand_breaker_title_color = breaker_block.settings.title_color | default: '#ffffff'
+      assign brand_breaker_subtitle_color = breaker_block.settings.subtitle_color | default: '#ffffff'
+      assign brand_breaker_title_size = breaker_block.settings.title_size | default: 42
+      assign brand_breaker_subtitle_size = breaker_block.settings.subtitle_size | default: 15
+      assign brand_breaker_overlay_opacity = breaker_block.settings.overlay_opacity | default: 42
     endif
   endfor
+
+  if template.suffix == 'designers'
+    assign is_vendor_collection = true
+  elsif collection.products_count > 0
+    assign first_vendor_handle = collection.products.first.vendor | handleize
+    assign collection_title_handle = collection.title | handleize
+    if first_vendor_handle != blank
+      if collection.handle == first_vendor_handle or collection_title_handle == first_vendor_handle
+        assign is_vendor_collection = true
+      endif
+    endif
+  endif
+
+  if is_vendor_collection
+    assign has_brand_breaker = true
+    if matched_brand_breaker_block == false and brand_breaker_image == blank and collection.featured_image != blank
+      assign brand_breaker_image = collection.featured_image
+    endif
+  endif
 -%}
 {%- if is_metro -%}
   {%- render 'product-grid-metro-style',
@@ -97,21 +153,62 @@
 {%- endcapture -%}
 
 <style>
-  .collection-breaker { grid-column: 1 / -1; position: relative; min-height: 260px; overflow: hidden; background: #f3f0eb; }
-  .collection-breaker__img { display: block; width: 100%; height: 100%; min-height: 260px; object-fit: cover; }
-  .collection-breaker__placeholder { min-height: 260px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #d8d0c5, #eee9e1 48%, #b9aa98); color: #fff; font-size: clamp(18px, 2.5vw, 32px); letter-spacing: .12em; text-align: center; text-transform: uppercase; }
-  .collection-breaker__overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; text-align: center; color: #fff; background: linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.42)); }
+  .collection-breaker {
+    grid-column: 1 / -1;
+    position: relative;
+    inline-size: 73%;
+    max-inline-size: 73%;
+    height: 665px;
+    margin-block: 30px;
+    margin-inline: auto;
+    overflow: hidden;
+    background: #f3f0eb;
+  }
+  .collection-breaker__img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .collection-breaker__placeholder { height: 665px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #d8d0c5, #eee9e1 48%, #b9aa98); color: #fff; font-size: clamp(18px, 2.5vw, 32px); letter-spacing: .12em; text-align: center; text-transform: uppercase; }
+  .collection-breaker__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(
+      180deg,
+      rgba(0,0,0,calc(var(--breaker-overlay-opacity, 42) / 100 * 0.1)),
+      rgba(0,0,0,calc(var(--breaker-overlay-opacity, 42) / 100))
+    );
+  }
   .collection-breaker__title, .collection-breaker__subtitle { margin: 0; color: inherit; }
-  .collection-breaker__title { font-size: clamp(24px, 3vw, 42px); letter-spacing: .08em; text-transform: uppercase; }
-  .collection-breaker__subtitle { max-width: 560px; margin-top: 10px; font-size: 15px; }
+  .collection-breaker__title {
+    color: var(--breaker-title-color, #ffffff);
+    font-size: clamp(24px, 3vw, var(--breaker-title-size, 42px));
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .collection-breaker__subtitle {
+    color: var(--breaker-subtitle-color, #ffffff);
+    max-width: 560px;
+    margin-top: 10px;
+    font-size: var(--breaker-subtitle-size, 15px);
+  }
   .collection-breaker__cta { margin-top: 18px; }
+  @media (max-width: 767.98px) {
+    .collection-breaker {
+      inline-size: 100%;
+      max-inline-size: 100%;
+    }
+  }
 </style>
 
 <div
   class="section--padding color-{{ section.settings.color_scheme }}"
   style="--section-padding-top: {{ section.settings.padding_top }}px;--section-padding-bottom: {{ section.settings.padding_bottom }}px;"
 >
-  <div class="collection page-width">
+  <div class="collection page-width--full">
     {%- paginate collection.products by section.settings.products_per_page -%}
       <div class="collection__content flex">
         {%- if collection.all_products_count > 0 and enable_filtering and filter_type != 'horizontal' -%}
@@ -268,7 +365,7 @@
                   {%- endif -%}
                 </div>
                   {%- if forloop.index == break_1_after and has_category_breaker -%}
-                    <div class="collection-breaker">
+                    <div class="collection-breaker" style="--breaker-title-color: {{ breaker_title_color }}; --breaker-subtitle-color: {{ breaker_subtitle_color }}; --breaker-title-size: {{ breaker_title_size }}px; --breaker-subtitle-size: {{ breaker_subtitle_size }}px; --breaker-overlay-opacity: {{ breaker_overlay_opacity }};">
                       {%- if breaker_1_image != blank -%}
                         {{ breaker_1_image | image_url: width: 1440 | image_tag: loading: 'lazy', class: 'collection-breaker__img' }}
                       {%- else -%}
@@ -282,7 +379,7 @@
                     </div>
                   {%- endif -%}
                   {%- if forloop.index == break_2_after and has_category_breaker -%}
-                    <div class="collection-breaker">
+                    <div class="collection-breaker" style="--breaker-title-color: {{ breaker_title_color }}; --breaker-subtitle-color: {{ breaker_subtitle_color }}; --breaker-title-size: {{ breaker_title_size }}px; --breaker-subtitle-size: {{ breaker_subtitle_size }}px; --breaker-overlay-opacity: {{ breaker_overlay_opacity }};">
                       {%- if breaker_2_image != blank -%}
                         {{ breaker_2_image | image_url: width: 1440 | image_tag: loading: 'lazy', class: 'collection-breaker__img' }}
                       {%- else -%}
@@ -293,6 +390,30 @@
                         {%- if breaker_2_subtitle != blank -%}<p class="collection-breaker__subtitle">{{ breaker_2_subtitle }}</p>{%- endif -%}
                         {%- if breaker_2_cta != blank and breaker_2_link != blank -%}<a class="btn btn--secondary collection-breaker__cta" href="{{ breaker_2_link }}">{{ breaker_2_cta }}</a>{%- endif -%}
                       </div>
+                    </div>
+                  {%- endif -%}
+                  {%- assign show_brand_breaker = false -%}
+                  {%- assign brand_break_modulo = forloop.index | modulo: brand_break_interval -%}
+                  {%- if has_brand_breaker and forloop.index > 0 and brand_break_modulo == 0 and forloop.index < collection.products.size -%}
+                    {%- assign show_brand_breaker = true -%}
+                  {%- endif -%}
+                  {%- if has_brand_breaker and show_brand_breaker == false and forloop.last and collection.products.size < brand_break_interval -%}
+                    {%- assign show_brand_breaker = true -%}
+                  {%- endif -%}
+                  {%- if show_brand_breaker -%}
+                    <div class="collection-breaker collection-breaker--brand" style="--breaker-title-color: {{ brand_breaker_title_color }}; --breaker-subtitle-color: {{ brand_breaker_subtitle_color }}; --breaker-title-size: {{ brand_breaker_title_size }}px; --breaker-subtitle-size: {{ brand_breaker_subtitle_size }}px; --breaker-overlay-opacity: {{ brand_breaker_overlay_opacity }};">
+                      {%- if brand_breaker_image != blank -%}
+                        {{ brand_breaker_image | image_url: width: 1800 | image_tag: loading: 'lazy', class: 'collection-breaker__img' }}
+                      {%- else -%}
+                        <div class="collection-breaker__placeholder"><span>{{ collection.title }} — Breaker</span></div>
+                      {%- endif -%}
+                      {%- if brand_breaker_title != blank or brand_breaker_subtitle != blank or brand_breaker_cta != blank -%}
+                        <div class="collection-breaker__overlay">
+                          {%- if brand_breaker_title != blank -%}<h3 class="collection-breaker__title">{{ brand_breaker_title }}</h3>{%- endif -%}
+                          {%- if brand_breaker_subtitle != blank -%}<p class="collection-breaker__subtitle">{{ brand_breaker_subtitle }}</p>{%- endif -%}
+                          {%- if brand_breaker_cta != blank and brand_breaker_link != blank -%}<a class="btn btn--secondary collection-breaker__cta" href="{{ brand_breaker_link }}">{{ brand_breaker_cta }}</a>{%- endif -%}
+                        </div>
+                      {%- endif -%}
                     </div>
                   {%- endif -%}
               {%- endfor -%}
@@ -504,6 +625,88 @@
   ],
   "blocks": [
     {
+      "type": "brand_breaker",
+      "name": "Brand breaker",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Brand collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "break_image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "break_title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "break_subtitle",
+          "label": "Subtitle"
+        },
+        {
+          "type": "text",
+          "id": "break_cta",
+          "label": "CTA label"
+        },
+        {
+          "type": "url",
+          "id": "break_link",
+          "label": "CTA link"
+        },
+        {
+          "type": "header",
+          "content": "Text and overlay style"
+        },
+        {
+          "type": "range",
+          "id": "title_size",
+          "min": 18,
+          "max": 96,
+          "step": 1,
+          "unit": "px",
+          "label": "Title size",
+          "default": 42
+        },
+        {
+          "type": "range",
+          "id": "subtitle_size",
+          "min": 12,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Subtitle size",
+          "default": 15
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "subtitle_color",
+          "label": "Subtitle color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 90,
+          "step": 5,
+          "unit": "%",
+          "label": "Overlay opacity",
+          "default": 40
+        }
+      ]
+    },
+    {
       "type": "category_breakers",
       "name": "Category breakers",
       "settings": [
@@ -569,6 +772,52 @@
           "type": "url",
           "id": "break_2_link",
           "label": "CTA link"
+        },
+        {
+          "type": "header",
+          "content": "Text and overlay style"
+        },
+        {
+          "type": "range",
+          "id": "title_size",
+          "min": 18,
+          "max": 96,
+          "step": 1,
+          "unit": "px",
+          "label": "Title size",
+          "default": 42
+        },
+        {
+          "type": "range",
+          "id": "subtitle_size",
+          "min": 12,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Subtitle size",
+          "default": 15
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "subtitle_color",
+          "label": "Subtitle color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 90,
+          "step": 5,
+          "unit": "%",
+          "label": "Overlay opacity",
+          "default": 40
         }
       ]
     }

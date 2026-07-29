@@ -25,8 +25,26 @@
 
   assign inner_class = 'collection-hero__inner relative f-grid f-grid-1-cols f-grid--gap-none color-' | append: section.settings.color_scheme
   assign text_class = ''
+  assign show_collection_image = section.settings.show_collection_image
+  assign is_vendor_collection = false
 
-  if section.settings.show_collection_image
+  if template.suffix == 'designers'
+    assign is_vendor_collection = true
+  endif
+  if is_vendor_collection == false and collection.products_count > 0
+    assign first_vendor_handle = collection.products.first.vendor | handleize
+    assign collection_title_handle = collection.title | handleize
+    if first_vendor_handle != blank
+      if collection.handle == first_vendor_handle or collection_title_handle == first_vendor_handle
+        assign is_vendor_collection = true
+      endif
+    endif
+  endif
+  if is_vendor_collection
+    assign show_collection_image = false
+  endif
+
+  if show_collection_image
     case image_position
       when 'left'
         assign inner_class = inner_class | append: ' md:f-grid-2-cols'
@@ -60,9 +78,9 @@
   class="collection-hero collection-hero--image-{{ section.settings.image_position }} hero hero--{{ section.settings.image_height }} hero--mobile-{{ section.settings.image_height_mobile }}{% if color_inherit %} color-inherit{% endif %} section section--padding"
   style="--section-padding-top: {{ section.settings.padding_top }}px;--section-padding-bottom: {{ section.settings.padding_bottom }}px;"
 >
-  <div class="page-width">
+  <div class="page-width--full">
     <div class="{{ inner_class }}{% unless color_inherit %} blocks-radius{% endunless %}">
-      {%- if section.settings.show_collection_image -%}
+      {%- if show_collection_image -%}
         {%- if banner -%}
           {% assign alt_image = banner.alt | default: collection.title | escape %}
           {%- capture sizes -%}min({{ settings.page_width }}, 100vw){%- endcapture -%}

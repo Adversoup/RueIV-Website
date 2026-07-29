@@ -126,6 +126,36 @@
   padding-inline: var(--page-padding);
 }
 
+.template-collection .collection-hero .page-width--full,
+.template-collection .collection.page-width--full,
+.template-product product-info.page-width--full {
+  --page-padding: clamp(1rem, 2vw, 2.4rem);
+}
+
+.template-collection .collection-section .products-list {
+  --column-gap: 1.6rem;
+  --column-gap-tablet-large: 1.6rem;
+  --column-gap-tablet: 1.4rem;
+  --row-gap: 2.2rem;
+}
+
+.template-product product-info .product {
+  --product-gap: 2rem;
+}
+
+.rv-brand-fullspread .page-width,
+.rv-brand-fullspread.page-width {
+  --page-padding: clamp(1rem, 2vw, 2.4rem);
+}
+
+.rv-brand-fullspread .products-list,
+.rv-brand-fullspread .collection-list__items {
+  --column-gap: 1.2rem;
+  --column-gap-tablet-large: 1.2rem;
+  --column-gap-tablet: 1.2rem;
+  --row-gap: 1.6rem;
+}
+
 .section--padding {
   padding-block-start: min(4.8rem, var(--section-padding-top, 0) * 0.6);
   padding-block-end: min(4.8rem, var(--section-padding-bottom, 0) * 0.6);
@@ -333,7 +363,7 @@
   --row-gap-mobile: 3.2rem;
 }
 .f-grid--gap-medium {
-  --column-gap: 3rem;
+  --column-gap: 1.5rem;
   --column-gap-tablet-large: 3rem;
   --column-gap-tablet: 3rem;
   --column-gap-mobile: 0.8rem;

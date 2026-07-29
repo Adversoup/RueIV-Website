@@ -25,7 +25,7 @@
   data-product-id="{{ product.id }}"
   data-update-url="true"
   data-url="{{ product.url }}"
-  class="section block section-{{ section.id }} section--padding page-width color-{{ section.settings.color_scheme }}"
+  class="section block section-{{ section.id }} section--padding page-width--full color-{{ section.settings.color_scheme }}"
   style="--section-padding-top: {{ section.settings.padding_top }}px;--section-padding-bottom: {{ section.settings.padding_bottom }}px;"
 >
   {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
