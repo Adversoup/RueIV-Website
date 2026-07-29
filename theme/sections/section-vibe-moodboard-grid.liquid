@@ -32,17 +32,15 @@
   /* Card */
   .vibe-mb__card {
     position: relative; overflow: hidden;
-    border-radius: var(--card-corner-radius, 4px);
-    background: var(--color-background);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-    display: flex; flex-direction: column;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    display: block;
     text-decoration: none; color: inherit;
     cursor: pointer;
   }
   .vibe-mb__card:hover {
-    box-shadow: 0 6px 24px rgba(0,0,0,0.10);
-    transform: translateY(-3px);
+    box-shadow: none;
   }
   .vibe-mb__card-media {
     position: relative; overflow: hidden;
@@ -55,13 +53,19 @@
   .vibe-mb__card:hover .vibe-mb__card-media img {
     transform: scale(1.04);
   }
-  .vibe-mb__card-body { padding: 16px 16px 20px; flex: 1; }
+  .vibe-mb__card-body {
+    position: absolute; inset: 0; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 28px; text-align: center; color: #fff;
+    background: linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.48));
+  }
   .vibe-mb__card-title {
     font-family: var(--font-heading-family); font-weight: 600;
-    font-size: 16px; margin: 0 0 6px; line-height: 1.25;
+    font-size: clamp(18px, 2vw, 28px); margin: 0 0 8px; line-height: 1.25;
+    color: inherit;
   }
   .vibe-mb__card-desc {
-    font-size: 14px; line-height: 1.55; opacity: 0.7; margin: 0;
+    font-size: 14px; line-height: 1.55; opacity: .92; margin: 0; color: inherit;
   }
   .vibe-mb__card-link {
     display: inline-block; margin-top: 10px;
@@ -92,12 +96,7 @@
   .vibe-mb__card:nth-child(6) .vibe-mb__placeholder { background: linear-gradient(145deg, #d4d0c4 0%, #e8e5da 50%, #c5c0b2 100%); }
 
   /* Tag chip */
-  .vibe-mb__tag {
-    background: rgba(255,255,255,0.92); backdrop-filter: blur(4px);
-    padding: 4px 10px; border-radius: 999px;
-    font-size: 14px; font-weight: 600; letter-spacing: 0.04em;
-    text-transform: uppercase; color: #333;
-  }
+  .vibe-mb__tag { display: none; }
 
   /* Bottom CTA */
   .vibe-mb__cta {
@@ -140,13 +139,12 @@
     {%- if cards.size > 0 -%}
       <div class="vibe-mb__grid">
         {%- for block in cards -%}
-          <a href="{{ block.settings.link | default: '#' }}" class="vibe-mb__card" {{ block.shopify_attributes }}>
+          {%- assign moodboard_product = block.settings.product -%}
+          {%- if moodboard_product != blank -%}
+            <a href="{{ moodboard_product.url }}" class="vibe-mb__card" {{ block.shopify_attributes }}>
             <div class="vibe-mb__card-media">
-              {%- if block.settings.tag != blank -%}
-                <span class="vibe-mb__tag">{{ block.settings.tag }}</span>
-              {%- endif -%}
-              {%- if block.settings.image != blank -%}
-                {{ block.settings.image | image_url: width: 900 | image_tag:
+              {%- if moodboard_product.featured_image != blank -%}
+                {{ moodboard_product.featured_image | image_url: width: 900 | image_tag:
                     loading: 'lazy',
                     sizes: '(max-width: 749px) 90vw, (max-width: 1023px) 45vw, 30vw',
                     widths: '400,600,800,900',
@@ -154,19 +152,30 @@
                 }}
               {%- else -%}
                 <div class="vibe-mb__placeholder">
-                  <span class="vibe-mb__placeholder-label">{{ block.settings.title | default: 'Moodboard' }}</span>
+                  <span class="vibe-mb__placeholder-label">{{ moodboard_product.title }}</span>
                 </div>
               {%- endif -%}
             </div>
             <div class="vibe-mb__card-body">
-              {%- if block.settings.title != blank -%}
-                <h3 class="vibe-mb__card-title">{{ block.settings.title }}</h3>
+              {%- if moodboard_product.title != blank -%}
+                <h3 class="vibe-mb__card-title">{{ moodboard_product.title }}</h3>
               {%- endif -%}
-              {%- if block.settings.description != blank -%}
-                <p class="vibe-mb__card-desc">{{ block.settings.description }}</p>
+              {%- if moodboard_product.description != blank -%}
+                <p class="vibe-mb__card-desc">{{ moodboard_product.description | strip_html | truncate: 180 }}</p>
               {%- endif -%}
             </div>
-          </a>
+            </a>
+          {%- else -%}
+            <div class="vibe-mb__card" {{ block.shopify_attributes }}>
+              <div class="vibe-mb__card-media">
+                <div class="vibe-mb__placeholder"><span class="vibe-mb__placeholder-label">Select moodboard product</span></div>
+              </div>
+              <div class="vibe-mb__card-body">
+                <h3 class="vibe-mb__card-title">Moodboard {{ forloop.index }}</h3>
+                <p class="vibe-mb__card-desc">Choose a special moodboard product in the Theme Editor.</p>
+              </div>
+            </div>
+          {%- endif -%}
         {%- endfor -%}
       </div>
     {%- endif -%}
@@ -284,41 +293,7 @@
       "type": "moodboard",
       "name": "Moodboard",
       "settings": [
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Image"
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Title",
-          "default": "Quiet Luxury Living Room"
-        },
-        {
-          "type": "textarea",
-          "id": "description",
-          "label": "Description",
-          "default": "Warm neutrals, soft bouclé, and sculptural lighting — a serene retreat for modern living."
-        },
-        {
-          "type": "text",
-          "id": "tag",
-          "label": "Tag Chip",
-          "default": "Living Room",
-          "info": "Displayed as a floating label on the image"
-        },
-        {
-          "type": "text",
-          "id": "link_label",
-          "label": "Link Label",
-          "default": "Shop this Vibe"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "Link"
-        }
+        { "type": "product", "id": "product", "label": "Moodboard product" }
       ]
     }
   ],
@@ -326,12 +301,9 @@
     {
       "name": "Vibe Moodboard Grid",
       "blocks": [
-        { "type": "moodboard", "settings": { "title": "Quiet Luxury Living Room", "description": "Warm neutrals, soft bouclé, and sculptural lighting — a serene retreat for modern living.", "tag": "Living Room", "link_label": "Shop this Vibe" } },
-        { "type": "moodboard", "settings": { "title": "Coastal Modern Bedroom", "description": "Light linens, whitewashed textures, and ocean-inspired hues for effortless calm.", "tag": "Bedroom", "link_label": "Shop this Vibe" } },
-        { "type": "moodboard", "settings": { "title": "Industrial Loft Dining", "description": "Raw materials meet refined craft — brass, leather, and statement wallpaper.", "tag": "Dining", "link_label": "Shop this Vibe" } },
-        { "type": "moodboard", "settings": { "title": "Japandi Study", "description": "Minimalist forms, natural wood, and paper-inspired wallcoverings for focused serenity.", "tag": "Study", "link_label": "Shop this Vibe" } },
-        { "type": "moodboard", "settings": { "title": "Art Deco Lounge", "description": "Rich velvets, geometric patterns, and statement lighting — glamour reimagined.", "tag": "Lounge", "link_label": "Shop this Vibe" } },
-        { "type": "moodboard", "settings": { "title": "Mediterranean Terrace", "description": "Terracotta tones, outdoor-rated fabrics, and sun-drenched warmth.", "tag": "Outdoor", "link_label": "Shop this Vibe" } }
+        { "type": "moodboard" },
+        { "type": "moodboard" },
+        { "type": "moodboard" }
       ]
     }
   ]

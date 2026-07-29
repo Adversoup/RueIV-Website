@@ -76,10 +76,28 @@
       </div>
     {%- endunless -%}
 
+    <div class="moodboard__palette" data-moodboard-palette>
+      <h2 class="moodboard__palette-title">Refine the palette</h2>
+      <p class="moodboard__palette-help">Choose up to four colors from this moodboard.</p>
+      <div class="moodboard__palette-grid">
+        {%- for palette_index in (1..4) -%}
+          <label class="moodboard__palette-swatch">
+            <span class="sr-only">Palette color {{ palette_index }}</span>
+            <input type="color" value="#d8d0c5" data-palette-color="{{ palette_index }}" aria-label="Palette color {{ palette_index }}">
+            <span class="moodboard__palette-value" data-palette-value="{{ palette_index }}">#D8D0C5</span>
+          </label>
+        {%- endfor -%}
+      </div>
+    </div>
+
     {%- comment -%} Add to Cart Form {%- endcomment -%}
     {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
       <input type="hidden" name="id" value="{{ current_variant.id }}" data-moodboard-variant-id>
       <input type="hidden" name="quantity" value="1">
+      {%- for palette_index in (1..4) -%}
+        <input type="hidden" name="properties[Color {{ palette_index }} HEX]" value="#D8D0C5" data-palette-hex="{{ palette_index }}">
+        <input type="hidden" name="properties[Color {{ palette_index }} RGB]" value="rgb(216, 208, 197)" data-palette-rgb="{{ palette_index }}">
+      {%- endfor -%}
       <button
         type="submit"
         name="add"
@@ -105,6 +123,62 @@ document.addEventListener('DOMContentLoaded', function () {
   {% endfor %}
 
   var btns = document.querySelectorAll('.moodboard__variant-btn');
+  var paletteInputs = document.querySelectorAll('[data-palette-color]');
+  var paletteImage = document.querySelector('.moodboard__grid img');
+
+  function hexToRgb(hex) {
+    var value = hex.replace('#', '');
+    var number = parseInt(value, 16);
+    return { r: (number >> 16) & 255, g: (number >> 8) & 255, b: number & 255 };
+  }
+
+  function updatePalette(index, hex) {
+    var rgb = hexToRgb(hex);
+    var rgbValue = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
+    var value = hex.toUpperCase();
+    var hexField = document.querySelector('[data-palette-hex="' + index + '"]');
+    var rgbField = document.querySelector('[data-palette-rgb="' + index + '"]');
+    var valueLabel = document.querySelector('[data-palette-value="' + index + '"]');
+    if (hexField) hexField.value = value;
+    if (rgbField) rgbField.value = rgbValue;
+    if (valueLabel) valueLabel.textContent = value;
+  }
+
+  paletteInputs.forEach(function (input) {
+    input.addEventListener('input', function () { updatePalette(this.dataset.paletteColor, this.value); });
+    input.addEventListener('click', function () {
+      if (window.EyeDropper) {
+        var eyedropper = new EyeDropper();
+        eyedropper.open().then(function (result) {
+          input.value = result.sRGBHex;
+          updatePalette(input.dataset.paletteColor, input.value);
+        }).catch(function () {});
+      }
+    });
+  });
+
+  function extractPalette() {
+    if (!paletteImage || !paletteImage.complete) return;
+    var canvas = document.createElement('canvas');
+    canvas.width = 32; canvas.height = 32;
+    var context = canvas.getContext('2d', { willReadFrequently: true });
+    try {
+      context.drawImage(paletteImage, 0, 0, 32, 32);
+      var pixels = context.getImageData(0, 0, 32, 32).data;
+      var samples = [];
+      for (var p = 0; p < pixels.length; p += 16) {
+        if (pixels[p + 3] > 220) samples.push([pixels[p], pixels[p + 1], pixels[p + 2]]);
+      }
+      var colors = samples.slice(0, 4);
+      colors.forEach(function (color, index) {
+        var hex = '#' + color.map(function (part) { return part.toString(16).padStart(2, '0'); }).join('');
+        var input = paletteInputs[index];
+        if (input) { input.value = hex; updatePalette(index + 1, hex); }
+      });
+    } catch (error) {}
+  }
+  if (paletteImage) paletteImage.addEventListener('load', extractPalette);
+  extractPalette();
   btns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       var idx = parseInt(this.dataset.optionIndex);

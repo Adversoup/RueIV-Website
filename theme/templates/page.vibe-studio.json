@@ -72,57 +72,45 @@
         "mb_1": {
           "type": "moodboard",
           "settings": {
-            "title": "Quiet Luxury Living Room",
-            "description": "Warm neutrals, soft bouclé, and sculptural lighting — a serene retreat for modern living.",
-            "tag": "Living Room",
-            "link": "/products/quiet-luxury-living-room-2"
+            "product": "quiet-luxury-living-room-2"
           }
         },
         "mb_2": {
           "type": "moodboard",
           "settings": {
-            "title": "Coastal Modern Bedroom",
-            "description": "Light linens, whitewashed textures, and ocean-inspired hues for effortless calm.",
-            "tag": "Bedroom",
-            "link": "/products/coastal-modern-bedroom-2"
+            "product": "coastal-modern-bedroom-2"
           }
         },
         "mb_3": {
           "type": "moodboard",
           "settings": {
-            "title": "Industrial Loft Dining",
-            "description": "Raw materials meet refined craft — brass, leather, and statement wallpaper.",
-            "tag": "Dining",
-            "link": "/products/industrial-loft-dining-2"
+            "product": "industrial-loft-dining-2"
           }
         },
         "mb_4": {
           "type": "moodboard",
           "settings": {
-            "title": "Japandi Study",
-            "description": "Minimalist forms, natural wood, and paper-inspired wallcoverings for focused serenity.",
-            "tag": "Study",
-            "link": "/products/japandi-study-2"
+            "product": "japandi-study-2"
           }
         },
         "mb_5": {
           "type": "moodboard",
           "settings": {
-            "title": "Art Deco Lounge",
-            "description": "Rich velvets, geometric patterns, and statement lighting — glamour reimagined.",
-            "tag": "Lounge",
-            "link": "/products/art-deco-lounge-2"
+            "product": "art-deco-lounge-2"
           }
         },
         "mb_6": {
           "type": "moodboard",
           "settings": {
-            "title": "Mediterranean Terrace",
-            "description": "Terracotta tones, outdoor-rated fabrics, and sun-drenched warmth.",
-            "tag": "Outdoor",
-            "link": "/products/mediterranean-terrace-2"
+            "product": "mediterranean-terrace-2"
           }
-        }
+        },
+        "mb_7": { "type": "moodboard", "settings": {} },
+        "mb_8": { "type": "moodboard", "settings": {} },
+        "mb_9": { "type": "moodboard", "settings": {} },
+        "mb_10": { "type": "moodboard", "settings": {} },
+        "mb_11": { "type": "moodboard", "settings": {} },
+        "mb_12": { "type": "moodboard", "settings": {} }
       },
       "block_order": [
         "mb_1",
@@ -130,7 +118,13 @@
         "mb_3",
         "mb_4",
         "mb_5",
-        "mb_6"
+        "mb_6",
+        "mb_7",
+        "mb_8",
+        "mb_9",
+        "mb_10",
+        "mb_11",
+        "mb_12"
       ],
       "settings": {
         "eyebrow": "Curated Vibes",

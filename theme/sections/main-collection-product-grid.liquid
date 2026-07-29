@@ -4,10 +4,13 @@
 <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
 {%- liquid
   assign current_filter_size = 0
-  assign columns_desktop = section.settings.columns_desktop
+  assign columns_desktop = 3
   assign columns_tablet = 3
-  assign columns_tablet_large = 4
+  assign columns_tablet_large = 3
   assign columns_mobile = section.settings.columns_mobile | times: 1
+
+  assign break_1_after = 15
+  assign break_2_after = 33
 
   for filter in collection.filters
     assign _dl = filter.label | downcase
@@ -31,6 +34,48 @@
   if section.settings.grid_layout == 'metro'
     assign is_metro = true
   endif
+
+  assign breaker_1_image = section.settings.break_1_image
+  assign breaker_1_title = section.settings.break_1_title
+  assign breaker_1_subtitle = section.settings.break_1_subtitle
+  assign breaker_1_cta = section.settings.break_1_cta
+  assign breaker_1_link = section.settings.break_1_link
+  assign breaker_2_image = section.settings.break_2_image
+  assign breaker_2_title = section.settings.break_2_title
+  assign breaker_2_subtitle = section.settings.break_2_subtitle
+  assign breaker_2_cta = section.settings.break_2_cta
+  assign breaker_2_link = section.settings.break_2_link
+  assign has_category_breaker = false
+  assign parent_collection_handle = collection.handle
+  if collection.handle == 'textiles' or collection.handle == 'fabric' or collection.handle contains 'textiles-'
+    assign parent_collection_handle = 'textiles'
+  elsif collection.handle == 'wallcovering' or collection.handle == 'wallpaper' or collection.handle contains 'wallcovering-'
+    assign parent_collection_handle = 'wallcovering'
+  elsif collection.handle == 'lighting' or collection.handle contains 'lighting-'
+    assign parent_collection_handle = 'lighting'
+  elsif collection.handle == 'furniture' or collection.handle contains 'furniture-'
+    assign parent_collection_handle = 'furniture'
+  elsif collection.handle == 'rugs' or collection.handle contains 'rugs-'
+    assign parent_collection_handle = 'rugs'
+  elsif collection.handle == 'accessories' or collection.handle contains 'accessories-'
+    assign parent_collection_handle = 'accessories'
+  endif
+
+  for breaker_block in section.blocks
+    if breaker_block.type == 'category_breakers' and breaker_block.settings.collection != blank and breaker_block.settings.collection.handle == parent_collection_handle
+      assign has_category_breaker = true
+      assign breaker_1_image = breaker_block.settings.break_1_image
+      assign breaker_1_title = breaker_block.settings.break_1_title
+      assign breaker_1_subtitle = breaker_block.settings.break_1_subtitle
+      assign breaker_1_cta = breaker_block.settings.break_1_cta
+      assign breaker_1_link = breaker_block.settings.break_1_link
+      assign breaker_2_image = breaker_block.settings.break_2_image
+      assign breaker_2_title = breaker_block.settings.break_2_title
+      assign breaker_2_subtitle = breaker_block.settings.break_2_subtitle
+      assign breaker_2_cta = breaker_block.settings.break_2_cta
+      assign breaker_2_link = breaker_block.settings.break_2_link
+    endif
+  endfor
 -%}
 {%- if is_metro -%}
   {%- render 'product-grid-metro-style',
@@ -51,10 +96,16 @@
 {%- endif -%}
 {%- endcapture -%}
 
-{% render 'divider',
-  show_divider: section.settings.show_section_divider,
-  divider_width: section.settings.divider_width
-%}
+<style>
+  .collection-breaker { grid-column: 1 / -1; position: relative; min-height: 260px; overflow: hidden; background: #f3f0eb; }
+  .collection-breaker__img { display: block; width: 100%; height: 100%; min-height: 260px; object-fit: cover; }
+  .collection-breaker__placeholder { min-height: 260px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #d8d0c5, #eee9e1 48%, #b9aa98); color: #fff; font-size: clamp(18px, 2.5vw, 32px); letter-spacing: .12em; text-align: center; text-transform: uppercase; }
+  .collection-breaker__overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; text-align: center; color: #fff; background: linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.42)); }
+  .collection-breaker__title, .collection-breaker__subtitle { margin: 0; color: inherit; }
+  .collection-breaker__title { font-size: clamp(24px, 3vw, 42px); letter-spacing: .08em; text-transform: uppercase; }
+  .collection-breaker__subtitle { max-width: 560px; margin-top: 10px; font-size: 15px; }
+  .collection-breaker__cta { margin-top: 18px; }
+</style>
 
 <div
   class="section--padding color-{{ section.settings.color_scheme }}"
@@ -191,6 +242,7 @@
                 {%- assign is_featured = false -%}
                 {%- if grid_weight >= 3 -%}{%- assign is_hero = true -%}{%- endif -%}
                 {%- if grid_weight == 2 -%}{%- assign is_featured = true -%}{%- endif -%}
+
                 <div class="f-column card{% if is_hero %} is-metro-item{% endif %}{% if is_featured %} is-featured-item{% endif %}">
                   {%- if is_metro -%}
                     {%- render 'card-product-metro',
@@ -215,6 +267,34 @@
                     -%}
                   {%- endif -%}
                 </div>
+                  {%- if forloop.index == break_1_after and has_category_breaker -%}
+                    <div class="collection-breaker">
+                      {%- if breaker_1_image != blank -%}
+                        {{ breaker_1_image | image_url: width: 1440 | image_tag: loading: 'lazy', class: 'collection-breaker__img' }}
+                      {%- else -%}
+                        <div class="collection-breaker__placeholder"><span>{{ parent_collection_handle | replace: '-', ' ' | capitalize }} — Breaker 1</span></div>
+                      {%- endif -%}
+                      <div class="collection-breaker__overlay">
+                        {%- if breaker_1_title != blank -%}<h3 class="collection-breaker__title">{{ breaker_1_title }}</h3>{%- endif -%}
+                        {%- if breaker_1_subtitle != blank -%}<p class="collection-breaker__subtitle">{{ breaker_1_subtitle }}</p>{%- endif -%}
+                        {%- if breaker_1_cta != blank and breaker_1_link != blank -%}<a class="btn btn--secondary collection-breaker__cta" href="{{ breaker_1_link }}">{{ breaker_1_cta }}</a>{%- endif -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
+                  {%- if forloop.index == break_2_after and has_category_breaker -%}
+                    <div class="collection-breaker">
+                      {%- if breaker_2_image != blank -%}
+                        {{ breaker_2_image | image_url: width: 1440 | image_tag: loading: 'lazy', class: 'collection-breaker__img' }}
+                      {%- else -%}
+                        <div class="collection-breaker__placeholder"><span>{{ parent_collection_handle | replace: '-', ' ' | capitalize }} — Breaker 2</span></div>
+                      {%- endif -%}
+                      <div class="collection-breaker__overlay">
+                        {%- if breaker_2_title != blank -%}<h3 class="collection-breaker__title">{{ breaker_2_title }}</h3>{%- endif -%}
+                        {%- if breaker_2_subtitle != blank -%}<p class="collection-breaker__subtitle">{{ breaker_2_subtitle }}</p>{%- endif -%}
+                        {%- if breaker_2_cta != blank and breaker_2_link != blank -%}<a class="btn btn--secondary collection-breaker__cta" href="{{ breaker_2_link }}">{{ breaker_2_cta }}</a>{%- endif -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
               {%- endfor -%}
             </grid-list>
             {%- liquid
@@ -248,9 +328,9 @@
       "type": "range",
       "id": "products_per_page",
       "min": 8,
-      "max": 36,
+      "max": 50,
       "step": 1,
-      "default": 15,
+      "default": 50,
       "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
     },
     {
@@ -421,6 +501,78 @@
       "label": "t:sections.all.divider.settings.divider_width.label",
       "visible_if": "{{ section.settings.show_section_divider == true }}"
     }
-  ]
+  ],
+  "blocks": [
+    {
+      "type": "category_breakers",
+      "name": "Category breakers",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Category collection"
+        },
+        {
+          "type": "header",
+          "content": "Breaker 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "break_1_image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "break_1_title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "break_1_subtitle",
+          "label": "Subtitle"
+        },
+        {
+          "type": "text",
+          "id": "break_1_cta",
+          "label": "CTA label"
+        },
+        {
+          "type": "url",
+          "id": "break_1_link",
+          "label": "CTA link"
+        },
+        {
+          "type": "header",
+          "content": "Breaker 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "break_2_image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "break_2_title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "break_2_subtitle",
+          "label": "Subtitle"
+        },
+        {
+          "type": "text",
+          "id": "break_2_cta",
+          "label": "CTA label"
+        },
+        {
+          "type": "url",
+          "id": "break_2_link",
+          "label": "CTA link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20
 }
 {% endschema %}

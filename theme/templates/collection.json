@@ -52,10 +52,10 @@
       "custom_css": [],
       "settings": {
         "color_scheme": "scheme-9",
-        "products_per_page": 15,
+        "products_per_page": 50,
         "columns_desktop": 3,
         "grid_layout": "standard",
-        "pagination": "number",
+        "pagination": "load_more",
         "enable_color_swatch": true,
         "enable_filtering": true,
         "filter_type": "horizontal",
@@ -66,7 +66,41 @@
         "padding_bottom": 100,
         "show_section_divider": true,
         "divider_width": "fixed"
-      }
+      },
+      "blocks": {
+        "textiles_breakers": {
+          "type": "category_breakers",
+          "settings": { "collection": "textiles" }
+        },
+        "wallcovering_breakers": {
+          "type": "category_breakers",
+          "settings": { "collection": "wallcovering" }
+        },
+        "lighting_breakers": {
+          "type": "category_breakers",
+          "settings": { "collection": "lighting" }
+        },
+        "furniture_breakers": {
+          "type": "category_breakers",
+          "settings": { "collection": "furniture" }
+        },
+        "rugs_breakers": {
+          "type": "category_breakers",
+          "settings": { "collection": "rugs" }
+        },
+        "accessories_breakers": {
+          "type": "category_breakers",
+          "settings": { "collection": "accessories" }
+        }
+      },
+      "block_order": [
+        "textiles_breakers",
+        "wallcovering_breakers",
+        "lighting_breakers",
+        "furniture_breakers",
+        "rugs_breakers",
+        "accessories_breakers"
+      ]
     }
   },
   "order": [
