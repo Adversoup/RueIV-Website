@@ -1,11 +1,11 @@
-<style>
+{% style %}
   .rueiv-ready { margin-block-start: 0 !important; min-height: 100vh; display: flex; align-items: center; padding: 80px 0; }
 
   /* Slider */
-  .rueiv-qs__slider { position: relative; overflow: hidden; padding: 0 60px; width: 100%; }
+  .rueiv-qs__slider { position: relative; overflow: hidden; padding: 0; width: 100%; }
   .rueiv-qs__track { display: flex; gap: 20px; transition: transform 0.5s ease; }
-  .rueiv-qs__card { flex: 0 0 calc(33.333% - 14px); text-decoration: none; color: inherit; }
-  .rueiv-qs__img-wrap { aspect-ratio: 3/4; overflow: hidden; background: #e8e5e0; position: relative; }
+  .rueiv-qs__card { flex: 0 0 calc((100% - 40px) / 3.35); text-decoration: none; color: inherit; }
+  .rueiv-qs__img-wrap { aspect-ratio: 4/5; overflow: hidden; background: #e8e5e0; position: relative; }
   .rueiv-qs__img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
   .rueiv-qs__card:hover .rueiv-qs__img-wrap img { transform: scale(1.04); }
   .rueiv-qs__img-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.18); transition: background 0.3s; }
@@ -13,20 +13,19 @@
   .rueiv-qs__img-label { font-family: var(--font-heading-family); font-size: clamp(18px, 2vw, 28px); font-weight: 300; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
 
   /* Counter */
-      .rueiv-qs__counter { display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-family: var(--font-heading-family); font-size: 14px; letter-spacing: 0.14em; margin-bottom: 16px; padding-right: 60px; }
+      .rueiv-qs__counter { display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-family: var(--font-heading-family); font-size: 14px; letter-spacing: 0.14em; margin-bottom: 16px; padding-right: 0; }
   .rueiv-qs__counter button { background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px 8px; color: #1a1a1a; opacity: 0.5; transition: opacity 0.2s; }
   .rueiv-qs__counter button:hover { opacity: 1; }
   .rueiv-qs__counter button:disabled { opacity: 0.2; cursor: default; }
   .rueiv-qs__counter span { opacity: 0.5; }
 
   @media (max-width: 767px) {
-    .rueiv-qs__slider { padding: 0 20px; }
     .rueiv-qs__card { flex: 0 0 calc(50% - 10px); }
-    .rueiv-qs__counter { right: 20px; }
+    .rueiv-qs__img-wrap { aspect-ratio: 1/1.15; }
   }
-</style>
+{% endstyle %}
 <section class="rueiv-section rueiv-ready">
-  <div class="rueiv-page-width" style="width:100%;">
+  <div class="rueiv-page-width" style="width:100%; max-width:none;">
     {%- if section.settings.heading != blank -%}
       <h2 class="rueiv-section-heading" style="text-align: center;">{{ section.settings.heading }}</h2>
     {%- endif -%}
@@ -40,6 +39,31 @@
       </div>
       <div class="rueiv-qs__slider" data-qs-slider>
       <div class="rueiv-qs__track" data-qs-track>
+        {%- assign qs_first_block = blank -%}
+        {%- assign qs_last_block = blank -%}
+
+        {%- for block in section.blocks -%}
+          {%- if forloop.first -%}
+            {%- assign qs_first_block = block -%}
+          {%- endif -%}
+          {%- assign qs_last_block = block -%}
+        {%- endfor -%}
+
+        {%- if qs_last_block != blank -%}
+          <a href="{{ qs_last_block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide data-qs-clone="true">
+            <div class="rueiv-qs__img-wrap">
+              {%- if qs_last_block.settings.image != blank -%}
+                {{ qs_last_block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: qs_last_block.settings.title }}
+              {%- else -%}
+                <div class="rueiv-pcard__placeholder"></div>
+              {%- endif -%}
+              <div class="rueiv-qs__img-overlay">
+                <span class="rueiv-qs__img-label">{{ qs_last_block.settings.title }}</span>
+              </div>
+            </div>
+          </a>
+        {%- endif -%}
+
         {%- for block in section.blocks -%}
           <a href="{{ block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide>
             <div class="rueiv-qs__img-wrap">
@@ -54,40 +78,79 @@
             </div>
           </a>
         {%- endfor -%}
+
+        {%- if qs_first_block != blank -%}
+          <a href="{{ qs_first_block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide data-qs-clone="true">
+            <div class="rueiv-qs__img-wrap">
+              {%- if qs_first_block.settings.image != blank -%}
+                {{ qs_first_block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: qs_first_block.settings.title }}
+              {%- else -%}
+                <div class="rueiv-pcard__placeholder"></div>
+              {%- endif -%}
+              <div class="rueiv-qs__img-overlay">
+                <span class="rueiv-qs__img-label">{{ qs_first_block.settings.title }}</span>
+              </div>
+            </div>
+          </a>
+        {%- endif -%}
       </div>
     </div>
   </div>
 </section>
 
-<script>
+{% javascript %}
 (function(){
   var slider = document.querySelector('[data-qs-slider]');
   if (!slider) return;
   var track = slider.querySelector('[data-qs-track]');
+  var originalCards = Array.from(slider.querySelectorAll('[data-qs-slide]:not([data-qs-clone="true"])'));
   var cards = slider.querySelectorAll('[data-qs-slide]');
   var prevBtn = document.querySelector('[data-qs-prev]');
   var nextBtn = document.querySelector('[data-qs-next]');
   var curEl = document.querySelector('[data-qs-current]');
   var totalEl = document.querySelector('[data-qs-total]');
-  var index = 0;
-  var total = cards.length;
+  var total = originalCards.length;
+  var index = total > 0 ? 1 : 0;
+  var gap = 20;
   totalEl.textContent = total;
-  curEl.textContent = 1;
+  curEl.textContent = total > 0 ? 1 : 0;
 
   function update() {
-    var cardW = cards[0] ? cards[0].offsetWidth + 20 : 0;
-    track.style.transform = 'translateX(-' + (index * cardW) + 'px)';
-    curEl.textContent = index + 1;
-    prevBtn.disabled = index === 0;
-    nextBtn.disabled = index >= total - 3;
+    cards = slider.querySelectorAll('[data-qs-slide]');
+    var cardW = cards[0] ? cards[0].offsetWidth + gap : 0;
+    var peek = cardW ? Math.min(cardW * 0.24, 84) : 0;
+    track.style.transform = 'translateX(' + (-index * cardW + peek) + 'px)';
+    if (total > 0) {
+      var realIndex = index;
+      if (realIndex === 0) realIndex = total;
+      if (realIndex === total + 1) realIndex = 1;
+      curEl.textContent = realIndex;
+    }
   }
 
-  prevBtn.addEventListener('click', function(){ if (index > 0) { index--; update(); } });
-  nextBtn.addEventListener('click', function(){ if (index < total - 3) { index++; update(); } });
+  prevBtn.addEventListener('click', function(){ if (total > 1) { index--; update(); } });
+  nextBtn.addEventListener('click', function(){ if (total > 1) { index++; update(); } });
+  track.addEventListener('transitionend', function(){
+    if (total < 2) return;
+    if (index === 0) {
+      track.style.transition = 'none';
+      index = total;
+      update();
+      track.offsetHeight;
+      track.style.transition = 'transform 0.5s ease';
+    }
+    if (index === total + 1) {
+      track.style.transition = 'none';
+      index = 1;
+      update();
+      track.offsetHeight;
+      track.style.transition = 'transform 0.5s ease';
+    }
+  });
   window.addEventListener('resize', update);
   update();
 })();
-</script>
+{% endjavascript %}
 
 {% schema %}
 {

@@ -116,6 +116,13 @@
   padding-inline: clamp(20px, 4vw, 60px);
 }
 
+.rueiv-trending .rueiv-page-width,
+.rueiv-ready .rueiv-page-width {
+  width: 100%;
+  max-width: none;
+  padding-inline: 7.5rem;
+}
+
 .rueiv-subtext {
   font-size: 15px;
   line-height: 1.8;
@@ -1314,6 +1321,11 @@
 
 /* ── Mobile ── */
 @media (max-width: 767px) {
+  .rueiv-trending .rueiv-page-width,
+  .rueiv-ready .rueiv-page-width {
+    padding-inline: 20px;
+  }
+
   .rueiv-section { --rueiv-gap: 96px; }
 
   .rueiv-section h1 { font-size: 32px; }

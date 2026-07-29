@@ -188,7 +188,7 @@
         "color_scheme": "scheme-1",
         "enable_sticky_info": true,
         "media_size": "large",
-        "gallery_layout": "carousel",
+        "gallery_layout": "grid-mix",
         "mobile_thumbnails": "hide",
         "enable_image_zoom": true,
         "enable_video_looping": true,

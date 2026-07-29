@@ -122,14 +122,14 @@
   padding-inline: var(--page-padding);
 }
 .page-width--full {
-  --page-padding: 1.5rem;
+  --page-padding: 7.5rem;
   padding-inline: var(--page-padding);
 }
 
 .template-collection .collection-hero .page-width--full,
 .template-collection .collection.page-width--full,
 .template-product product-info.page-width--full {
-  --page-padding: clamp(1rem, 2vw, 2.4rem);
+  --page-padding: 7.5rem;
 }
 
 .template-collection .collection-section .products-list {
