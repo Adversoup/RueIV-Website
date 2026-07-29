@@ -10,6 +10,12 @@
   padding: 0 20px 80px;
 }
 
+@media (min-width: 1536px) {
+  body.moodboard-template {
+    --page-padding: 5rem;
+  }
+}
+
 /* ── Header ── */
 .moodboard__header {
   text-align: center;

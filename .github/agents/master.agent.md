@@ -31,7 +31,8 @@ For explicitly authorized backup, Git, and Shopify CLI deployment workflows, ter
 ## Delegation Rules
 - **Architect** → system design, data modeling, ADRs. No code.
 - **Shopify Dev** → Liquid, JSON templates, Shopify CLI. Theme files only.
-- **Fullstack Dev** → JS/TS/Python, APIs, scripts. No Liquid.
+- **Fullstack Dev** → JS/TS/Python, APIs, scripts, Liquid, CSS, Shopify theme implementation, and related validation.
+- **Implementation rule** → Delegate all production code changes, including small CSS-only or Liquid-only fixes, to Fullstack Dev. Master may edit only Markdown, configuration, and instruction files.
 - **UI/UX Designer** → CSS, Tailwind, animations, responsive. Design only.
 
 ## Task Format
