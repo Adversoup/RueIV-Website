@@ -55,6 +55,7 @@
   assign has_brand_breaker = false
   assign matched_brand_breaker_block = false
   assign is_vendor_collection = false
+  assign current_vendor_handle = blank
   assign brand_breaker_image = blank
   assign brand_breaker_title = blank
   assign brand_breaker_subtitle = blank
@@ -80,6 +81,10 @@
     assign parent_collection_handle = 'accessories'
   endif
 
+  if collection.products_count > 0
+    assign current_vendor_handle = collection.products.first.vendor | handleize
+  endif
+
   for breaker_block in section.blocks
     if breaker_block.type == 'category_breakers' and breaker_block.settings.collection != blank and breaker_block.settings.collection.handle == parent_collection_handle
       assign has_category_breaker = true
@@ -98,19 +103,32 @@
       assign breaker_title_size = breaker_block.settings.title_size | default: 42
       assign breaker_subtitle_size = breaker_block.settings.subtitle_size | default: 15
       assign breaker_overlay_opacity = breaker_block.settings.overlay_opacity | default: 42
-    elsif breaker_block.type == 'brand_breaker' and breaker_block.settings.collection != blank and breaker_block.settings.collection.handle == collection.handle
-      assign has_brand_breaker = true
-      assign matched_brand_breaker_block = true
-      assign brand_breaker_image = breaker_block.settings.break_image
-      assign brand_breaker_title = breaker_block.settings.break_title
-      assign brand_breaker_subtitle = breaker_block.settings.break_subtitle
-      assign brand_breaker_cta = breaker_block.settings.break_cta
-      assign brand_breaker_link = breaker_block.settings.break_link
-      assign brand_breaker_title_color = breaker_block.settings.title_color | default: '#ffffff'
-      assign brand_breaker_subtitle_color = breaker_block.settings.subtitle_color | default: '#ffffff'
-      assign brand_breaker_title_size = breaker_block.settings.title_size | default: 42
-      assign brand_breaker_subtitle_size = breaker_block.settings.subtitle_size | default: 15
-      assign brand_breaker_overlay_opacity = breaker_block.settings.overlay_opacity | default: 42
+    elsif breaker_block.type == 'brand_breaker' and breaker_block.settings.collection != blank
+      assign matches_brand_breaker = false
+      assign block_collection_handle = breaker_block.settings.collection.handle
+      assign block_collection_vendor_handle = breaker_block.settings.collection.title | handleize
+      if block_collection_handle == collection.handle
+        assign matches_brand_breaker = true
+      elsif current_vendor_handle != blank and block_collection_handle == current_vendor_handle
+        assign matches_brand_breaker = true
+      elsif current_vendor_handle != blank and block_collection_vendor_handle == current_vendor_handle
+        assign matches_brand_breaker = true
+      endif
+
+      if matches_brand_breaker
+        assign has_brand_breaker = true
+        assign matched_brand_breaker_block = true
+        assign brand_breaker_image = breaker_block.settings.break_image
+        assign brand_breaker_title = breaker_block.settings.break_title
+        assign brand_breaker_subtitle = breaker_block.settings.break_subtitle
+        assign brand_breaker_cta = breaker_block.settings.break_cta
+        assign brand_breaker_link = breaker_block.settings.break_link
+        assign brand_breaker_title_color = breaker_block.settings.title_color | default: '#ffffff'
+        assign brand_breaker_subtitle_color = breaker_block.settings.subtitle_color | default: '#ffffff'
+        assign brand_breaker_title_size = breaker_block.settings.title_size | default: 42
+        assign brand_breaker_subtitle_size = breaker_block.settings.subtitle_size | default: 15
+        assign brand_breaker_overlay_opacity = breaker_block.settings.overlay_opacity | default: 42
+      endif
     endif
   endfor
 
@@ -128,7 +146,7 @@
 
   if is_vendor_collection
     assign has_brand_breaker = true
-    if matched_brand_breaker_block == false and brand_breaker_image == blank and collection.featured_image != blank
+    if matched_brand_breaker_block == false and brand_breaker_image == blank and collection.featured_image != blank and template.suffix != 'designers'
       assign brand_breaker_image = collection.featured_image
     endif
   endif
