@@ -43,6 +43,45 @@
     },
     "product-grid": {
       "type": "main-collection-product-grid",
+      "blocks": {
+        "arte_breaker": {
+          "type": "brand_breaker",
+          "settings": {
+            "collection": "arte"
+          }
+        },
+        "fabricut_breaker": {
+          "type": "brand_breaker",
+          "settings": {
+            "collection": "fabricut"
+          }
+        },
+        "porta_romana_breaker": {
+          "type": "brand_breaker",
+          "settings": {
+            "collection": "porta-romana"
+          }
+        },
+        "verellen_breaker": {
+          "type": "brand_breaker",
+          "settings": {
+            "collection": "verellen"
+          }
+        },
+        "zr_breaker": {
+          "type": "brand_breaker",
+          "settings": {
+            "collection": "zr"
+          }
+        }
+      },
+      "block_order": [
+        "arte_breaker",
+        "fabricut_breaker",
+        "porta_romana_breaker",
+        "verellen_breaker",
+        "zr_breaker"
+      ],
       "settings": {
         "color_scheme": "scheme-9",
         "products_per_page": 50,
