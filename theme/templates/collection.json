@@ -91,6 +91,26 @@
         "accessories_breakers": {
           "type": "category_breakers",
           "settings": { "collection": "accessories" }
+        },
+        "arte_breaker": {
+          "type": "brand_breaker",
+          "settings": { "collection": "arte" }
+        },
+        "fabricut_breaker": {
+          "type": "brand_breaker",
+          "settings": { "collection": "fabricut" }
+        },
+        "porta_romana_breaker": {
+          "type": "brand_breaker",
+          "settings": { "collection": "porta-romana" }
+        },
+        "verellen_breaker": {
+          "type": "brand_breaker",
+          "settings": { "collection": "verellen" }
+        },
+        "zr_breaker": {
+          "type": "brand_breaker",
+          "settings": { "collection": "zr" }
         }
       },
       "block_order": [
@@ -99,7 +119,12 @@
         "lighting_breakers",
         "furniture_breakers",
         "rugs_breakers",
-        "accessories_breakers"
+        "accessories_breakers",
+        "arte_breaker",
+        "fabricut_breaker",
+        "porta_romana_breaker",
+        "verellen_breaker",
+        "zr_breaker"
       ]
     }
   },

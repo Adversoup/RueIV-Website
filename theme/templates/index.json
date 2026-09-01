@@ -12,6 +12,19 @@
     "rueiv_hero": {
       "type": "rueiv-hero",
       "blocks": {
+        "slide_yDjj7W": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/homepage001.png",
+            "kicker": "",
+            "heading": "Curated Design for Interior Professionals",
+            "description": "",
+            "button_label": "Explore Textiles",
+            "button_url": "",
+            "button_label_2": "",
+            "button_url_2": ""
+          }
+        },
         "slide_PTGEyb": {
           "type": "slide",
           "settings": {
@@ -66,6 +79,7 @@
         }
       },
       "block_order": [
+        "slide_yDjj7W",
         "slide_PTGEyb",
         "slide_NB3KVD",
         "slide_1",
@@ -156,20 +170,6 @@
         "video_asset": "",
         "constrain_height": false,
         "link": ""
-      }
-    },
-    "rueiv_spotlight": {
-      "type": "rueiv-brand-spotlight",
-      "settings": {
-        "video_url": "https://cdn.shopify.com/videos/c/o/v/2eb723bafc90472184c7a0e0065fcad5.mp4",
-        "image_asset": "",
-        "title": "<p>Brand Spotlight <em>Porta Romana</em></p>",
-        "subtitle": "The designers shaping what's next.",
-        "copy": "New launches. — Distinct points of view. — Collections driving the market.",
-        "button_label": "Explore The Designers",
-        "button_url": "/collections/designers",
-        "text_align": "center",
-        "overlay_opacity": 40
       }
     },
     "rueiv_vibe": {
@@ -281,62 +281,121 @@
         "show_vendor": true
       }
     },
+    "rueiv_spotlight": {
+      "type": "rueiv-brand-spotlight",
+      "settings": {
+        "video_url": "https://cdn.shopify.com/videos/c/o/v/2eb723bafc90472184c7a0e0065fcad5.mp4",
+        "image_asset": "",
+        "title": "<p>Brand Spotlight <em>Porta Romana</em></p>",
+        "subtitle": "The designers shaping what's next.",
+        "copy": "New launches. — Distinct points of view. — Collections driving the market.",
+        "button_label": "Explore The Designers",
+        "button_url": "/collections/designers",
+        "text_align": "center",
+        "overlay_opacity": 40
+      }
+    },
     "rueiv_ready": {
       "type": "rueiv-project-ready",
       "blocks": {
         "qs_furniture": {
           "type": "category",
-          "settings": { "image": "", "title": "Furniture", "link": "/collections/quick-ship-furniture" }
+          "settings": {
+            "title": "Furniture",
+            "link": "/collections/quick-ship-furniture"
+          }
         },
         "qs_seating": {
           "type": "category",
-          "settings": { "image": "", "title": "Seating", "link": "/collections/quick-ship-seating" }
+          "settings": {
+            "title": "Seating",
+            "link": "/collections/quick-ship-seating"
+          }
         },
         "qs_tables": {
           "type": "category",
-          "settings": { "image": "", "title": "Tables", "link": "/collections/quick-ship-tables" }
+          "settings": {
+            "title": "Tables",
+            "link": "/collections/quick-ship-tables"
+          }
         },
         "qs_casegoods": {
           "type": "category",
-          "settings": { "image": "", "title": "Case Goods", "link": "/collections/quick-ship-case-goods" }
+          "settings": {
+            "title": "Case Goods",
+            "link": "/collections/quick-ship-case-goods"
+          }
         },
         "qs_rugs": {
           "type": "category",
-          "settings": { "image": "", "title": "Rugs", "link": "/collections/quick-ship-rugs" }
+          "settings": {
+            "title": "Rugs",
+            "link": "/collections/quick-ship-rugs"
+          }
         },
         "qs_lighting": {
           "type": "category",
-          "settings": { "image": "", "title": "Lighting", "link": "/collections/quick-ship-lighting" }
+          "settings": {
+            "title": "Lighting",
+            "link": "/collections/quick-ship-lighting"
+          }
         },
         "qs_lamps": {
           "type": "category",
-          "settings": { "image": "", "title": "Lamps", "link": "/collections/quick-ship-lamps" }
+          "settings": {
+            "title": "Lamps",
+            "link": "/collections/quick-ship-lamps"
+          }
         },
         "qs_pendants": {
           "type": "category",
-          "settings": { "image": "", "title": "Pendants", "link": "/collections/quick-ship-pendants" }
+          "settings": {
+            "title": "Pendants",
+            "link": "/collections/quick-ship-pendants"
+          }
         },
         "qs_walllights": {
           "type": "category",
-          "settings": { "image": "", "title": "Wall Lights", "link": "/collections/quick-ship-wall-lights" }
+          "settings": {
+            "title": "Wall Lights",
+            "link": "/collections/quick-ship-wall-lights"
+          }
         },
         "qs_mirrors": {
           "type": "category",
-          "settings": { "image": "", "title": "Mirrors", "link": "/collections/quick-ship-mirrors" }
+          "settings": {
+            "title": "Mirrors",
+            "link": "/collections/quick-ship-mirrors"
+          }
         },
         "qs_accessories": {
           "type": "category",
-          "settings": { "image": "", "title": "Accessories", "link": "/collections/quick-ship-accessories" }
+          "settings": {
+            "title": "Accessories",
+            "link": "/collections/quick-ship-accessories"
+          }
         },
         "qs_floordisplay": {
           "type": "category",
-          "settings": { "image": "", "title": "Floor Display", "link": "/collections/quick-ship-floor-display" }
+          "settings": {
+            "title": "Floor Display",
+            "link": "/collections/quick-ship-floor-display"
+          }
         }
       },
       "block_order": [
-        "qs_furniture", "qs_seating", "qs_tables", "qs_casegoods",
-        "qs_rugs", "qs_lighting", "qs_lamps", "qs_pendants",
-        "qs_walllights", "qs_mirrors", "qs_accessories", "qs_floordisplay"
+        "qs_furniture",
+        "qs_seating",
+        "qs_tables",
+        "qs_casegoods",
+        "qs_rugs",
+        "qs_lighting",
+        "qs_lamps",
+        "qs_pendants",
+        "qs_walllights",
+        "qs_mirrors",
+        "qs_accessories",
+        "qs_floordisplay"
       ],
       "settings": {
         "heading": "Quick Ship"
