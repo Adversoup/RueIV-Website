@@ -88,7 +88,7 @@
       "settings": {
         "hero_heading": "YOUR NEXT GENERATION SHOWROOM",
         "hero_subtitle": "Textiles. Wallcovering. Furniture. Lighting. Rugs.",
-        "banner_text": "An editorial gateway to the showroom \u2014 presenting the most compelling pieces from the world\u2019s leading design houses. Discover materials, collections, and ideas curated to inspire exceptional interiors."
+        "banner_text": "An editorial gateway to the showroom — presenting the most compelling pieces from the world’s leading design houses. Discover materials, collections, and ideas curated to inspire exceptional interiors."
       }
     },
     "rueiv_gateway": {
@@ -116,10 +116,7 @@
           "type": "category",
           "settings": {
             "collection": "furniture",
-            "image": "",
-            "image_asset": "furniture-verellen-homepage.jpg",
-            "image_alt": "Verellen furniture seating arrangement in a bright living room",
-            "image_credit": "",
+            "image": "shopify://shop_images/CLOUD_SOFA_251993_600x_55ea77d1-2566-4efc-a90a-76048f9f121a.jpg",
             "label": "Furniture",
             "link": ""
           }
@@ -137,10 +134,7 @@
           "type": "category",
           "settings": {
             "collection": "rugs",
-            "image": "",
-            "image_asset": "homepage-rugs-chris-everard.jpg",
-            "image_alt": "Interior with cream rug featuring an ochre patterned border, curved sofa, and natural light",
-            "image_credit": "Photographer: Chris Everard",
+            "image": "shopify://shop_images/ZA_ZA_RUG_252202_2000x_0000f73c-f893-4e95-a77f-3ac8ec850d51.jpg",
             "label": "Rugs",
             "link": ""
           }
@@ -149,10 +143,7 @@
           "type": "category",
           "settings": {
             "collection": "accessories",
-            "image": "",
-            "image_asset": "accessories-delecuona.webp",
-            "image_alt": "Layered decorative pillows in chocolate brown and textured charcoal fabrics",
-            "image_credit": "",
+            "image": "shopify://shop_images/Elliot_Pillow.webp",
             "label": "Accessories",
             "link": ""
           }
@@ -209,7 +200,7 @@
           "type": "step",
           "settings": {
             "title": "Receive",
-            "description": "Within 24\u201348 hours, receive a custom-curated selection."
+            "description": "Within 24–48 hours, receive a custom-curated selection."
           }
         },
         "pillar_1": {
@@ -278,7 +269,7 @@
         "button_url": "/pages/vibe-studio",
         "board_heading": "Select Your Project Aesthetic",
         "board_copy": "Each board represents a carefully curated design direction developed by our showroom team. Add a vibe to your cart and we'll source a cohesive selection tailored to your project.",
-        "board_note": "Curated sourcing selections are delivered within 24\u201348 business hours from submission. Trade-only service."
+        "board_note": "Curated sourcing selections are delivered within 24–48 business hours from submission. Trade-only service."
       }
     },
     "rueiv_trending": {
@@ -297,7 +288,7 @@
         "image_asset": "",
         "title": "<p>Brand Spotlight <em>Porta Romana</em></p>",
         "subtitle": "The designers shaping what's next.",
-        "copy": "New launches. \u2014 Distinct points of view. \u2014 Collections driving the market.",
+        "copy": "New launches. — Distinct points of view. — Collections driving the market.",
         "button_label": "Explore The Designers",
         "button_url": "/collections/designers",
         "text_align": "center",
@@ -311,89 +302,84 @@
           "type": "category",
           "settings": {
             "title": "Furniture",
-            "link": "/collections/quick-ship-furniture",
-            "image_asset": "quickship-furniture.avif",
-            "coming_soon": false
+            "link": "/collections/quick-ship-furniture"
           }
         },
         "qs_seating": {
           "type": "category",
           "settings": {
             "title": "Seating",
-            "link": "/collections/quick-ship-seating",
-            "image_asset": "quickship-seating.jpg",
-            "coming_soon": false
+            "link": "/collections/quick-ship-seating"
           }
         },
         "qs_tables": {
           "type": "category",
           "settings": {
             "title": "Tables",
-            "link": "/collections/quick-ship-tables",
-            "image_asset": "quickship-tables.jpg",
-            "coming_soon": false
+            "link": "/collections/quick-ship-tables"
+          }
+        },
+        "qs_casegoods": {
+          "type": "category",
+          "settings": {
+            "title": "Case Goods",
+            "link": "/collections/quick-ship-case-goods"
           }
         },
         "qs_rugs": {
           "type": "category",
           "settings": {
             "title": "Rugs",
-            "link": "/collections/quick-ship-rugs",
-            "image_asset": "quickship-rugs.jpg",
-            "coming_soon": false
+            "link": "/collections/quick-ship-rugs"
           }
         },
         "qs_lighting": {
           "type": "category",
           "settings": {
             "title": "Lighting",
-            "link": "/collections/quick-ship-lighting",
-            "image_asset": "quickship-lighting.jpg",
-            "coming_soon": false
+            "link": "/collections/quick-ship-lighting"
           }
         },
         "qs_lamps": {
           "type": "category",
           "settings": {
             "title": "Lamps",
-            "link": "/collections/quick-ship-lamps",
-            "image_asset": "quickship-lamps.webp",
-            "coming_soon": false
+            "link": "/collections/quick-ship-lamps"
+          }
+        },
+        "qs_pendants": {
+          "type": "category",
+          "settings": {
+            "title": "Pendants",
+            "link": "/collections/quick-ship-pendants"
           }
         },
         "qs_walllights": {
           "type": "category",
           "settings": {
             "title": "Wall Lights",
-            "link": "/collections/quick-ship-wall-lights",
-            "image_asset": "quickship-walllights.jpg",
-            "coming_soon": false
+            "link": "/collections/quick-ship-wall-lights"
           }
         },
         "qs_mirrors": {
           "type": "category",
           "settings": {
             "title": "Mirrors",
-            "link": "/collections/quick-ship-mirrors",
-            "image_asset": "quickship-mirrors.webp",
-            "coming_soon": false
+            "link": "/collections/quick-ship-mirrors"
           }
         },
         "qs_accessories": {
           "type": "category",
           "settings": {
             "title": "Accessories",
-            "link": "/collections/quick-ship-accessories",
-            "image_asset": "quickship-accessories.webp",
-            "coming_soon": false
+            "link": "/collections/quick-ship-accessories"
           }
         },
         "qs_floordisplay": {
           "type": "category",
           "settings": {
             "title": "Floor Display",
-            "link": "",
-            "coming_soon": true
+            "link": "/collections/quick-ship-floor-display"
           }
         }
       },
@@ -401,9 +387,11 @@
         "qs_furniture",
         "qs_seating",
         "qs_tables",
+        "qs_casegoods",
         "qs_rugs",
         "qs_lighting",
         "qs_lamps",
+        "qs_pendants",
         "qs_walllights",
         "qs_mirrors",
         "qs_accessories",

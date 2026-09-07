@@ -16,30 +16,15 @@
           {%- assign img = block.settings.image | default: col.image -%}
           {%- assign label = block.settings.label | default: col.title -%}
           {%- assign link = block.settings.link | default: col.url -%}
-          {%- assign asset_name = block.settings.image_asset -%}
-          {%- assign image_credit = block.settings.image_credit -%}
-          {%- assign alt_text = block.settings.image_alt | default: label -%}
 
           <a href="{{ link }}" class="rueiv-gateway__tile" {{ block.shopify_attributes }}>
             <div class="rueiv-gateway__frame">
               <div class="rueiv-gateway__img-wrap">
                 {%- if img != blank -%}
                   {{ img | image_url: width: 900 | image_tag:
-                     loading: 'lazy', class: 'rueiv-gateway__img', alt: alt_text }}
-                {%- elsif asset_name != blank -%}
-                  <img
-                    src="{{ asset_name | asset_url }}"
-                    alt="{{ alt_text | escape }}"
-                    class="rueiv-gateway__img"
-                    loading="lazy"
-                    width="900"
-                    height="1200"
-                  >
+                     loading: 'lazy', class: 'rueiv-gateway__img', alt: label }}
                 {%- else -%}
                   <div class="rueiv-gateway__placeholder"></div>
-                {%- endif -%}
-                {%- if image_credit != blank -%}
-                  <span class="rueiv-gateway__credit">{{ image_credit | escape }}</span>
                 {%- endif -%}
               </div>
             </div>
@@ -124,24 +109,6 @@
       "settings": [
         { "type": "collection", "id": "collection", "label": "Collection" },
         { "type": "image_picker", "id": "image", "label": "Lifestyle Image Override" },
-        {
-          "type": "text",
-          "id": "image_asset",
-          "label": "Theme asset filename",
-          "info": "Optional fallback when no Shopify Files image is set (e.g. furniture-verellen-homepage.jpg)"
-        },
-        {
-          "type": "text",
-          "id": "image_alt",
-          "label": "Image alt text",
-          "info": "Describes the photograph for accessibility. Do not use photographer credit here."
-        },
-        {
-          "type": "text",
-          "id": "image_credit",
-          "label": "Visible image credit",
-          "info": "Rendered as on-image overlay text (e.g. Photographer: Chris Everard)"
-        },
         { "type": "text", "id": "label", "label": "Label Override" },
         { "type": "url", "id": "link", "label": "Link Override" }
       ]

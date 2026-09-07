@@ -5,19 +5,15 @@
   .rueiv-qs__slider { position: relative; overflow: hidden; padding: 0; width: 100%; }
   .rueiv-qs__track { display: flex; gap: 20px; transition: transform 0.5s ease; }
   .rueiv-qs__card { flex: 0 0 calc((100% - 40px) / 3.35); text-decoration: none; color: inherit; }
-  .rueiv-qs__card--soon { cursor: default; pointer-events: none; }
   .rueiv-qs__img-wrap { aspect-ratio: 4/5; overflow: hidden; background: #e8e5e0; position: relative; }
   .rueiv-qs__img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
   .rueiv-qs__card:hover .rueiv-qs__img-wrap img { transform: scale(1.04); }
-  .rueiv-qs__card--soon:hover .rueiv-qs__img-wrap img { transform: none; }
   .rueiv-qs__img-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.18); transition: background 0.3s; }
   .rueiv-qs__card:hover .rueiv-qs__img-overlay { background: rgba(0,0,0,0.30); }
-  .rueiv-qs__card--soon .rueiv-qs__img-overlay { background: rgba(0,0,0,0.35); }
-  .rueiv-qs__img-label { font-family: var(--font-heading-family); font-size: clamp(18px, 2vw, 28px); font-weight: 300; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.5); text-align: center; padding: 0 12px; }
-  .rueiv-qs__soon-note { display: block; margin-top: 10px; font-size: clamp(12px, 1.2vw, 14px); letter-spacing: 0.2em; font-weight: 400; }
+  .rueiv-qs__img-label { font-family: var(--font-heading-family); font-size: clamp(18px, 2vw, 28px); font-weight: 300; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
 
   /* Counter */
-  .rueiv-qs__counter { display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-family: var(--font-heading-family); font-size: 14px; letter-spacing: 0.14em; margin-bottom: 16px; padding-right: 0; }
+      .rueiv-qs__counter { display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-family: var(--font-heading-family); font-size: 14px; letter-spacing: 0.14em; margin-bottom: 16px; padding-right: 0; }
   .rueiv-qs__counter button { background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px 8px; color: #1a1a1a; opacity: 0.5; transition: opacity 0.2s; }
   .rueiv-qs__counter button:hover { opacity: 1; }
   .rueiv-qs__counter button:disabled { opacity: 0.2; cursor: default; }
@@ -35,11 +31,11 @@
     {%- endif -%}
 
     <div class="rueiv-qs__counter">
-        <button type="button" data-qs-prev aria-label="Previous">&lsaquo;</button>
+        <button data-qs-prev aria-label="Previous">&lsaquo;</button>
         <span data-qs-current>1</span>
         <span>/</span>
         <span data-qs-total>1</span>
-        <button type="button" data-qs-next aria-label="Next">&rsaquo;</button>
+        <button data-qs-next aria-label="Next">&rsaquo;</button>
       </div>
       <div class="rueiv-qs__slider" data-qs-slider>
       <div class="rueiv-qs__track" data-qs-track>
@@ -54,15 +50,48 @@
         {%- endfor -%}
 
         {%- if qs_last_block != blank -%}
-          {%- render 'rueiv-quick-ship-card', block: qs_last_block, clone: true -%}
+          <a href="{{ qs_last_block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide data-qs-clone="true">
+            <div class="rueiv-qs__img-wrap">
+              {%- if qs_last_block.settings.image != blank -%}
+                {{ qs_last_block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: qs_last_block.settings.title }}
+              {%- else -%}
+                <div class="rueiv-pcard__placeholder"></div>
+              {%- endif -%}
+              <div class="rueiv-qs__img-overlay">
+                <span class="rueiv-qs__img-label">{{ qs_last_block.settings.title }}</span>
+              </div>
+            </div>
+          </a>
         {%- endif -%}
 
         {%- for block in section.blocks -%}
-          {%- render 'rueiv-quick-ship-card', block: block, clone: false -%}
+          <a href="{{ block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide>
+            <div class="rueiv-qs__img-wrap">
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: block.settings.title }}
+              {%- else -%}
+                <div class="rueiv-pcard__placeholder"></div>
+              {%- endif -%}
+              <div class="rueiv-qs__img-overlay">
+                <span class="rueiv-qs__img-label">{{ block.settings.title }}</span>
+              </div>
+            </div>
+          </a>
         {%- endfor -%}
 
         {%- if qs_first_block != blank -%}
-          {%- render 'rueiv-quick-ship-card', block: qs_first_block, clone: true -%}
+          <a href="{{ qs_first_block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide data-qs-clone="true">
+            <div class="rueiv-qs__img-wrap">
+              {%- if qs_first_block.settings.image != blank -%}
+                {{ qs_first_block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: qs_first_block.settings.title }}
+              {%- else -%}
+                <div class="rueiv-pcard__placeholder"></div>
+              {%- endif -%}
+              <div class="rueiv-qs__img-overlay">
+                <span class="rueiv-qs__img-label">{{ qs_first_block.settings.title }}</span>
+              </div>
+            </div>
+          </a>
         {%- endif -%}
       </div>
     </div>
@@ -136,21 +165,8 @@
       "name": "Category Slide",
       "settings": [
         { "type": "image_picker", "id": "image", "label": "Image" },
-        {
-          "type": "text",
-          "id": "image_asset",
-          "label": "Theme asset filename",
-          "info": "Optional fallback when no Shopify Files image is set"
-        },
         { "type": "text", "id": "title", "label": "Category Name", "default": "Category" },
-        { "type": "url", "id": "link", "label": "Link" },
-        {
-          "type": "checkbox",
-          "id": "coming_soon",
-          "label": "Coming Soon",
-          "default": false,
-          "info": "Shows Coming Soon state without fabricating product imagery"
-        }
+        { "type": "url", "id": "link", "label": "Link" }
       ]
     }
   ],
@@ -162,13 +178,15 @@
         { "type": "category", "settings": { "title": "Furniture" } },
         { "type": "category", "settings": { "title": "Seating" } },
         { "type": "category", "settings": { "title": "Tables" } },
+        { "type": "category", "settings": { "title": "Case Goods" } },
         { "type": "category", "settings": { "title": "Rugs" } },
         { "type": "category", "settings": { "title": "Lighting" } },
         { "type": "category", "settings": { "title": "Lamps" } },
+        { "type": "category", "settings": { "title": "Pendants" } },
         { "type": "category", "settings": { "title": "Wall Lights" } },
         { "type": "category", "settings": { "title": "Mirrors" } },
         { "type": "category", "settings": { "title": "Accessories" } },
-        { "type": "category", "settings": { "title": "Floor Display", "coming_soon": true } }
+        { "type": "category", "settings": { "title": "Floor Display" } }
       ]
     }
   ]
