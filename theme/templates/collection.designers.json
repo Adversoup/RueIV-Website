@@ -11,7 +11,9 @@
   "sections": {
     "breadcrumbs": {
       "type": "breadcrumbs",
-      "settings": { "text_alignment": "center" }
+      "settings": {
+        "text_alignment": "center"
+      }
     },
     "banner": {
       "type": "main-collection-banner",
@@ -27,7 +29,9 @@
           }
         }
       },
-      "block_order": ["collection_info"],
+      "block_order": [
+        "collection_info"
+      ],
       "settings": {
         "color_scheme": "scheme-1",
         "text_alignment": "center",
@@ -36,6 +40,7 @@
         "image_position": "top",
         "image_height": "extra-small",
         "enable_parallax": false,
+        "parallax_direction": "vertical",
         "image_height_mobile": "auto",
         "padding_top": 38,
         "padding_bottom": 60
@@ -47,31 +52,80 @@
         "arte_breaker": {
           "type": "brand_breaker",
           "settings": {
-            "collection": "arte"
+            "collection": "arte",
+            "break_image": "shopify://shop_images/arte-hero.png",
+            "break_title": "",
+            "break_subtitle": "",
+            "break_cta": "",
+            "break_link": "",
+            "title_size": 42,
+            "subtitle_size": 15,
+            "title_color": "#ffffff",
+            "subtitle_color": "#ffffff",
+            "overlay_opacity": 40
           }
         },
         "fabricut_breaker": {
           "type": "brand_breaker",
           "settings": {
-            "collection": "fabricut"
+            "collection": "fabricut",
+            "break_image": "shopify://shop_images/fabric-overlay-9027992486019.jpg",
+            "break_title": "",
+            "break_subtitle": "",
+            "break_cta": "",
+            "break_link": "",
+            "title_size": 42,
+            "subtitle_size": 15,
+            "title_color": "#ffffff",
+            "subtitle_color": "#ffffff",
+            "overlay_opacity": 40
           }
         },
         "porta_romana_breaker": {
           "type": "brand_breaker",
           "settings": {
-            "collection": "porta-romana"
+            "collection": "porta-romana",
+            "break_image": "shopify://shop_images/porta-romano-hero.jpg",
+            "break_title": "",
+            "break_subtitle": "",
+            "break_cta": "",
+            "break_link": "",
+            "title_size": 42,
+            "subtitle_size": 15,
+            "title_color": "#ffffff",
+            "subtitle_color": "#ffffff",
+            "overlay_opacity": 40
           }
         },
         "verellen_breaker": {
           "type": "brand_breaker",
           "settings": {
-            "collection": "verellen"
+            "collection": "verellen",
+            "break_title": "",
+            "break_subtitle": "",
+            "break_cta": "",
+            "break_link": "",
+            "title_size": 42,
+            "subtitle_size": 15,
+            "title_color": "#ffffff",
+            "subtitle_color": "#ffffff",
+            "overlay_opacity": 40
           }
         },
         "zr_breaker": {
           "type": "brand_breaker",
           "settings": {
-            "collection": "zr"
+            "collection": "zr",
+            "break_image": "shopify://shop_images/ZR_SP2023_LowRes_016.jpg",
+            "break_title": "",
+            "break_subtitle": "",
+            "break_cta": "",
+            "break_link": "",
+            "title_size": 42,
+            "subtitle_size": 15,
+            "title_color": "#ffffff",
+            "subtitle_color": "#ffffff",
+            "overlay_opacity": 40
           }
         }
       },
@@ -88,15 +142,22 @@
         "columns_desktop": 3,
         "grid_layout": "standard",
         "pagination": "load_more",
+        "enable_color_swatch": true,
         "enable_filtering": true,
         "filter_type": "horizontal",
         "enable_sorting": false,
         "expand_filter_groups": "Availability, Color, Size, Product type",
         "columns_mobile": "2",
         "padding_top": 40,
-        "padding_bottom": 100
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
       }
     }
   },
-  "order": ["breadcrumbs", "banner", "product-grid"]
+  "order": [
+    "breadcrumbs",
+    "banner",
+    "product-grid"
+  ]
 }
