@@ -440,6 +440,23 @@
   aspect-ratio: 4 / 5;
 }
 
+.rueiv-gateway__credit {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  z-index: 3;
+  margin: 0;
+  font-family: var(--font-body-family, inherit);
+  font-size: clamp(10px, 0.85vw, 12px);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  color: #f7f4ef;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+
 .rueiv-gateway__img {
   width: 100%;
   height: 100%;
@@ -1344,6 +1361,13 @@
   .rueiv-gateway__wall-inner { padding: 48px 20px; }
   .rueiv-gateway__frame { padding: 6px; }
   .rueiv-gateway__img-wrap { aspect-ratio: 3 / 4; }
+  .rueiv-gateway__credit {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
   .rueiv-gateway__label { font-size: clamp(16px, 4vw, 24px); letter-spacing: 0.14em; }
 
   /* Vibe Studio */

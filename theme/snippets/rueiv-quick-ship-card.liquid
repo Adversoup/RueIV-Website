@@ -1,0 +1,59 @@
+{%- comment -%}
+  RueIV Quick Ship category card
+  Accepts: block, clone (boolean)
+{%- endcomment -%}
+{%- liquid
+  assign qs_title = block.settings.title
+  assign qs_link = block.settings.link | default: '/collections/quick-ship'
+  assign qs_asset = block.settings.image_asset
+  assign qs_soon = block.settings.coming_soon
+  if qs_soon
+    assign qs_link = '#'
+  endif
+-%}
+{%- if qs_soon -%}
+  <div
+    class="rueiv-qs__card rueiv-qs__card--soon"
+    data-qs-slide
+    {% if clone %}data-qs-clone="true"{% endif %}
+    {% unless clone %}{{ block.shopify_attributes }}{% endunless %}
+    role="group"
+    aria-label="{{ qs_title | escape }} — Coming Soon"
+  >
+{%- else -%}
+  <a
+    href="{{ qs_link }}"
+    class="rueiv-qs__card"
+    data-qs-slide
+    {% if clone %}data-qs-clone="true"{% endif %}
+    {% unless clone %}{{ block.shopify_attributes }}{% endunless %}
+  >
+{%- endif -%}
+  <div class="rueiv-qs__img-wrap">
+    {%- if block.settings.image != blank -%}
+      {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: qs_title }}
+    {%- elsif qs_asset != blank -%}
+      <img
+        src="{{ qs_asset | asset_url }}"
+        alt="{{ qs_title | escape }}"
+        loading="lazy"
+        width="600"
+        height="750"
+      >
+    {%- else -%}
+      <div class="rueiv-pcard__placeholder"></div>
+    {%- endif -%}
+    <div class="rueiv-qs__img-overlay">
+      <span class="rueiv-qs__img-label">
+        {{ qs_title }}
+        {%- if qs_soon -%}
+          <span class="rueiv-qs__soon-note">Coming Soon</span>
+        {%- endif -%}
+      </span>
+    </div>
+  </div>
+{%- if qs_soon -%}
+  </div>
+{%- else -%}
+  </a>
+{%- endif -%}
