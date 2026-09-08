@@ -88,7 +88,7 @@
       "settings": {
         "hero_heading": "YOUR NEXT GENERATION SHOWROOM",
         "hero_subtitle": "Textiles. Wallcovering. Furniture. Lighting. Rugs.",
-        "banner_text": "An editorial gateway to the showroom — presenting the most compelling pieces from the world’s leading design houses. Discover materials, collections, and ideas curated to inspire exceptional interiors."
+        "banner_text": "An editorial gateway to the showroom \u2014 presenting the most compelling pieces from the world\u2019s leading design houses. Discover materials, collections, and ideas curated to inspire exceptional interiors."
       }
     },
     "rueiv_gateway": {
@@ -116,7 +116,7 @@
           "type": "category",
           "settings": {
             "collection": "furniture",
-            "image": "shopify://shop_images/CLOUD_SOFA_251993_600x_55ea77d1-2566-4efc-a90a-76048f9f121a.jpg",
+            "image": "shopify://shop_images/furniture-Verellen-homepage.jpg",
             "label": "Furniture",
             "link": ""
           }
@@ -125,7 +125,7 @@
           "type": "category",
           "settings": {
             "collection": "lighting",
-            "image": "shopify://shop_images/Powell-and-Bonnell-lighting-9596-Emperor-sconce-2.jpg",
+            "image": "shopify://shop_images/lighting-homepage.jpg",
             "label": "Lighting",
             "link": ""
           }
@@ -134,7 +134,7 @@
           "type": "category",
           "settings": {
             "collection": "rugs",
-            "image": "shopify://shop_images/ZA_ZA_RUG_252202_2000x_0000f73c-f893-4e95-a77f-3ac8ec850d51.jpg",
+            "image": "shopify://shop_images/homepage-rugs-chris-everard_1bcafd4b-c08a-4005-9ce2-1831d1a654d2.jpg",
             "label": "Rugs",
             "link": ""
           }
@@ -143,7 +143,7 @@
           "type": "category",
           "settings": {
             "collection": "accessories",
-            "image": "shopify://shop_images/Elliot_Pillow.webp",
+            "image": "shopify://shop_images/accesories-delecuona.webp",
             "label": "Accessories",
             "link": ""
           }
@@ -200,7 +200,7 @@
           "type": "step",
           "settings": {
             "title": "Receive",
-            "description": "Within 24–48 hours, receive a custom-curated selection."
+            "description": "Within 24\u201348 hours, receive a custom-curated selection."
           }
         },
         "pillar_1": {
@@ -269,7 +269,7 @@
         "button_url": "/pages/vibe-studio",
         "board_heading": "Select Your Project Aesthetic",
         "board_copy": "Each board represents a carefully curated design direction developed by our showroom team. Add a vibe to your cart and we'll source a cohesive selection tailored to your project.",
-        "board_note": "Curated sourcing selections are delivered within 24–48 business hours from submission. Trade-only service."
+        "board_note": "Curated sourcing selections are delivered within 24\u201348 business hours from submission. Trade-only service."
       }
     },
     "rueiv_trending": {
@@ -288,7 +288,7 @@
         "image_asset": "",
         "title": "<p>Brand Spotlight <em>Porta Romana</em></p>",
         "subtitle": "The designers shaping what's next.",
-        "copy": "New launches. — Distinct points of view. — Collections driving the market.",
+        "copy": "New launches. \u2014 Distinct points of view. \u2014 Collections driving the market.",
         "button_label": "Explore The Designers",
         "button_url": "/collections/designers",
         "text_align": "center",
@@ -301,6 +301,7 @@
         "qs_furniture": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-furniture.jpg",
             "title": "Furniture",
             "link": "/collections/quick-ship-furniture"
           }
@@ -308,6 +309,7 @@
         "qs_seating": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-seating.jpg",
             "title": "Seating",
             "link": "/collections/quick-ship-seating"
           }
@@ -315,20 +317,15 @@
         "qs_tables": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-tables.jpg",
             "title": "Tables",
             "link": "/collections/quick-ship-tables"
-          }
-        },
-        "qs_casegoods": {
-          "type": "category",
-          "settings": {
-            "title": "Case Goods",
-            "link": "/collections/quick-ship-case-goods"
           }
         },
         "qs_rugs": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-rugs.jpg",
             "title": "Rugs",
             "link": "/collections/quick-ship-rugs"
           }
@@ -336,6 +333,7 @@
         "qs_lighting": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-lighting.jpg",
             "title": "Lighting",
             "link": "/collections/quick-ship-lighting"
           }
@@ -343,20 +341,15 @@
         "qs_lamps": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-lamps.webp",
             "title": "Lamps",
             "link": "/collections/quick-ship-lamps"
-          }
-        },
-        "qs_pendants": {
-          "type": "category",
-          "settings": {
-            "title": "Pendants",
-            "link": "/collections/quick-ship-pendants"
           }
         },
         "qs_walllights": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-walllights.jpg",
             "title": "Wall Lights",
             "link": "/collections/quick-ship-wall-lights"
           }
@@ -364,6 +357,7 @@
         "qs_mirrors": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-mirrors.webp",
             "title": "Mirrors",
             "link": "/collections/quick-ship-mirrors"
           }
@@ -371,6 +365,7 @@
         "qs_accessories": {
           "type": "category",
           "settings": {
+            "image": "shopify://shop_images/quickship-accessories.webp",
             "title": "Accessories",
             "link": "/collections/quick-ship-accessories"
           }
@@ -387,11 +382,9 @@
         "qs_furniture",
         "qs_seating",
         "qs_tables",
-        "qs_casegoods",
         "qs_rugs",
         "qs_lighting",
         "qs_lamps",
-        "qs_pendants",
         "qs_walllights",
         "qs_mirrors",
         "qs_accessories",
