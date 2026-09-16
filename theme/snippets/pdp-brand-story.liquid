@@ -15,11 +15,8 @@
   assign _logo = product.metafields.brand.logo.value
   assign _tier = product.metafields.brand.tier.value | default: ''
 
-  comment
-    Build vendor collection URL. Vendor-based collections use handles like "fabricut", "verellen", etc.
-  endcomment
-  assign _vendor_handle = _vendor | handleize
 -%}
+{%- render 'rueiv-vendor-url', vendor: _vendor -%}
 
 {%- if _story != blank -%}
 <div class="pdp-brand-story color-scheme-2">
@@ -42,12 +39,9 @@
         {{ _story }}
       </div>
 
-      {%- assign _vendor_coll = collections[_vendor_handle] -%}
-      {%- if _vendor_coll != blank -%}
-        <a href="{{ _vendor_coll.url }}" class="pdp-brand-story__cta btn btn--secondary btn--small">
-          Explore {{ _vendor }}
-        </a>
-      {%- endif -%}
+      <a href="{{ rueiv_vendor_url }}" class="pdp-brand-story__cta btn btn--secondary btn--small">
+        Explore {{ _vendor }}
+      </a>
     </div>
   </div>
 </div>

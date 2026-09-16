@@ -1,0 +1,33 @@
+{%- comment -%}
+  snippets/rueiv-price-resolver.liquid
+  ────────────────────────────────────
+  Determines whether a product should show price UI.
+  Data-driven via override.price_hidden metafield; also treats zero/blank
+  variant price as hidden (trade/quote catalog convention).
+
+  Sets: rueiv_show_price (boolean), rueiv_price_hidden (boolean)
+
+  Usage:
+    {% render 'rueiv-price-resolver', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign rueiv_price_hidden = false
+  assign _hidden_meta = product.metafields.override.price_hidden.value
+
+  if _hidden_meta == true or _hidden_meta == 'true' or _hidden_meta == 1
+    assign rueiv_price_hidden = true
+  endif
+
+  assign _variant = product.selected_or_first_available_variant
+  assign _price = _variant.price
+
+  if _price == blank or _price == 0
+    assign rueiv_price_hidden = true
+  endif
+
+  assign rueiv_show_price = true
+  if rueiv_price_hidden
+    assign rueiv_show_price = false
+  endif
+-%}

@@ -1,0 +1,25 @@
+{%- comment -%}
+  snippets/rueiv-vendor-url.liquid
+  ─────────────────────────────────
+  Resolves a vendor display name to its collection URL.
+  Convention: collections[vendor | handleize].url with fallback to
+  vendor filter on all-products collection.
+
+  Sets: rueiv_vendor_url
+
+  Usage:
+    {% render 'rueiv-vendor-url', vendor: product.vendor %}
+    <a href="{{ rueiv_vendor_url }}">...</a>
+{%- endcomment -%}
+
+{%- liquid
+  assign _vendor_name = vendor | default: product.vendor
+  assign _handle = _vendor_name | handleize
+  assign _coll = collections[_handle]
+  assign _vendor_param = _vendor_name | url_param_escape
+  assign rueiv_vendor_url = routes.all_products_collection_url | append: '?filter.p.vendor=' | append: _vendor_param
+
+  if _coll != blank
+    assign rueiv_vendor_url = _coll.url
+  endif
+-%}

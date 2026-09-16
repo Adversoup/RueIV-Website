@@ -16,6 +16,7 @@
   assign _heading = section.settings.heading | default: 'You may also like'
   assign _columns = section.settings.columns | default: 4
   assign _columns_mobile = section.settings.columns_mobile | default: 2
+  assign _image_ratio = section.settings.image_ratio | default: 'square'
 
   comment
     Try color×category collection first (e.g. "navy-fabric")
@@ -53,14 +54,13 @@
         {%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
         {%- if _shown >= _limit -%}{%- break -%}{%- endif -%}
         <div class="f-column">
-          {% render 'product-card',
-            product_card_product: p,
-            media_aspect_ratio: section.settings.image_ratio | default: 'square',
-            show_secondary_image: true,
+          {% render 'card-product',
+            product: p,
+            image_ratio: _image_ratio,
             show_vendor: true,
-            show_rating: false,
-            show_quick_add: true,
-            section_id: section.id,
+            enable_quick_add: true,
+            section_index: 2,
+            index: forloop.index,
             image_sizes: image_sizes
           %}
         </div>
@@ -73,14 +73,13 @@
           {%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
           {%- if _shown >= _limit -%}{%- break -%}{%- endif -%}
           <div class="f-column">
-            {% render 'product-card',
-              product_card_product: p,
-              media_aspect_ratio: section.settings.image_ratio | default: 'square',
-              show_secondary_image: true,
+            {% render 'card-product',
+              product: p,
+              image_ratio: _image_ratio,
               show_vendor: true,
-              show_rating: false,
-              show_quick_add: true,
-              section_id: section.id,
+              enable_quick_add: true,
+              section_index: 2,
+              index: forloop.index,
               image_sizes: image_sizes
             %}
           </div>
@@ -93,14 +92,13 @@
       {%- for p in recommendations.products limit: _limit -%}
         {%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
         <div class="f-column">
-          {% render 'product-card',
-            product_card_product: p,
-            media_aspect_ratio: section.settings.image_ratio | default: 'square',
-            show_secondary_image: true,
+          {% render 'card-product',
+            product: p,
+            image_ratio: _image_ratio,
             show_vendor: true,
-            show_rating: false,
-            show_quick_add: true,
-            section_id: section.id,
+            enable_quick_add: true,
+            section_index: 2,
+            index: forloop.index,
             image_sizes: image_sizes
           %}
         </div>
@@ -206,7 +204,6 @@
       "label": "Padding bottom"
     }
   ],
-  "templates": ["product"],
   "presets": [
     {
       "name": "Related Products (RueIV)"

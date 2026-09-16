@@ -150,6 +150,12 @@
             "custom_liquid": "{% render 'pdp-brand-story', product: product %}"
           }
         },
+        "rueiv_tearsheet": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'pdp-tearsheet', product: product %}"
+          }
+        },
         "rueiv_specs": {
           "type": "custom_liquid",
           "settings": {
@@ -175,6 +181,7 @@
         "buy_buttons",
         "pickup_availability",
         "complementary",
+        "rueiv_tearsheet",
         "rueiv_specs",
         "collapsible-row-1",
         "brand_story_block",

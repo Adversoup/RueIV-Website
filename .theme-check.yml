@@ -1,0 +1,23 @@
+root: theme
+
+ignore:
+  - node_modules/**
+
+TemplateLength:
+  enabled: false
+  exclude:
+    - 'snippets/rueiv-product-specs.liquid'
+    - 'sections/main-collection-product-grid.liquid'
+
+NestedSnippet:
+  enabled: true
+  max_nesting_level: 4
+
+RemoteAsset:
+  enabled: false
+
+ImgWidthAndHeight:
+  enabled: false
+
+MissingAsset:
+  enabled: false

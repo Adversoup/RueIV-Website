@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "theme-check --fail-level error theme",
+    "theme-check": "theme-check --fail-level error theme",
     "image:normalize": "node scripts/image_normalize.js",
     "image:preview": "node scripts/image_normalize.js --limit 5",
     "image:batch": "node scripts/image_normalize.js --upload",
@@ -29,5 +30,8 @@
     "csv-parse": "^6.1.0",
     "dotenv": "^17.3.1",
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@shopify/theme-check-node": "^3.29.0"
   }
 }

@@ -192,6 +192,14 @@
       "pin": true,
       "existing": true
     },
+    {
+      "namespace": "override",
+      "key": "price_hidden",
+      "type": "boolean",
+      "name": "Price Hidden",
+      "description": "When true, theme suppresses price UI and JSON-LD offers (trade/quote catalog)",
+      "pin": true
+    },
 
     {
       "namespace": "brand",
@@ -219,6 +227,15 @@
       "description": "flagship · partner · emerging",
       "pin": false,
       "existing": true
+    },
+
+    {
+      "namespace": "specs",
+      "key": "tearsheet",
+      "type": "file_reference",
+      "name": "Tearsheet / Spec PDF",
+      "description": "Downloadable spec sheet PDF for PDP tearsheet link",
+      "pin": false
     }
   ],
 

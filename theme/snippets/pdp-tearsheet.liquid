@@ -1,0 +1,53 @@
+{%- comment -%}
+  snippets/pdp-tearsheet.liquid
+  ─────────────────────────────
+  Renders a tearsheet / spec PDF download when specs.tearsheet metafield is set.
+  Data-driven — no vendor-specific logic.
+
+  Usage:
+    {% render 'pdp-tearsheet', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign _tearsheet = product.metafields.specs.tearsheet.value
+  assign _label = label | default: 'Download spec sheet'
+-%}
+
+{%- if _tearsheet != blank -%}
+<div class="rv-tearsheet">
+  <a
+    href="{{ _tearsheet.url }}"
+    class="rv-tearsheet__link"
+    target="_blank"
+    rel="noopener noreferrer"
+    download
+  >
+    <svg class="rv-tearsheet__icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    <span>{{ _label }}</span>
+  </a>
+</div>
+
+<style>
+  .rv-tearsheet { margin-top: 12px; }
+  .rv-tearsheet__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(var(--color-foreground));
+    text-decoration: none;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.25);
+    padding-bottom: 2px;
+    transition: opacity 0.2s;
+  }
+  .rv-tearsheet__link:hover { opacity: 0.65; }
+  .rv-tearsheet__icon { flex-shrink: 0; }
+</style>
+{%- endif -%}
