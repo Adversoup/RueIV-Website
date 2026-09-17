@@ -3,7 +3,7 @@
 
   /* Slider */
   .rueiv-qs__slider { position: relative; overflow: hidden; padding: 0; width: 100%; }
-  .rueiv-qs__track { display: flex; gap: 20px; transition: transform 0.5s ease; }
+  .rueiv-qs__track { display: flex; gap: 20px; transition: transform 0.5s ease; will-change: transform; }
   .rueiv-qs__card { flex: 0 0 calc((100% - 40px) / 3.35); text-decoration: none; color: inherit; }
   .rueiv-qs__img-wrap { aspect-ratio: 4/5; overflow: hidden; background: #e8e5e0; position: relative; }
   .rueiv-qs__img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
@@ -13,7 +13,7 @@
   .rueiv-qs__img-label { font-family: var(--font-heading-family); font-size: clamp(18px, 2vw, 28px); font-weight: 300; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
 
   /* Counter */
-      .rueiv-qs__counter { display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-family: var(--font-heading-family); font-size: 14px; letter-spacing: 0.14em; margin-bottom: 16px; padding-right: 0; }
+  .rueiv-qs__counter { display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-family: var(--font-heading-family); font-size: 14px; letter-spacing: 0.14em; margin-bottom: 16px; padding-right: 0; }
   .rueiv-qs__counter button { background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px 8px; color: #1a1a1a; opacity: 0.5; transition: opacity 0.2s; }
   .rueiv-qs__counter button:hover { opacity: 1; }
   .rueiv-qs__counter button:disabled { opacity: 0.2; cursor: default; }
@@ -31,41 +31,20 @@
     {%- endif -%}
 
     <div class="rueiv-qs__counter">
-        <button data-qs-prev aria-label="Previous">&lsaquo;</button>
-        <span data-qs-current>1</span>
-        <span>/</span>
-        <span data-qs-total>1</span>
-        <button data-qs-next aria-label="Next">&rsaquo;</button>
-      </div>
-      <div class="rueiv-qs__slider" data-qs-slider>
+      <button type="button" data-qs-prev aria-label="Previous">&lsaquo;</button>
+      <span data-qs-current>1</span>
+      <span>/</span>
+      <span data-qs-total>1</span>
+      <button type="button" data-qs-next aria-label="Next">&rsaquo;</button>
+    </div>
+    <div class="rueiv-qs__slider" data-qs-slider>
       <div class="rueiv-qs__track" data-qs-track>
-        {%- assign qs_first_block = blank -%}
-        {%- assign qs_last_block = blank -%}
-
+        {%- comment -%}
+          Infinite loop requires a full clone of every category slide on both sides
+          (clone count == category slide count), not a single first/last clone.
+        {%- endcomment -%}
         {%- for block in section.blocks -%}
-          {%- if forloop.first -%}
-            {%- assign qs_first_block = block -%}
-          {%- endif -%}
-          {%- assign qs_last_block = block -%}
-        {%- endfor -%}
-
-        {%- if qs_last_block != blank -%}
-          <a href="{{ qs_last_block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide data-qs-clone="true">
-            <div class="rueiv-qs__img-wrap">
-              {%- if qs_last_block.settings.image != blank -%}
-                {{ qs_last_block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: qs_last_block.settings.title }}
-              {%- else -%}
-                <div class="rueiv-pcard__placeholder"></div>
-              {%- endif -%}
-              <div class="rueiv-qs__img-overlay">
-                <span class="rueiv-qs__img-label">{{ qs_last_block.settings.title }}</span>
-              </div>
-            </div>
-          </a>
-        {%- endif -%}
-
-        {%- for block in section.blocks -%}
-          <a href="{{ block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide>
+          <a href="{{ block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide data-qs-clone="true" tabindex="-1" aria-hidden="true">
             <div class="rueiv-qs__img-wrap">
               {%- if block.settings.image != blank -%}
                 {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: block.settings.title }}
@@ -79,20 +58,35 @@
           </a>
         {%- endfor -%}
 
-        {%- if qs_first_block != blank -%}
-          <a href="{{ qs_first_block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide data-qs-clone="true">
+        {%- for block in section.blocks -%}
+          <a href="{{ block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide {{ block.shopify_attributes }}>
             <div class="rueiv-qs__img-wrap">
-              {%- if qs_first_block.settings.image != blank -%}
-                {{ qs_first_block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: qs_first_block.settings.title }}
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: block.settings.title }}
               {%- else -%}
                 <div class="rueiv-pcard__placeholder"></div>
               {%- endif -%}
               <div class="rueiv-qs__img-overlay">
-                <span class="rueiv-qs__img-label">{{ qs_first_block.settings.title }}</span>
+                <span class="rueiv-qs__img-label">{{ block.settings.title }}</span>
               </div>
             </div>
           </a>
-        {%- endif -%}
+        {%- endfor -%}
+
+        {%- for block in section.blocks -%}
+          <a href="{{ block.settings.link | default: '/collections/quick-ship' }}" class="rueiv-qs__card" data-qs-slide data-qs-clone="true" tabindex="-1" aria-hidden="true">
+            <div class="rueiv-qs__img-wrap">
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: block.settings.title }}
+              {%- else -%}
+                <div class="rueiv-pcard__placeholder"></div>
+              {%- endif -%}
+              <div class="rueiv-qs__img-overlay">
+                <span class="rueiv-qs__img-label">{{ block.settings.title }}</span>
+              </div>
+            </div>
+          </a>
+        {%- endfor -%}
       </div>
     </div>
   </div>
@@ -104,51 +98,77 @@
   if (!slider) return;
   var track = slider.querySelector('[data-qs-track]');
   var originalCards = Array.from(slider.querySelectorAll('[data-qs-slide]:not([data-qs-clone="true"])'));
-  var cards = slider.querySelectorAll('[data-qs-slide]');
   var prevBtn = document.querySelector('[data-qs-prev]');
   var nextBtn = document.querySelector('[data-qs-next]');
   var curEl = document.querySelector('[data-qs-current]');
   var totalEl = document.querySelector('[data-qs-total]');
   var total = originalCards.length;
-  var index = total > 0 ? 1 : 0;
   var gap = 20;
-  totalEl.textContent = total;
-  curEl.textContent = total > 0 ? 1 : 0;
+  /* Start on the first real slide (after one full cloned set). */
+  var index = total > 0 ? total : 0;
+  var locked = false;
 
-  function update() {
-    cards = slider.querySelectorAll('[data-qs-slide]');
-    var cardW = cards[0] ? cards[0].offsetWidth + gap : 0;
-    var peek = cardW ? Math.min(cardW * 0.24, 84) : 0;
-    track.style.transform = 'translateX(' + (-index * cardW + peek) + 'px)';
-    if (total > 0) {
-      var realIndex = index;
-      if (realIndex === 0) realIndex = total;
-      if (realIndex === total + 1) realIndex = 1;
-      curEl.textContent = realIndex;
+  if (totalEl) totalEl.textContent = String(total);
+  if (curEl) curEl.textContent = total > 0 ? '1' : '0';
+
+  function cardStep() {
+    var cards = slider.querySelectorAll('[data-qs-slide]');
+    if (!cards.length) return 0;
+    return cards[0].offsetWidth + gap;
+  }
+
+  function realIndex() {
+    if (total < 1) return 0;
+    return ((index % total) + total) % total;
+  }
+
+  function applyTransform(animate) {
+    var step = cardStep();
+    if (!animate) {
+      track.style.transition = 'none';
+    } else {
+      track.style.transition = 'transform 0.5s ease';
+    }
+    track.style.transform = 'translateX(' + (-index * step) + 'px)';
+    if (curEl && total > 0) curEl.textContent = String(realIndex() + 1);
+    if (!animate) {
+      track.offsetHeight;
+      track.style.transition = 'transform 0.5s ease';
     }
   }
 
-  prevBtn.addEventListener('click', function(){ if (total > 1) { index--; update(); } });
-  nextBtn.addEventListener('click', function(){ if (total > 1) { index++; update(); } });
-  track.addEventListener('transitionend', function(){
+  function normalizeLoop() {
     if (total < 2) return;
-    if (index === 0) {
-      track.style.transition = 'none';
-      index = total;
-      update();
-      track.offsetHeight;
-      track.style.transition = 'transform 0.5s ease';
+    if (index < total) {
+      index += total;
+      applyTransform(false);
+    } else if (index >= total * 2) {
+      index -= total;
+      applyTransform(false);
     }
-    if (index === total + 1) {
-      track.style.transition = 'none';
-      index = 1;
-      update();
-      track.offsetHeight;
-      track.style.transition = 'transform 0.5s ease';
-    }
+  }
+
+  function go(delta) {
+    if (total < 2 || locked) return;
+    locked = true;
+    index += delta;
+    applyTransform(true);
+  }
+
+  if (prevBtn) prevBtn.addEventListener('click', function(){ go(-1); });
+  if (nextBtn) nextBtn.addEventListener('click', function(){ go(1); });
+
+  track.addEventListener('transitionend', function(e){
+    if (e.target !== track || e.propertyName !== 'transform') return;
+    normalizeLoop();
+    locked = false;
   });
-  window.addEventListener('resize', update);
-  update();
+
+  window.addEventListener('resize', function(){
+    applyTransform(false);
+  });
+
+  applyTransform(false);
 })();
 {% endjavascript %}
 
