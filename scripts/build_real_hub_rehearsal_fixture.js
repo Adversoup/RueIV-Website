@@ -223,10 +223,24 @@ function main() {
 
   if (!fs.existsSync(FIXTURE_DIR)) fs.mkdirSync(FIXTURE_DIR, { recursive: true });
 
+  const manifestPath = path.join(FIXTURE_DIR, 'manifest.json');
+  const productsPath = path.join(FIXTURE_DIR, 'products.json');
+  let generatedAt = new Date().toISOString();
+  if (fs.existsSync(manifestPath)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      if (existing.manifest?.checksum_sha256 === checksum && existing.generated_at) {
+        generatedAt = existing.generated_at;
+      }
+    } catch {
+      // Regenerate timestamp when manifest is unreadable.
+    }
+  }
+
   const manifest = {
     version: '1.0.0',
     gate: 'RUEIV_REAL_HUB_DATA_STAGING_REHEARSAL_READY_FOR_BOUNDED_GO_LIVE_GATE',
-    generated_at: new Date().toISOString(),
+    generated_at: generatedAt,
     mode: 'read_only_hub_csv_export',
     live_mutation: false,
     source: {
@@ -259,8 +273,15 @@ function main() {
     },
   };
 
-  fs.writeFileSync(path.join(FIXTURE_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
-  fs.writeFileSync(path.join(FIXTURE_DIR, 'products.json'), JSON.stringify(sanitizedProducts, null, 2));
+  const manifestJson = JSON.stringify(manifest, null, 2);
+  const productsJson = JSON.stringify(sanitizedProducts, null, 2);
+  const writeIfChanged = (filePath, content) => {
+    if (!fs.existsSync(filePath) || fs.readFileSync(filePath, 'utf8') !== content) {
+      fs.writeFileSync(filePath, content);
+    }
+  };
+  writeIfChanged(manifestPath, manifestJson);
+  writeIfChanged(productsPath, productsJson);
 
   console.log('Real Hub rehearsal fixture built (read-only)');
   console.log(`Selected records: ${sanitizedProducts.length}/${allProducts.length}`);
