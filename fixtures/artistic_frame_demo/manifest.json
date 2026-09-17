@@ -1,0 +1,49 @@
+{
+  "version": "1.0.0",
+  "gate": "ARTISTIC_FRAME_SOURCE143_COHORT_PENDING",
+  "generated_at": "2026-09-17T14:00:00.000Z",
+  "mode": "awaiting_source143",
+  "live_mutation": false,
+  "source": {
+    "upstream": "Adversoup/RueIV-Source#143",
+    "status": "pending",
+    "fingerprint": null,
+    "ingested_at": null,
+    "ingest_command": "node scripts/ingest_source143_af_cohort.js --from /path/to/source143/export"
+  },
+  "demo": {
+    "vendor_display_name": "Artistic Frame",
+    "vendor_handle": "artistic-frame",
+    "collection_handle": "artistic-frame-demo",
+    "collection_title": "Artistic Frame — Client Demo",
+    "max_products": 50,
+    "target_products": 30,
+    "price_hidden": true,
+    "hidden_from_navigation": true,
+    "default_product_status": "ACTIVE"
+  },
+  "manifest": {
+    "selected_records": 0,
+    "checksum_sha256": null,
+    "products_file": "products.json"
+  },
+  "scaffold": {
+    "enabled": true,
+    "products_file": "products.scaffold.json",
+    "record_count": 3,
+    "note": "Machinery-only scaffold for preflight/sync dry-run until Source#143 fingerprint is ingested. Pass --allow-scaffold to preflight."
+  },
+  "coverage": {
+    "required_scenarios": [
+      "vendor_brand",
+      "sku",
+      "title_description",
+      "product_type",
+      "images_gallery",
+      "price_hidden",
+      "options_variants",
+      "collection_handle",
+      "tearsheet_optional"
+    ]
+  }
+}

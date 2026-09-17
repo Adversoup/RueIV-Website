@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "description": "Bounded Artistic Frame client demo configuration (Issue #11).",
+  "upstream": {
+    "source_issue": "Adversoup/RueIV-Source#143",
+    "website_issue": "Adversoup/RueIV-Website#11"
+  },
+  "vendor": {
+    "display_name": "Artistic Frame",
+    "handle": "artistic-frame",
+    "tier": "partner",
+    "categories": ["Furniture"],
+    "status": "demo"
+  },
+  "collection": {
+    "handle": "artistic-frame-demo",
+    "title": "Artistic Frame — Client Demo",
+    "description_html": "<p>Bounded client showcase cohort. Not linked from main navigation.</p>",
+    "hidden_from_navigation": true,
+    "demo_tag": "demo:artistic-frame"
+  },
+  "limits": {
+    "max_products": 50,
+    "target_products": 30
+  },
+  "policy": {
+    "price_hidden": true,
+    "default_product_status": "ACTIVE",
+    "no_theme_publish": true,
+    "no_menu_changes": true,
+    "no_other_vendors": true,
+    "no_hub_mutation": true,
+    "no_production_media_processing": true
+  },
+  "fixture_dir": "fixtures/artistic_frame_demo",
+  "gates": {
+    "preflight": "ARTISTIC_FRAME_CLIENT_DEMO_PREFLIGHT_READY",
+    "live_verified": "ARTISTIC_FRAME_CLIENT_DEMO_LIVE_BOUNDED_SHOWCASE_VERIFIED_READY_FOR_MONDAY"
+  }
+}

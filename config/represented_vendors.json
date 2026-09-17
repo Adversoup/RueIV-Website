@@ -18,7 +18,8 @@
     { "display_name": "Fabricut", "handle": "fabricut", "tier": "flagship", "categories": ["Textiles"], "status": "live" },
     { "display_name": "Porta Romana", "handle": "porta-romana", "tier": "flagship", "categories": ["Lighting"], "status": "live" },
     { "display_name": "Verellen", "handle": "verellen", "tier": "flagship", "categories": ["Furniture"], "status": "live" },
-    { "display_name": "ZR", "handle": "zr", "tier": "flagship", "categories": ["Textiles"], "status": "live" }
+    { "display_name": "ZR", "handle": "zr", "tier": "flagship", "categories": ["Textiles"], "status": "live" },
+    { "display_name": "Artistic Frame", "handle": "artistic-frame", "tier": "partner", "categories": ["Furniture"], "status": "demo" }
   ],
   "pending_from_hub": {
     "note": "Remaining vendors in the 23-vendor Jeffrey Michaels represented set will be appended here when Hub canonical vendor list is finalized. Theme code is vendor-agnostic — no per-vendor Liquid branches required.",
