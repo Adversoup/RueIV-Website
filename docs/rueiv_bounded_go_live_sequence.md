@@ -1,7 +1,9 @@
 # RueIV Bounded Go-Live Sequence & Rollback Checklist
 
 Use when Hub downstream publish is authorized and staging simulation gate is green.  
-**Gate prerequisite:** `RUEIV_SHOPIFY_STAGING_SIMULATION_READY_FOR_BOUNDED_GO_LIVE_GATE`
+**Gate prerequisites:**
+- `RUEIV_SHOPIFY_STAGING_SIMULATION_READY_FOR_BOUNDED_GO_LIVE_GATE` (synthetic)
+- `RUEIV_REAL_HUB_DATA_STAGING_REHEARSAL_READY_FOR_BOUNDED_GO_LIVE_GATE` (real Hub CSV export)
 
 **Hard rule:** No step in this sequence may be executed by automation without explicit owner authorization at the publish gate (Step 7).
 
@@ -11,8 +13,10 @@ Use when Hub downstream publish is authorized and staging simulation gate is gre
 
 | # | Action | Owner | Rollback needed? |
 |---|--------|-------|------------------|
-| 0.1 | Confirm staging simulation report green: `node scripts/staging_simulation.js` | Dev | N/A |
-| 0.2 | Confirm PR #5 merged; Theme Check CI green on merge commit | Dev | N/A |
+| 0.1 | Confirm synthetic staging simulation green: `npm run staging:simulate` | Dev | N/A |
+| 0.1b | Confirm real Hub rehearsal green: `npm run staging:rehearsal` | Dev | N/A |
+| 0.1c | Verify rehearsal checksum matches `fixtures/real_hub_rehearsal/manifest.json` | Dev | N/A |
+| 0.2 | Confirm PR #5 merged; Quick Ship (#8) on main; Theme Check CI green | Dev | N/A |
 | 0.3 | Document current live theme ID: `shopify theme list` | Dev | **Required for rollback** |
 | 0.4 | Confirm Hub canonical vendor list matches `config/represented_vendors.json` | Catalog | N/A |
 | 0.5 | Confirm wording freeze — no nav label changes in diff | Dev | N/A |
@@ -24,7 +28,7 @@ Use when Hub downstream publish is authorized and staging simulation gate is gre
 | # | Action | Script / tool | Env | Rollback |
 |---|--------|---------------|-----|----------|
 | 1.1 | Export Hub batch — max **N products per sync** (recommend 50–100 first batch) | Hub export | — | Revert batch SKUs to DRAFT in Hub |
-| 1.2 | Validate batch against mapping doc | `node scripts/staging_simulation.js` on sample | — | Fix Hub payload |
+| 1.2 | Validate batch against mapping doc | `npm run staging:rehearsal` (refresh fixture if export changed) | — | Fix Hub payload |
 | 1.3 | Import batch as **DRAFT** | `DEFAULT_STATUS=DRAFT node scripts/import_shopify.js` | `LIMIT=N` | Set products DRAFT via Admin or script |
 | 1.4 | Verify handles deterministic | Spot-check 5 SKUs | — | Update handles before ACTIVE |
 | 1.5 | Backfill filter tags for batch | `node scripts/backfill_filter_tags.js` | `LIMIT=N` | Tags idempotent — remove via script if needed |
@@ -166,7 +170,9 @@ Run on **unpublished preview theme** with PR #5 code pushed to development theme
 
 ```bash
 # Staging simulation (always safe)
-node scripts/staging_simulation.js --verbose
+npm run staging:simulate
+npm run staging:rehearsal
+node scripts/staging_simulation.js --real --verbose
 
 # Theme check (local)
 npm run theme-check
@@ -183,7 +189,9 @@ DEFAULT_STATUS=DRAFT LIMIT=50 node scripts/import_shopify.js
 
 ## Related Documents
 
-- `docs/rueiv_staging_simulation_report.md` — simulation results
+- `docs/rueiv_staging_simulation_report.md` — synthetic simulation results
+- `docs/rueiv_real_hub_staging_rehearsal_report.md` — real Hub CSV rehearsal results
+- `fixtures/real_hub_rehearsal/` — deterministic sanitized fixture + checksum
 - `docs/hub_shopify_field_mapping.md` — field mapping contract
 - `docs/rueiv_go_live_checklist.md` — PR #5 go-live checklist
 - `docs/brand_template_rules.md` — vendor/collection rules
