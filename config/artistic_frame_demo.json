@@ -35,6 +35,6 @@
   "fixture_dir": "fixtures/artistic_frame_demo",
   "gates": {
     "preflight": "ARTISTIC_FRAME_CLIENT_DEMO_PREFLIGHT_READY",
-    "live_verified": "ARTISTIC_FRAME_CLIENT_DEMO_LIVE_BOUNDED_SHOWCASE_VERIFIED_READY_FOR_MONDAY"
+    "live_verified": "ARTISTIC_FRAME_CLIENT_DEMO_LIVE_BOUNDED_SHOWCASE_VERIFIED_READY_FOR_FRIDAY"
   }
 }

@@ -227,6 +227,9 @@ async function main() {
     if (preflight.source143.using_scaffold) {
       throw new Error('Scaffold cohort cannot be used for live sync — ingest Source#143 first');
     }
+    if (preflight.source143.using_bootstrap) {
+      throw new Error('Bootstrap cohort cannot be used for live sync — ingest verified Source#143 export first');
+    }
     if (preflight.gate !== DEMO_CONFIG.gates.preflight) {
       throw new Error(`Preflight gate mismatch: ${preflight.gate}`);
     }

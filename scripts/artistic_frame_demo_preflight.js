@@ -164,20 +164,28 @@ async function main() {
   const updateCount = actions.filter((a) => a.action === 'update').length;
   const quarantineCount = actions.filter((a) => a.action === 'quarantine').length;
 
-  const source143Ready = manifest.source?.status === 'ingested' && Boolean(manifest.source?.fingerprint);
+  const usingBootstrap = manifest.mode === 'bootstrap_public_refs'
+    || manifest.source?.status === 'bootstrap_fallback';
+  const source143Ready = manifest.source?.status === 'ingested'
+    && Boolean(manifest.source?.fingerprint)
+    && !usingBootstrap;
   const preflightPass = mappingOk
     && quarantineCount === 0
     && products.length <= maxProducts
-    && (source143Ready || (usingScaffold && ALLOW_SCAFFOLD));
+    && (source143Ready || (usingScaffold && ALLOW_SCAFFOLD) || usingBootstrap);
 
   const gate = preflightPass
-    ? (usingScaffold ? 'ARTISTIC_FRAME_CLIENT_DEMO_PREFLIGHT_SCAFFOLD_OK' : DEMO_CONFIG.gates.preflight)
+    ? (usingScaffold
+      ? 'ARTISTIC_FRAME_CLIENT_DEMO_PREFLIGHT_SCAFFOLD_OK'
+      : usingBootstrap
+        ? 'ARTISTIC_FRAME_CLIENT_DEMO_PREFLIGHT_BOOTSTRAP_OK'
+        : DEMO_CONFIG.gates.preflight)
     : 'ARTISTIC_FRAME_CLIENT_DEMO_PREFLIGHT_BLOCKED';
 
   const report = {
     gate,
     generated_at: new Date().toISOString(),
-    mode: usingScaffold ? 'scaffold_dry_run' : 'source143_preflight',
+    mode: usingScaffold ? 'scaffold_dry_run' : usingBootstrap ? 'bootstrap_dry_run' : 'source143_preflight',
     live_mutation: false,
     prerequisite_gates: [
       'RUEIV_SHOPIFY_STAGING_SIMULATION_READY_FOR_BOUNDED_GO_LIVE_GATE',
@@ -188,6 +196,7 @@ async function main() {
       fingerprint: manifest.source?.fingerprint || null,
       ready: source143Ready,
       using_scaffold: usingScaffold,
+      using_bootstrap: usingBootstrap,
     },
     cohort: {
       vendor: vendorName,
@@ -293,8 +302,10 @@ async function main() {
     }
   }
 
-  if (!source143Ready && !usingScaffold) {
+  if (!source143Ready && !usingScaffold && !usingBootstrap) {
     console.log('\nBLOCKED: Source#143 cohort not ingested. Run ingest_source143_af_cohort.js first.');
+  } else if (usingBootstrap) {
+    console.log('\nBOOTSTRAP OK (dry-run only): ingest verified Source#143 export before live sync.');
   }
 
   process.exit(preflightPass ? 0 : 1);

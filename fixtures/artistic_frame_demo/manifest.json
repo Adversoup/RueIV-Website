@@ -1,15 +1,18 @@
 {
   "version": "1.0.0",
-  "gate": "ARTISTIC_FRAME_SOURCE143_COHORT_PENDING",
-  "generated_at": "2026-09-17T14:00:00.000Z",
-  "mode": "awaiting_source143",
+  "gate": "ARTISTIC_FRAME_SOURCE143_BOOTSTRAP_PUBLIC_REFS",
+  "generated_at": "2026-09-17T14:41:58.071Z",
+  "mode": "bootstrap_public_refs",
   "live_mutation": false,
   "source": {
     "upstream": "Adversoup/RueIV-Source#143",
-    "status": "pending",
+    "status": "bootstrap_fallback",
     "fingerprint": null,
-    "ingested_at": null,
-    "ingest_command": "node scripts/ingest_source143_af_cohort.js --from /path/to/source143/export"
+    "export_fingerprint": null,
+    "ingested_at": "2026-09-17T14:41:58.071Z",
+    "note": "Public-ref bootstrap — NOT Source#143 verified. Live sync blocked until real export ingested with matching fingerprints.",
+    "expected_manifest_fingerprint": "c07ee64f47fc0dc9359389cc52f1d7a1e06de6bc0528dade8715a78f3d632989",
+    "expected_export_fingerprint": "23fe31223434e84d9e677a2bc0efccb41c43e4a6ed6e0f500b833168ffcba434"
   },
   "demo": {
     "vendor_display_name": "Artistic Frame",
@@ -23,27 +26,15 @@
     "default_product_status": "ACTIVE"
   },
   "manifest": {
-    "selected_records": 0,
-    "checksum_sha256": null,
-    "products_file": "products.json"
+    "selected_records": 30,
+    "checksum_sha256": "27a2ec095ba168bc13256d152807b13213f67dbadeb8bb7ad930cd40b5aed25b",
+    "products_file": "products.json",
+    "source143_selection_rules": [
+      "bootstrap_public_refs_sort_by_sku"
+    ]
   },
   "scaffold": {
-    "enabled": true,
-    "products_file": "products.scaffold.json",
-    "record_count": 3,
-    "note": "Machinery-only scaffold for preflight/sync dry-run until Source#143 fingerprint is ingested. Pass --allow-scaffold to preflight."
-  },
-  "coverage": {
-    "required_scenarios": [
-      "vendor_brand",
-      "sku",
-      "title_description",
-      "product_type",
-      "images_gallery",
-      "price_hidden",
-      "options_variants",
-      "collection_handle",
-      "tearsheet_optional"
-    ]
+    "enabled": false,
+    "note": "Bootstrap cohort — not scaffold; still blocked for live until Source#143 ingest"
   }
 }

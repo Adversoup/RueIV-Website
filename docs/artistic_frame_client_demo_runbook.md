@@ -1,8 +1,8 @@
 # Artistic Frame Client Demo Runbook (Issue #11)
 
-**Deadline:** Monday, 21 Sep 2026 (Europe/Istanbul)  
-**Upstream cohort:** `Adversoup/RueIV-Source#143`  
-**Target gate (live):** `ARTISTIC_FRAME_CLIENT_DEMO_LIVE_BOUNDED_SHOWCASE_VERIFIED_READY_FOR_MONDAY`
+**Deadline:** Friday, 18 Sep 2026 (Europe/Istanbul)  
+**Upstream cohort:** `Adversoup/RueIV-Source#143` (PR #144, branch `cursor/artistic-frame-client-demo-143-32eb`)  
+**Target gate (live):** `ARTISTIC_FRAME_CLIENT_DEMO_LIVE_BOUNDED_SHOWCASE_VERIFIED_READY_FOR_FRIDAY`
 
 Bounded RueIV Shopify showcase: Artistic Frame only, ≤50 products, dedicated hidden-from-nav collection, price hidden, rollback manifest, **no theme publish**, **no menu changes**.
 
@@ -22,21 +22,35 @@ npm run theme-check
 
 ## Phase 1 — Consume Source#143 cohort
 
-When RueIV-Source#143 exports `manifest.json` + `products.json`:
+When RueIV-Source#143 exports readiness files:
+
+- `artistic_frame_showcase_cohort_manifest.json`
+- `artistic_frame_shopify_export_payload.json`
 
 ```bash
-node scripts/ingest_source143_af_cohort.js --from /path/to/source143/export
+node scripts/ingest_source143_af_cohort.js --from /path/to/source143/export \
+  --manifest-fingerprint c07ee64f47fc0dc9359389cc52f1d7a1e06de6bc0528dade8715a78f3d632989 \
+  --export-fingerprint 23fe31223434e84d9e677a2bc0efccb41c43e4a6ed6e0f500b833168ffcba434
 ```
+
+Legacy layout (`manifest.json` + `products.json`) is also accepted.
 
 Validates: Artistic Frame vendor only, ≤50 records, checksum/fingerprint.
 
-**Until Source#143 lands:** machinery dry-run only with scaffold (3 records):
+**If Source repo is inaccessible:** public-ref bootstrap (30 SKUs, dry-run only):
+
+```bash
+npm run af-demo:bootstrap
+npm run af-demo:preflight
+```
+
+Bootstrap is **not authorized for live Shopify mutation** — replace with verified Source#143 ingest before `--live`.
+
+**Machinery-only scaffold** (3 records):
 
 ```bash
 npm run af-demo:preflight:scaffold
 ```
-
-Scaffold is **not authorized for live Shopify mutation**.
 
 ---
 
