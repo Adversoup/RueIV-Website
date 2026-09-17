@@ -10,6 +10,8 @@
     "test": "shopify theme check --fail-level error",
     "theme-check": "shopify theme check --fail-level error",
     "staging:simulate": "node scripts/staging_simulation.js",
+    "staging:rehearsal:build": "node scripts/build_real_hub_rehearsal_fixture.js",
+    "staging:rehearsal": "node scripts/build_real_hub_rehearsal_fixture.js && node scripts/staging_simulation.js --real",
     "image:normalize": "node scripts/image_normalize.js",
     "image:preview": "node scripts/image_normalize.js --limit 5",
     "image:batch": "node scripts/image_normalize.js --upload",
