@@ -22,6 +22,10 @@ const {
   hubToShopifyProduct,
 } = require('../lib/hub_shopify_mapper');
 const {
+  REMOTE_MEDIA_HANDOFF_MODE,
+  validateRemoteMediaHandoff,
+} = require('../lib/af_demo_handoff');
+const {
   hasShopifyCredentials,
   findProductByHandle,
   findProductsBySkuVendor,
@@ -168,10 +172,20 @@ async function main() {
     || manifest.source?.status === 'bootstrap_fallback';
   const usingSource146 = manifest.mode === 'source146_ingested'
     || manifest.source?.upstream?.includes('#146');
+  const requiredGate = DEMO_CONFIG.upstream?.required_gate;
+  const mediaHandoffMode = manifest.source?.media_handoff_mode
+    || DEMO_CONFIG.media_handoff?.mode
+    || REMOTE_MEDIA_HANDOFF_MODE;
+  const handoffValidation = usingSource146
+    ? validateRemoteMediaHandoff(products, { media_handoff_mode: mediaHandoffMode })
+    : { ok: true, issues: [] };
   const source146Ready = usingSource146
     && manifest.source?.status === 'ingested'
-    && (manifest.source?.required_gate === DEMO_CONFIG.upstream?.required_gate
-      || manifest.gate === 'ARTISTIC_FRAME_SOURCE146_COHORT_INGESTED');
+    && manifest.source?.required_gate === requiredGate
+    && manifest.source?.media_handoff_mode === REMOTE_MEDIA_HANDOFF_MODE
+    && handoffValidation.ok
+    && (manifest.gate === 'ARTISTIC_FRAME_SOURCE146_COHORT_INGESTED'
+      || manifest.mode === 'source146_ingested');
   const source143Ready = !usingBootstrap
     && !usingSource146
     && manifest.source?.status === 'ingested'
@@ -180,7 +194,8 @@ async function main() {
   const preflightPass = mappingOk
     && quarantineCount === 0
     && products.length <= maxProducts
-    && cohortReady;
+    && cohortReady
+    && (!usingSource146 || handoffValidation.ok);
 
   const gate = preflightPass
     ? (usingScaffold
@@ -215,8 +230,12 @@ async function main() {
     source146: {
       ready: source146Ready,
       upstream_gate: manifest.source?.required_gate || DEMO_CONFIG.upstream?.required_gate || null,
+      media_handoff_mode: mediaHandoffMode,
+      remote_media_handoff_ok: handoffValidation.ok,
+      remote_media_issues: handoffValidation.issues || [],
       excluded_skus: manifest.source?.excluded_skus || DEMO_CONFIG.cohort?.excluded_skus || [],
       smoke_sku: DEMO_CONFIG.cohort?.smoke_sku || null,
+      target_products: DEMO_CONFIG.limits?.target_products || null,
     },
     cohort: {
       vendor: vendorName,
@@ -307,6 +326,9 @@ async function main() {
   console.log(`Cohort: ${products.length}/${maxProducts} (${vendorName})`);
   console.log(`Source#143: ${manifest.source?.status || 'pending'}${usingScaffold ? ' (scaffold)' : ''}`);
   console.log(`Mapping: ${mappingOk ? 'OK' : 'FAIL'} | Quarantine: ${quarantined.length}`);
+  if (usingSource146) {
+    console.log(`Remote media handoff: ${handoffValidation.ok ? 'OK' : 'FAIL'} (${mediaHandoffMode})`);
+  }
   console.log(`Actions: create=${createCount} update=${updateCount} quarantine=${quarantineCount}`);
   console.log(`Preflight pass: ${preflightPass ? 'YES' : 'NO'}`);
   console.log(`Report: ${reportPath}`);

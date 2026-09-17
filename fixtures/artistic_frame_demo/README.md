@@ -1,6 +1,6 @@
 # Artistic Frame Demo Fixture (Source#146)
 
-Bounded cohort fixture for Issue #11 client demo. Consumes the enriched/polished payload from `Adversoup/RueIV-Source#146` after gate `ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC`.
+Bounded cohort fixture for Issue #11 client demo. Consumes the text-enriched remote-media handoff from `Adversoup/RueIV-Source#146` after gate `ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT`.
 
 ## Expected files after Source#146 ingest
 
@@ -9,22 +9,26 @@ Bounded cohort fixture for Issue #11 client demo. Consumes the enriched/polished
 | `manifest.json` | Website fixture manifest (written by ingest) |
 | `products.json` | Sanitized Hub-shaped records (≤50, Artistic Frame only) |
 
-## Source#146 upstream export (RueIV-Source)
+## Source#146 upstream handoff (RueIV-Source)
+
+Drop sanitized files into `source146_handoff/` (see that directory README).
+
+Preferred names:
 
 | File | Purpose |
 |------|---------|
-| `artistic_frame_demo_enriched_cohort_manifest.json` | Enriched cohort manifest + gate |
-| `artistic_frame_demo_enriched_export.json` | 28 text-ready Hub-shaped export |
+| `artistic_frame_demo_text_enriched_cohort_manifest.json` | Text-enriched cohort manifest + gate |
+| `artistic_frame_demo_text_enriched_export.json` | 28-product export with `primary_image_source_url(s)` |
 
-Legacy Source#143 file names are also accepted by `ingest_source146_af_cohort.js`.
+Legacy enriched/Source#143 file names are also accepted by `ingest_source146_af_cohort.js`.
 
 Automatic exclusions: **2532A**, **2588S**.
 
 ## Ingest from Source#146 export
 
 ```bash
-node scripts/ingest_source146_af_cohort.js --from /path/to/source146/export \
-  [--manifest-fingerprint <hash>] [--export-fingerprint <hash>]
+npm run af-demo:ingest:146
+# or: node scripts/ingest_source146_af_cohort.js --from fixtures/artistic_frame_demo/source146_handoff
 ```
 
 ## Remote media (no manual JPEG handoff)

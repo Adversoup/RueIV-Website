@@ -2,7 +2,7 @@
 
 **Deadline:** Friday, 18 Sep 2026 (Europe/Istanbul)  
 **Upstream cohort:** `Adversoup/RueIV-Source#146` (enriched/polished AF demo payload)  
-**Required upstream gate:** `ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC`  
+**Required upstream gate:** `ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT`  
 **Target gate (live):** `ARTISTIC_FRAME_CLIENT_DEMO_LIVE_BOUNDED_SHOWCASE_VERIFIED_READY_FOR_FRIDAY`
 
 Bounded RueIV Shopify showcase: Artistic Frame only, ≤50 products, dedicated hidden-from-nav collection, price hidden, rollback manifest, **no theme publish**, **no menu changes**.
@@ -23,11 +23,10 @@ npm run theme-check
 
 ## Phase 1 — Consume Source#146 enriched cohort
 
-When RueIV-Source#146 reports `ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC`, ingest the polished export (28 text-ready products; **2532A** and **2588S** excluded automatically):
+When RueIV-Source#146 / PR #148 reports `ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT`, drop the handoff into `fixtures/artistic_frame_demo/source146_handoff/` and ingest (28 text-ready products with `primary_image_source_url(s)`; **2532A** and **2588S** excluded automatically):
 
 ```bash
-node scripts/ingest_source146_af_cohort.js --from /path/to/source146/export \
-  [--manifest-fingerprint <hash>] [--export-fingerprint <hash>]
+npm run af-demo:ingest:146
 ```
 
 Accepted file names include:

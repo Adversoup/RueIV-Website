@@ -5,7 +5,10 @@
     "source_issue": "Adversoup/RueIV-Source#146",
     "prior_source_issue": "Adversoup/RueIV-Source#143",
     "website_issue": "Adversoup/RueIV-Website#11",
-    "required_gate": "ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC"
+    "required_gate": "ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT",
+    "legacy_gates": [
+      "ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC"
+    ]
   },
   "vendor": {
     "display_name": "Artistic Frame",
@@ -29,12 +32,18 @@
     "smoke_sku": "2505A",
     "excluded_skus": ["2532A", "2588S"]
   },
+  "media_handoff": {
+    "mode": "remote_source_url_import",
+    "primary_field": "primary_image_source_url",
+    "gallery_field": "gallery_image_source_urls"
+  },
   "sync": {
     "remote_media_first": true,
     "proxy_fallback": true,
     "media_poll_interval_ms": 2000,
     "media_poll_max_attempts": 30
   },
+  "handoff_dir": "fixtures/artistic_frame_demo/source146_handoff",
   "policy": {
     "price_hidden": true,
     "default_product_status": "ACTIVE",
