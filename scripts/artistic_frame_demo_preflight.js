@@ -166,13 +166,21 @@ async function main() {
 
   const usingBootstrap = manifest.mode === 'bootstrap_public_refs'
     || manifest.source?.status === 'bootstrap_fallback';
-  const source143Ready = manifest.source?.status === 'ingested'
-    && Boolean(manifest.source?.fingerprint)
-    && !usingBootstrap;
+  const usingSource146 = manifest.mode === 'source146_ingested'
+    || manifest.source?.upstream?.includes('#146');
+  const source146Ready = usingSource146
+    && manifest.source?.status === 'ingested'
+    && (manifest.source?.required_gate === DEMO_CONFIG.upstream?.required_gate
+      || manifest.gate === 'ARTISTIC_FRAME_SOURCE146_COHORT_INGESTED');
+  const source143Ready = !usingBootstrap
+    && !usingSource146
+    && manifest.source?.status === 'ingested'
+    && Boolean(manifest.source?.fingerprint);
+  const cohortReady = source146Ready || source143Ready || (usingScaffold && ALLOW_SCAFFOLD) || usingBootstrap;
   const preflightPass = mappingOk
     && quarantineCount === 0
     && products.length <= maxProducts
-    && (source143Ready || (usingScaffold && ALLOW_SCAFFOLD) || usingBootstrap);
+    && cohortReady;
 
   const gate = preflightPass
     ? (usingScaffold
@@ -185,7 +193,13 @@ async function main() {
   const report = {
     gate,
     generated_at: new Date().toISOString(),
-    mode: usingScaffold ? 'scaffold_dry_run' : usingBootstrap ? 'bootstrap_dry_run' : 'source143_preflight',
+    mode: usingScaffold
+      ? 'scaffold_dry_run'
+      : usingBootstrap
+        ? 'bootstrap_dry_run'
+        : usingSource146
+          ? 'source146_preflight'
+          : 'source143_preflight',
     live_mutation: false,
     prerequisite_gates: [
       'RUEIV_SHOPIFY_STAGING_SIMULATION_READY_FOR_BOUNDED_GO_LIVE_GATE',
@@ -197,6 +211,12 @@ async function main() {
       ready: source143Ready,
       using_scaffold: usingScaffold,
       using_bootstrap: usingBootstrap,
+    },
+    source146: {
+      ready: source146Ready,
+      upstream_gate: manifest.source?.required_gate || DEMO_CONFIG.upstream?.required_gate || null,
+      excluded_skus: manifest.source?.excluded_skus || DEMO_CONFIG.cohort?.excluded_skus || [],
+      smoke_sku: DEMO_CONFIG.cohort?.smoke_sku || null,
     },
     cohort: {
       vendor: vendorName,
@@ -302,10 +322,12 @@ async function main() {
     }
   }
 
-  if (!source143Ready && !usingScaffold && !usingBootstrap) {
-    console.log('\nBLOCKED: Source#143 cohort not ingested. Run ingest_source143_af_cohort.js first.');
+  if (!source146Ready && !source143Ready && !usingScaffold && !usingBootstrap) {
+    console.log('\nBLOCKED: Source#146 cohort not ingested. Run ingest_source146_af_cohort.js first.');
   } else if (usingBootstrap) {
-    console.log('\nBOOTSTRAP OK (dry-run only): ingest verified Source#143 export before live sync.');
+    console.log('\nBOOTSTRAP OK (dry-run only): ingest verified Source#146 export before live sync.');
+  } else if (source146Ready) {
+    console.log(`\nSource#146 ready (${products.length} products). Live path: smoke ${DEMO_CONFIG.cohort?.smoke_sku} → remaining cohort.`);
   }
 
   process.exit(preflightPass ? 0 : 1);

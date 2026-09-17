@@ -3,11 +3,16 @@
  * artistic_frame_demo_sync.js
  * Bounded Artistic Frame demo Shopify sync — DRY_RUN by default.
  *
- * Usage:
- *   node scripts/artistic_frame_demo_sync.js              # dry-run
- *   node scripts/artistic_frame_demo_sync.js --live       # live (requires preflight pass + Source#143)
+ * Remote media: productCreateMedia + originalSource (Shopify CDN fetch), with
+ * poll-until-READY/FAILED and automatic proxy staged-upload fallback.
  *
- * Env: SHOPIFY_STORE, SHOPIFY_ADMIN_ACCESS_TOKEN, DRY_RUN=true|false
+ * Usage:
+ *   node scripts/artistic_frame_demo_sync.js                    # dry-run full cohort
+ *   node scripts/artistic_frame_demo_sync.js --live               # smoke SKU then remaining cohort
+ *   node scripts/artistic_frame_demo_sync.js --live --smoke-only  # 1-product media smoke only
+ *   node scripts/artistic_frame_demo_sync.js --live --skip-smoke    # remaining cohort (after smoke pass)
+ *
+ * Env: SHOPIFY_STORE, SHOPIFY_ADMIN_ACCESS_TOKEN
  */
 
 'use strict';
@@ -16,6 +21,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { hubToShopifyProduct, normalizeImageUrl } = require('../lib/hub_shopify_mapper');
+const { attachRemoteProductImages } = require('../lib/shopify_remote_media');
 const {
   hasShopifyCredentials,
   gqlFetch,
@@ -33,11 +39,16 @@ const DEMO_CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'artist
 const LIVE = process.argv.includes('--live');
 const DRY_RUN = !LIVE;
 const VERBOSE = process.argv.includes('--verbose');
+const SMOKE_ONLY = process.argv.includes('--smoke-only');
+const SKIP_SMOKE = process.argv.includes('--skip-smoke');
+
+const SMOKE_SKU = process.env.AF_DEMO_SMOKE_SKU || DEMO_CONFIG.cohort?.smoke_sku || '2505A';
+const SMOKE_REPORT_PATH = path.join(OUT_DIR, 'artistic_frame_demo_media_smoke_report.json');
 
 function loadPreflightReport() {
   const reportPath = path.join(OUT_DIR, 'artistic_frame_demo_preflight_report.json');
   if (!fs.existsSync(reportPath)) {
-    throw new Error(`Missing preflight report. Run: npm run af-demo:preflight`);
+    throw new Error('Missing preflight report. Run: npm run af-demo:preflight');
   }
   return JSON.parse(fs.readFileSync(reportPath, 'utf8'));
 }
@@ -47,7 +58,30 @@ function loadProducts(productsFile) {
   return JSON.parse(fs.readFileSync(productsPath, 'utf8'));
 }
 
-async function createProduct(product) {
+function loadSmokeReport() {
+  if (!fs.existsSync(SMOKE_REPORT_PATH)) return null;
+  return JSON.parse(fs.readFileSync(SMOKE_REPORT_PATH, 'utf8'));
+}
+
+function assertLiveAuthorized(preflight) {
+  if (!hasShopifyCredentials()) {
+    throw new Error('Live sync requires SHOPIFY_STORE and SHOPIFY_ADMIN_ACCESS_TOKEN');
+  }
+  if (!preflight.summary.preflight_pass) {
+    throw new Error('Preflight did not pass — live sync blocked');
+  }
+  if (preflight.source143?.using_scaffold) {
+    throw new Error('Scaffold cohort cannot be used for live sync — ingest Source#146 export first');
+  }
+  if (preflight.source143?.using_bootstrap) {
+    throw new Error('Bootstrap cohort cannot be used for live sync — ingest verified Source#146 export first');
+  }
+  if (preflight.gate !== DEMO_CONFIG.gates.preflight) {
+    throw new Error(`Preflight gate mismatch: ${preflight.gate}`);
+  }
+}
+
+async function createProduct(product, options = {}) {
   const query = `
     mutation productSet($input: ProductSetInput!, $synchronous: Boolean!) {
       productSet(input: $input, synchronous: $synchronous) {
@@ -97,10 +131,26 @@ async function createProduct(product) {
     throw new Error(`productSet failed: ${JSON.stringify(result.data.productSet.userErrors)}`);
   }
   const created = result?.data?.productSet?.product;
-  if (created && product.images.length > 0) {
-    await addProductMedia(created.id, product.images);
+  if (!created) return null;
+
+  let mediaResult = null;
+  if (product.images.length > 0) {
+    mediaResult = await attachRemoteProductImages(created.id, product.images, {
+      sku: product.sku,
+      allowProxyFallback: options.allowProxyFallback !== false,
+      pollIntervalMs: DEMO_CONFIG.sync?.media_poll_interval_ms,
+      pollMaxAttempts: DEMO_CONFIG.sync?.media_poll_max_attempts,
+      onPollTick: VERBOSE
+        ? ({ attempt, statuses }) => console.log(`    media poll #${attempt}: ${statuses.join(', ')}`)
+        : null,
+    });
+    if (!mediaResult.ok) {
+      const blocker = mediaResult.blocker || 'Media attach/poll failed';
+      throw new Error(`${blocker}: ${JSON.stringify(mediaResult.errors).slice(0, 400)}`);
+    }
   }
-  return created;
+
+  return { product: created, media: mediaResult };
 }
 
 async function updateProduct(shopifyId, product) {
@@ -128,21 +178,6 @@ async function updateProduct(shopifyId, product) {
   return result?.data?.productSet?.product;
 }
 
-async function addProductMedia(productId, imageUrls) {
-  const query = `
-    mutation productCreateMedia($productId: ID!, $media: [CreateMediaInput!]!) {
-      productCreateMedia(productId: $productId, media: $media) {
-        mediaUserErrors { field message code }
-      }
-    }
-  `;
-  const media = imageUrls.map((url) => ({
-    mediaContentType: 'IMAGE',
-    originalSource: normalizeImageUrl(url),
-  }));
-  await gqlFetch(query, { productId, media });
-}
-
 async function upsertMetafields(ownerId, metafields) {
   if (!metafields?.length) return;
   const query = `
@@ -167,6 +202,9 @@ async function ensureDemoCollection(productIds) {
   const existing = await getCollectionByHandle(handle);
 
   if (existing?.id) {
+    if (productIds.length > 0) {
+      await addProductsToCollection(existing.id, productIds);
+    }
     return { action: 'exists', collection: existing, product_ids: productIds };
   }
 
@@ -211,37 +249,119 @@ async function addProductsToCollection(collectionId, productIds) {
   await gqlFetch(query, { id: collectionId, productIds });
 }
 
-async function main() {
-  if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+function selectCohortProducts(products, phase) {
+  const smokeHub = products.find((p) => p.sku === SMOKE_SKU);
+  if (!smokeHub && (phase === 'smoke' || SMOKE_ONLY)) {
+    throw new Error(`Smoke SKU ${SMOKE_SKU} not found in cohort — cannot run remote-media smoke`);
+  }
 
-  const preflight = loadPreflightReport();
-  const products = loadProducts(preflight.cohort.products_file);
+  if (phase === 'smoke' || SMOKE_ONLY) {
+    return [smokeHub];
+  }
 
-  if (LIVE) {
-    if (!hasShopifyCredentials()) {
-      throw new Error('Live sync requires SHOPIFY_STORE and SHOPIFY_ADMIN_ACCESS_TOKEN');
+  if (phase === 'remaining') {
+    return products.filter((p) => p.sku !== SMOKE_SKU);
+  }
+
+  return products;
+}
+
+async function syncProduct(hub, preflight, summary) {
+  const product = hubToShopifyProduct(hub, {
+    forcePriceHidden: DEMO_CONFIG.policy.price_hidden,
+    productStatus: DEMO_CONFIG.policy.default_product_status,
+  });
+  product.images = product.images.map(normalizeImageUrl);
+
+  const actionEntry = preflight.intended_actions.find((a) => a.sku === hub.sku);
+  const action = actionEntry?.action || 'create';
+
+  if (action === 'quarantine') {
+    summary.products.push({ sku: hub.sku, action: 'quarantine', status: 'skipped' });
+    return null;
+  }
+
+  if (DRY_RUN) {
+    summary.products.push({
+      sku: hub.sku,
+      handle: product.handle,
+      action,
+      status: 'dry_run',
+      would_create: action === 'create',
+      would_update: action === 'update',
+      image_count: product.images.length,
+      media_attach: 'productCreateMedia.originalSource (+ proxy fallback if remote fetch fails)',
+    });
+    if (action === 'create') summary.created++;
+    if (action === 'update') summary.updated++;
+    return null;
+  }
+
+  let shopifyProduct;
+  let mediaResult = null;
+
+  if (action === 'update' && actionEntry?.existing_id) {
+    shopifyProduct = await updateProduct(actionEntry.existing_id, product);
+    await upsertMetafields(actionEntry.existing_id, product.metafields);
+    if (product.images.length > 0) {
+      mediaResult = await attachRemoteProductImages(actionEntry.existing_id, product.images, {
+        sku: hub.sku,
+        pollIntervalMs: DEMO_CONFIG.sync?.media_poll_interval_ms,
+        pollMaxAttempts: DEMO_CONFIG.sync?.media_poll_max_attempts,
+      });
+      if (!mediaResult.ok) {
+        throw new Error(mediaResult.blocker || 'Media attach failed on update');
+      }
     }
-    if (!preflight.summary.preflight_pass) {
-      throw new Error('Preflight did not pass — live sync blocked');
-    }
-    if (preflight.source143.using_scaffold) {
-      throw new Error('Scaffold cohort cannot be used for live sync — ingest Source#143 first');
-    }
-    if (preflight.source143.using_bootstrap) {
-      throw new Error('Bootstrap cohort cannot be used for live sync — ingest verified Source#143 export first');
-    }
-    if (preflight.gate !== DEMO_CONFIG.gates.preflight) {
-      throw new Error(`Preflight gate mismatch: ${preflight.gate}`);
+    summary.updated++;
+  } else {
+    const existing = await findProductByHandle(product.handle);
+    if (existing) {
+      shopifyProduct = await updateProduct(existing.id, product);
+      await upsertMetafields(existing.id, product.metafields);
+      summary.updated++;
+    } else {
+      const created = await createProduct(product);
+      shopifyProduct = created.product;
+      mediaResult = created.media;
+      if (shopifyProduct) {
+        await upsertMetafields(shopifyProduct.id, product.metafields);
+      }
+      summary.created++;
     }
   }
 
+  const entry = {
+    sku: hub.sku,
+    handle: product.handle,
+    action,
+    status: 'ok',
+    shopify_id: shopifyProduct?.id || null,
+    media: mediaResult
+      ? {
+          ok: mediaResult.ok,
+          attach_method: mediaResult.attachMethod,
+          poll: mediaResult.poll,
+          errors: mediaResult.errors,
+        }
+      : null,
+  };
+  summary.products.push(entry);
+  await sleep(250);
+  return shopifyProduct?.id || null;
+}
+
+async function runPhase(phase, products, preflight) {
+  const cohort = selectCohortProducts(products, phase);
   const summary = {
     gate: LIVE ? DEMO_CONFIG.gates.live_verified : 'ARTISTIC_FRAME_CLIENT_DEMO_SYNC_DRY_RUN',
     generated_at: new Date().toISOString(),
     mode: DRY_RUN ? 'dry_run' : 'live',
     live_mutation: !DRY_RUN,
+    phase,
+    smoke_sku: SMOKE_SKU,
     store: STORE || null,
-    cohort_count: products.length,
+    cohort_count: cohort.length,
     created: 0,
     updated: 0,
     failed: 0,
@@ -251,98 +371,122 @@ async function main() {
       no_theme_publish: true,
       no_menu_changes: true,
       price_hidden: true,
+      remote_media: 'productCreateMedia.originalSource',
+      proxy_fallback: DEMO_CONFIG.sync?.proxy_fallback !== false,
     },
   };
 
   const productIds = [];
 
-  for (const hub of products) {
-    const product = hubToShopifyProduct(hub, {
-      forcePriceHidden: DEMO_CONFIG.policy.price_hidden,
-      productStatus: DEMO_CONFIG.policy.default_product_status,
-    });
-    product.images = product.images.map(normalizeImageUrl);
-
-    const actionEntry = preflight.intended_actions.find((a) => a.sku === hub.sku);
-    const action = actionEntry?.action || 'create';
-
-    if (action === 'quarantine') {
-      summary.products.push({ sku: hub.sku, action: 'quarantine', status: 'skipped' });
-      continue;
-    }
-
+  for (const hub of cohort) {
     try {
-      if (DRY_RUN) {
-        summary.products.push({
-          sku: hub.sku,
-          handle: product.handle,
-          action,
-          status: 'dry_run',
-          would_create: action === 'create',
-          would_update: action === 'update',
-        });
-        if (action === 'create') summary.created++;
-        if (action === 'update') summary.updated++;
-        continue;
-      }
-
-      let shopifyProduct;
-      if (action === 'update' && actionEntry?.existing_id) {
-        shopifyProduct = await updateProduct(actionEntry.existing_id, product);
-        await upsertMetafields(actionEntry.existing_id, product.metafields);
-        summary.updated++;
-      } else {
-        const existing = await findProductByHandle(product.handle);
-        if (existing) {
-          shopifyProduct = await updateProduct(existing.id, product);
-          await upsertMetafields(existing.id, product.metafields);
-          summary.updated++;
-        } else {
-          shopifyProduct = await createProduct(product);
-          if (shopifyProduct) {
-            await upsertMetafields(shopifyProduct.id, product.metafields);
-          }
-          summary.created++;
-        }
-      }
-
-      if (shopifyProduct?.id) productIds.push(shopifyProduct.id);
-      summary.products.push({
-        sku: hub.sku,
-        handle: product.handle,
-        action,
-        status: 'ok',
-        shopify_id: shopifyProduct?.id || null,
-      });
-      await sleep(250);
+      const id = await syncProduct(hub, preflight, summary);
+      if (id) productIds.push(id);
     } catch (err) {
       summary.failed++;
-      summary.products.push({ sku: hub.sku, action, status: 'failed', error: err.message });
+      summary.products.push({
+        sku: hub.sku,
+        action: preflight.intended_actions.find((a) => a.sku === hub.sku)?.action || 'create',
+        status: 'failed',
+        error: err.message,
+      });
+      if (phase === 'smoke' || SMOKE_ONLY) {
+        summary.blocker = err.message;
+        break;
+      }
     }
   }
 
-  if (!DRY_RUN && productIds.length > 0) {
+  if (!DRY_RUN && phase !== 'smoke' && !SMOKE_ONLY && productIds.length > 0) {
     summary.collection = await ensureDemoCollection(productIds);
   } else {
     summary.collection = {
       handle: DEMO_CONFIG.collection.handle,
-      action: DRY_RUN ? 'would_ensure' : 'skipped',
+      action: DRY_RUN ? 'would_ensure' : (phase === 'smoke' || SMOKE_ONLY ? 'deferred_until_full_sync' : 'skipped'),
       product_count: productIds.length,
     };
   }
 
+  return { summary, productIds };
+}
+
+function writeSmokeReport(summary) {
+  const smokeProduct = summary.products.find((p) => p.sku === SMOKE_SKU);
+  const report = {
+    gate: summary.failed === 0 && smokeProduct?.status === 'ok'
+      ? 'ARTISTIC_FRAME_REMOTE_MEDIA_SMOKE_READY'
+      : 'ARTISTIC_FRAME_REMOTE_MEDIA_SMOKE_FAILED',
+    generated_at: new Date().toISOString(),
+    smoke_sku: SMOKE_SKU,
+    store: STORE || null,
+    status: summary.failed === 0 ? 'pass' : 'fail',
+    blocker: summary.blocker || null,
+    product: smokeProduct || null,
+    media: smokeProduct?.media || null,
+    sync_summary: summary,
+  };
+  fs.writeFileSync(SMOKE_REPORT_PATH, JSON.stringify(report, null, 2));
+  return report;
+}
+
+async function main() {
+  if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+
+  const preflight = loadPreflightReport();
+  const products = loadProducts(preflight.cohort.products_file);
+
+  if (LIVE) {
+    assertLiveAuthorized(preflight);
+  }
+
+  let finalSummary;
+
+  if (DRY_RUN) {
+    finalSummary = (await runPhase('full', products, preflight)).summary;
+  } else if (SMOKE_ONLY) {
+    finalSummary = (await runPhase('smoke', products, preflight)).summary;
+    const smokeReport = writeSmokeReport(finalSummary);
+    if (smokeReport.status !== 'pass') {
+      console.error(`SMOKE FAILED: ${smokeReport.blocker || 'see report'}`);
+      process.exit(1);
+    }
+  } else if (SKIP_SMOKE) {
+    const priorSmoke = loadSmokeReport();
+    if (!priorSmoke || priorSmoke.status !== 'pass') {
+      throw new Error('skip-smoke requires prior passing smoke report — run --smoke-only first');
+    }
+    finalSummary = (await runPhase('remaining', products, preflight)).summary;
+  } else {
+    const smokeResult = await runPhase('smoke', products, preflight);
+    const smokeReport = writeSmokeReport(smokeResult.summary);
+    if (smokeReport.status !== 'pass') {
+      console.error(`SMOKE FAILED — full cohort blocked: ${smokeReport.blocker || 'see smoke report'}`);
+      console.error(`Smoke report: ${SMOKE_REPORT_PATH}`);
+      process.exit(1);
+    }
+    console.log(`Smoke SKU ${SMOKE_SKU} media READY — proceeding with remaining ${products.length - 1} products…`);
+    const remainingResult = await runPhase('remaining', products, preflight);
+    finalSummary = {
+      ...remainingResult.summary,
+      phase: 'smoke_then_remaining',
+      smoke_report: smokeReport,
+      smoke_summary: smokeResult.summary,
+    };
+  }
+
   const outPath = path.join(OUT_DIR, 'artistic_frame_demo_sync_report.json');
-  fs.writeFileSync(outPath, JSON.stringify(summary, null, 2));
+  fs.writeFileSync(outPath, JSON.stringify(finalSummary, null, 2));
 
   if (!DRY_RUN) {
     const rollbackPath = path.join(OUT_DIR, 'artistic_frame_demo_rollback_manifest.json');
     if (fs.existsSync(rollbackPath)) {
       const rollback = JSON.parse(fs.readFileSync(rollbackPath, 'utf8'));
       rollback.executed_at = new Date().toISOString();
-      rollback.live_product_ids = summary.products
+      rollback.live_product_ids = finalSummary.products
         .filter((p) => p.shopify_id)
         .map((p) => ({ sku: p.sku, id: p.shopify_id, action: p.action }));
-      rollback.collection_result = summary.collection;
+      rollback.collection_result = finalSummary.collection;
+      rollback.media_smoke = loadSmokeReport();
       fs.writeFileSync(rollbackPath, JSON.stringify(rollback, null, 2));
     }
   }
@@ -350,18 +494,22 @@ async function main() {
   console.log('╔══════════════════════════════════════════════════════════╗');
   console.log(`║  Artistic Frame Demo Sync — ${DRY_RUN ? 'DRY RUN' : 'LIVE'}${' '.repeat(DRY_RUN ? 24 : 29)}║`);
   console.log('╚══════════════════════════════════════════════════════════╝');
-  console.log(`Gate: ${summary.gate}`);
-  console.log(`Cohort: ${products.length} | created=${summary.created} updated=${summary.updated} failed=${summary.failed}`);
-  console.log(`Collection: ${DEMO_CONFIG.collection.handle} (${summary.collection?.action || 'n/a'})`);
+  console.log(`Gate: ${finalSummary.gate}`);
+  console.log(`Phase: ${finalSummary.phase || 'full'}`);
+  console.log(`Cohort: ${finalSummary.cohort_count} | created=${finalSummary.created} updated=${finalSummary.updated} failed=${finalSummary.failed}`);
+  console.log(`Collection: ${DEMO_CONFIG.collection.handle} (${finalSummary.collection?.action || 'n/a'})`);
   console.log(`Report: ${outPath}`);
+  if (LIVE && fs.existsSync(SMOKE_REPORT_PATH)) {
+    console.log(`Smoke report: ${SMOKE_REPORT_PATH}`);
+  }
 
   if (VERBOSE) {
-    for (const p of summary.products) {
-      console.log(`  ${p.sku}: ${p.status} (${p.action})`);
+    for (const p of finalSummary.products) {
+      console.log(`  ${p.sku}: ${p.status} (${p.action})${p.media?.attach_method ? ` media=${p.media.attach_method}` : ''}`);
     }
   }
 
-  process.exit(summary.failed > 0 ? 1 : 0);
+  process.exit(finalSummary.failed > 0 ? 1 : 0);
 }
 
 main().catch((err) => {

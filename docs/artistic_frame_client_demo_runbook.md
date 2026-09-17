@@ -1,7 +1,8 @@
 # Artistic Frame Client Demo Runbook (Issue #11)
 
 **Deadline:** Friday, 18 Sep 2026 (Europe/Istanbul)  
-**Upstream cohort:** `Adversoup/RueIV-Source#143` (PR #144, branch `cursor/artistic-frame-client-demo-143-32eb`)  
+**Upstream cohort:** `Adversoup/RueIV-Source#146` (enriched/polished AF demo payload)  
+**Required upstream gate:** `ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC`  
 **Target gate (live):** `ARTISTIC_FRAME_CLIENT_DEMO_LIVE_BOUNDED_SHOWCASE_VERIFIED_READY_FOR_FRIDAY`
 
 Bounded RueIV Shopify showcase: Artistic Frame only, ≤50 products, dedicated hidden-from-nav collection, price hidden, rollback manifest, **no theme publish**, **no menu changes**.
@@ -20,31 +21,31 @@ npm run theme-check
 
 ---
 
-## Phase 1 — Consume Source#143 cohort
+## Phase 1 — Consume Source#146 enriched cohort
 
-When RueIV-Source#143 exports readiness files:
-
-- `artistic_frame_showcase_cohort_manifest.json`
-- `artistic_frame_shopify_export_payload.json`
+When RueIV-Source#146 reports `ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC`, ingest the polished export (28 text-ready products; **2532A** and **2588S** excluded automatically):
 
 ```bash
-node scripts/ingest_source143_af_cohort.js --from /path/to/source143/export \
-  --manifest-fingerprint c07ee64f47fc0dc9359389cc52f1d7a1e06de6bc0528dade8715a78f3d632989 \
-  --export-fingerprint 23fe31223434e84d9e677a2bc0efccb41c43e4a6ed6e0f500b833168ffcba434
+node scripts/ingest_source146_af_cohort.js --from /path/to/source146/export \
+  [--manifest-fingerprint <hash>] [--export-fingerprint <hash>]
 ```
 
-Legacy layout (`manifest.json` + `products.json`) is also accepted.
+Accepted file names include:
 
-Validates: Artistic Frame vendor only, ≤50 records, checksum/fingerprint.
+- `artistic_frame_demo_enriched_cohort_manifest.json` + `artistic_frame_demo_enriched_export.json`
+- legacy `artistic_frame_showcase_cohort_manifest.json` + `artistic_frame_shopify_export_payload.json`
+- `manifest.json` + `products.json`
 
-**If Source repo is inaccessible:** public-ref bootstrap (30 SKUs, dry-run only):
+Validates: upstream gate, Artistic Frame vendor only, ≤50 records, exclusion list, checksum/fingerprint when provided.
+
+**If Source repo is inaccessible:** public-ref bootstrap (dry-run machinery only):
 
 ```bash
 npm run af-demo:bootstrap
 npm run af-demo:preflight
 ```
 
-Bootstrap is **not authorized for live Shopify mutation** — replace with verified Source#143 ingest before `--live`.
+Bootstrap is **not authorized for live Shopify mutation** — replace with verified Source#146 ingest before `--live`.
 
 **Machinery-only scaffold** (3 records):
 
@@ -81,16 +82,25 @@ Preflight records:
 
 ## Phase 3 — Bounded live sync (owner-authorized only)
 
+Remote media is **automatic** — no manual JPEG handoff:
+
+1. `productCreateMedia` with `CreateMediaInput.originalSource` (Shopify fetches authoritative AF URL)
+2. Poll media status until `READY` or `FAILED`
+3. On remote fetch failure: server-side proxy fetch → `stagedUploadsCreate` → attach (still no manual handoff)
+
 ```bash
-npm run af-demo:sync          # dry-run (default)
-npm run af-demo:sync:live     # live mutation
+npm run af-demo:sync              # dry-run (default)
+npm run af-demo:sync:smoke        # live 1-product media smoke (SKU 2505A)
+npm run af-demo:sync:live         # smoke 2505A → if media READY, remaining 27 + collection
+npm run af-demo:sync:continue     # remaining cohort only (after smoke pass)
 ```
 
 Live sync requires:
 
-1. Preflight gate pass (Source#143 ingested, not scaffold)
+1. Preflight gate pass (Source#146 ingested, not scaffold/bootstrap)
 2. `SHOPIFY_STORE` + `SHOPIFY_ADMIN_ACCESS_TOKEN`
 3. Zero quarantined records
+4. Smoke report `out/artistic_frame_demo_media_smoke_report.json` = pass (for full live)
 
 Creates/updates **only** the AF demo cohort and manual collection `artistic-frame-demo`. Does **not** modify navigation or publish theme.
 
@@ -149,7 +159,8 @@ npm run af-demo:rollback:live   # execute
 | ≤50 Artistic Frame products | Other vendors |
 | `artistic-frame-demo` collection | Theme publish |
 | Price hidden via mapper | Menu/navigation changes |
-| Hub image URL refs | Production media processing |
+| Hub image URL refs via Shopify remote fetch | Manual image downloads |
+| Automatic proxy staged-upload fallback | Production media processing |
 | Rollback manifest | Hub catalog mutation |
 | DRAFT/ACTIVE on cohort only | Broad live sync |
 
@@ -164,10 +175,10 @@ npm run af-demo:preflight:scaffold
 npm run af-demo:sync
 npm run af-demo:rollback
 
-# Production path (after Source#143 ingest)
-node scripts/ingest_source143_af_cohort.js --from /path/to/export
+# Production path (after Source#146 ingest)
+node scripts/ingest_source146_af_cohort.js --from /path/to/export
 npm run af-demo:preflight
-npm run af-demo:sync:live
+npm run af-demo:sync:live   # smoke 2505A → remaining 27
 # verify → demo
 # if needed:
 npm run af-demo:rollback:live

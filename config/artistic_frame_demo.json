@@ -1,9 +1,11 @@
 {
-  "version": "1.0.0",
-  "description": "Bounded Artistic Frame client demo configuration (Issue #11).",
+  "version": "1.1.0",
+  "description": "Bounded Artistic Frame client demo configuration (Issue #11 / Source#146).",
   "upstream": {
-    "source_issue": "Adversoup/RueIV-Source#143",
-    "website_issue": "Adversoup/RueIV-Website#11"
+    "source_issue": "Adversoup/RueIV-Source#146",
+    "prior_source_issue": "Adversoup/RueIV-Source#143",
+    "website_issue": "Adversoup/RueIV-Website#11",
+    "required_gate": "ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC"
   },
   "vendor": {
     "display_name": "Artistic Frame",
@@ -21,7 +23,17 @@
   },
   "limits": {
     "max_products": 50,
-    "target_products": 30
+    "target_products": 28
+  },
+  "cohort": {
+    "smoke_sku": "2505A",
+    "excluded_skus": ["2532A", "2588S"]
+  },
+  "sync": {
+    "remote_media_first": true,
+    "proxy_fallback": true,
+    "media_poll_interval_ms": 2000,
+    "media_poll_max_attempts": 30
   },
   "policy": {
     "price_hidden": true,
@@ -30,7 +42,8 @@
     "no_menu_changes": true,
     "no_other_vendors": true,
     "no_hub_mutation": true,
-    "no_production_media_processing": true
+    "no_production_media_processing": true,
+    "no_manual_image_downloads": true
   },
   "fixture_dir": "fixtures/artistic_frame_demo",
   "gates": {
