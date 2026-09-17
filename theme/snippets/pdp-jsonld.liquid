@@ -9,6 +9,7 @@
     {% render 'pdp-jsonld', product: product %}
 {%- endcomment -%}
 
+{%- render 'rueiv-price-resolver', product: product -%}
 {%- liquid
   assign _color = product.metafields.override.color_family.value
   if _color == blank
@@ -54,7 +55,7 @@
   {%- if _material != blank -%}
   ,"material": {{ _material | json }}
   {%- endif -%}
-  {%- if product.variants.size > 0 -%}
+  {%- if product.variants.size > 0 and rueiv_show_price -%}
   ,"offers": {
     "@type": "Offer",
     "url": {{ canonical_url | json }},

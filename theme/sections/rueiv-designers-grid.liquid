@@ -88,7 +88,7 @@
   Build a deduplicated list of vendors with first product data.
 {%- endcomment -%}
 
-{%- paginate coll.products by 1000 -%}
+{%- paginate coll.products by 250 -%}
   {%- for product in coll.products -%}
     {%- assign vendor_handle = product.vendor | handleize -%}
     {%- unless seen_vendors contains vendor_handle -%}
@@ -120,7 +120,14 @@
       {%- assign img_url = parts[1] -%}
       {%- assign vendor_encoded = parts[2] -%}
 
-      <a href="/collections/all/{{ vendor_name | handleize }}" class="rv-designers__card">
+      {%- assign _vendor_handle = vendor_name | handleize -%}
+      {%- assign _vendor_coll = collections[_vendor_handle] -%}
+      {%- assign _vendor_param = vendor_name | url_param_escape -%}
+      {%- assign _vendor_link = routes.all_products_collection_url | append: '?filter.p.vendor=' | append: _vendor_param -%}
+      {%- if _vendor_coll != blank -%}
+        {%- assign _vendor_link = _vendor_coll.url -%}
+      {%- endif -%}
+      <a href="{{ _vendor_link }}" class="rv-designers__card">
         <div class="rv-designers__img-wrap">
           {%- if img_url != blank -%}
             <img src="{{ img_url }}" alt="{{ vendor_name | escape }}" class="rv-designers__img" loading="lazy" width="800" height="1067">

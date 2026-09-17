@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "description": "Canonical represented-vendor registry for RueIV + Jeffrey Michaels parent set. Hub publish uses vendor (display name) and handle for smart collections and theme URL resolution.",
+  "conventions": {
+    "shopify_vendor_field": "Exact display name — must match Hub canonical_vendor / brand",
+    "collection_handle": "vendor | handleize — one automated smart collection per vendor",
+    "brand_page_template": "page.brand",
+    "brand_collection_template": "collection.brand-top",
+    "designers_index_template": "collection.designers"
+  },
+  "vendors": [
+    { "display_name": "Alexander Lamont", "handle": "alexander-lamont", "tier": "partner", "categories": ["Textiles", "Wallcovering"], "status": "live" },
+    { "display_name": "Altura", "handle": "altura", "tier": "partner", "categories": ["Textiles"], "status": "live" },
+    { "display_name": "Area Environments", "handle": "area-environments", "tier": "partner", "categories": ["Wallcovering"], "status": "live" },
+    { "display_name": "Arte", "handle": "arte", "tier": "flagship", "categories": ["Wallcovering"], "status": "live" },
+    { "display_name": "CC Milano", "handle": "cc-milano", "tier": "partner", "categories": ["Furniture"], "status": "live" },
+    { "display_name": "Chase Erwin", "handle": "chase-erwin", "tier": "partner", "categories": ["Textiles"], "status": "live" },
+    { "display_name": "Fabricut", "handle": "fabricut", "tier": "flagship", "categories": ["Textiles"], "status": "live" },
+    { "display_name": "Porta Romana", "handle": "porta-romana", "tier": "flagship", "categories": ["Lighting"], "status": "live" },
+    { "display_name": "Verellen", "handle": "verellen", "tier": "flagship", "categories": ["Furniture"], "status": "live" },
+    { "display_name": "ZR", "handle": "zr", "tier": "flagship", "categories": ["Textiles"], "status": "live" }
+  ],
+  "pending_from_hub": {
+    "note": "Remaining vendors in the 23-vendor Jeffrey Michaels represented set will be appended here when Hub canonical vendor list is finalized. Theme code is vendor-agnostic — no per-vendor Liquid branches required.",
+    "required_assets_per_vendor": [
+      "brand.logo (file_reference on at least one product OR future brand metaobject)",
+      "brand.story (optional editorial copy for PDP brand story block)",
+      "collection featured image for vendor smart collection",
+      "page.brand instance (optional marketing landing page)"
+    ]
+  }
+}
