@@ -14,6 +14,7 @@
     "staging:rehearsal": "node scripts/build_real_hub_rehearsal_fixture.js && node scripts/staging_simulation.js --real",
     "af-demo:bootstrap": "node scripts/bootstrap_source143_af_public_refs.js --write-fixture",
     "af-demo:ingest": "node scripts/ingest_source143_af_cohort.js",
+    "af-demo:bridge:146": "node scripts/bridge_source146_handoff.js",
     "af-demo:ingest:146": "node scripts/ingest_source146_af_cohort.js --from fixtures/artistic_frame_demo/source146_handoff",
     "af-demo:preflight": "node scripts/artistic_frame_demo_preflight.js",
     "af-demo:preflight:scaffold": "node scripts/artistic_frame_demo_preflight.js --allow-scaffold",

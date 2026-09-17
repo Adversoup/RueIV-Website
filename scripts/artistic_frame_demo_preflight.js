@@ -179,11 +179,17 @@ async function main() {
   const handoffValidation = usingSource146
     ? validateRemoteMediaHandoff(products, { media_handoff_mode: mediaHandoffMode })
     : { ok: true, issues: [] };
+  const targetProducts = DEMO_CONFIG.limits?.target_products;
+  const cohortCountOk = !usingSource146
+    || !targetProducts
+    || products.length === targetProducts;
   const source146Ready = usingSource146
     && manifest.source?.status === 'ingested'
     && manifest.source?.required_gate === requiredGate
     && manifest.source?.media_handoff_mode === REMOTE_MEDIA_HANDOFF_MODE
     && handoffValidation.ok
+    && cohortCountOk
+    && products.some((p) => p.sku === DEMO_CONFIG.cohort?.smoke_sku)
     && (manifest.gate === 'ARTISTIC_FRAME_SOURCE146_COHORT_INGESTED'
       || manifest.mode === 'source146_ingested');
   const source143Ready = !usingBootstrap
@@ -195,7 +201,7 @@ async function main() {
     && quarantineCount === 0
     && products.length <= maxProducts
     && cohortReady
-    && (!usingSource146 || handoffValidation.ok);
+    && (!usingSource146 || (handoffValidation.ok && cohortCountOk));
 
   const gate = preflightPass
     ? (usingScaffold

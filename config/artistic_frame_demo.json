@@ -3,12 +3,19 @@
   "description": "Bounded Artistic Frame client demo configuration (Issue #11 / Source#146).",
   "upstream": {
     "source_issue": "Adversoup/RueIV-Source#146",
+    "source_repo": "Adversoup/RueIV-Source",
+    "source_ref": "main",
     "prior_source_issue": "Adversoup/RueIV-Source#143",
     "website_issue": "Adversoup/RueIV-Website#11",
     "required_gate": "ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT",
     "legacy_gates": [
       "ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC"
-    ]
+    ],
+    "source_paths": {
+      "payload": "docs/ai/readiness/issue-146/artistic_frame_demo_enriched_payload.json",
+      "manifest": "docs/ai/readiness/issue-146/artistic_frame_demo_enrichment_manifest.json"
+    },
+    "payload_fingerprint": "5f0b2771bc015c04f74cdc6bafaad04cccf39fadf572ba1748850f0a0e210b6d"
   },
   "vendor": {
     "display_name": "Artistic Frame",

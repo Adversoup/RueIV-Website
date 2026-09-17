@@ -36,6 +36,7 @@ const LEGACY_GATES = new Set(DEMO_CONFIG.upstream.legacy_gates || []);
 const EXCLUDED_SKUS = new Set(DEMO_CONFIG.cohort?.excluded_skus || []);
 
 const SOURCE146_MANIFEST_NAMES = [
+  'artistic_frame_demo_enrichment_manifest.json',
   'artistic_frame_demo_text_enriched_cohort_manifest.json',
   'artistic_frame_demo_remote_media_handoff_manifest.json',
   'artistic_frame_demo_enriched_cohort_manifest.json',
@@ -44,6 +45,7 @@ const SOURCE146_MANIFEST_NAMES = [
   'manifest.json',
 ];
 const SOURCE146_EXPORT_NAMES = [
+  'artistic_frame_demo_enriched_payload.json',
   'artistic_frame_demo_text_enriched_export.json',
   'artistic_frame_demo_remote_media_export.json',
   'artistic_frame_demo_enriched_export.json',
@@ -56,7 +58,9 @@ function parseArgs() {
   const args = process.argv.slice(2);
   let fromDir = process.env.SOURCE146_DIR || null;
   let manifestFingerprint = process.env.SOURCE146_MANIFEST_FINGERPRINT || null;
-  let exportFingerprint = process.env.SOURCE146_EXPORT_FINGERPRINT || null;
+  let exportFingerprint = process.env.SOURCE146_EXPORT_FINGERPRINT
+    || DEMO_CONFIG.upstream?.payload_fingerprint
+    || null;
   let skipGate = false;
 
   for (let i = 0; i < args.length; i++) {
@@ -193,6 +197,10 @@ function main() {
   }
   if (products.length > DEMO_CONFIG.limits.max_products) {
     throw new Error(`Cohort exceeds max ${DEMO_CONFIG.limits.max_products}: got ${products.length}`);
+  }
+  const targetProducts = DEMO_CONFIG.limits.target_products;
+  if (targetProducts && products.length !== targetProducts) {
+    throw new Error(`Cohort count must be exactly ${targetProducts} after exclusions: got ${products.length}`);
   }
 
   const smokeSku = DEMO_CONFIG.cohort?.smoke_sku;
