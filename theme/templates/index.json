@@ -286,15 +286,27 @@
       "blocks": {
         "qs_furniture": {
           "type": "category",
-          "settings": { "image": "", "title": "Furniture", "link": "/collections/quick-ship-furniture" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-furniture.jpg",
+            "title": "Furniture",
+            "link": "/collections/quick-ship-furniture"
+          }
         },
         "qs_seating": {
           "type": "category",
-          "settings": { "image": "", "title": "Seating", "link": "/collections/quick-ship-seating" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-seating.jpg",
+            "title": "Seating",
+            "link": "/collections/quick-ship-seating"
+          }
         },
         "qs_tables": {
           "type": "category",
-          "settings": { "image": "", "title": "Tables", "link": "/collections/quick-ship-tables" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-tables.jpg",
+            "title": "Tables",
+            "link": "/collections/quick-ship-tables"
+          }
         },
         "qs_casegoods": {
           "type": "category",
@@ -302,15 +314,27 @@
         },
         "qs_rugs": {
           "type": "category",
-          "settings": { "image": "", "title": "Rugs", "link": "/collections/quick-ship-rugs" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-rugs.jpg",
+            "title": "Rugs",
+            "link": "/collections/quick-ship-rugs"
+          }
         },
         "qs_lighting": {
           "type": "category",
-          "settings": { "image": "", "title": "Lighting", "link": "/collections/quick-ship-lighting" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-lighting.jpg",
+            "title": "Lighting",
+            "link": "/collections/quick-ship-lighting"
+          }
         },
         "qs_lamps": {
           "type": "category",
-          "settings": { "image": "", "title": "Lamps", "link": "/collections/quick-ship-lamps" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-lamps.webp",
+            "title": "Lamps",
+            "link": "/collections/quick-ship-lamps"
+          }
         },
         "qs_pendants": {
           "type": "category",
@@ -318,19 +342,31 @@
         },
         "qs_walllights": {
           "type": "category",
-          "settings": { "image": "", "title": "Wall Lights", "link": "/collections/quick-ship-wall-lights" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-walllights.jpg",
+            "title": "Wall Lights",
+            "link": "/collections/quick-ship-wall-lights"
+          }
         },
         "qs_mirrors": {
           "type": "category",
-          "settings": { "image": "", "title": "Mirrors", "link": "/collections/quick-ship-mirrors" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-mirrors.webp",
+            "title": "Mirrors",
+            "link": "/collections/quick-ship-mirrors"
+          }
         },
         "qs_accessories": {
           "type": "category",
-          "settings": { "image": "", "title": "Accessories", "link": "/collections/quick-ship-accessories" }
+          "settings": {
+            "image": "shopify://shop_images/quickship-accessories.webp",
+            "title": "Accessories",
+            "link": "/collections/quick-ship-accessories"
+          }
         },
         "qs_floordisplay": {
           "type": "category",
-          "settings": { "image": "", "title": "Floor Display", "link": "/collections/quick-ship-floor-display" }
+          "settings": { "title": "Floor Display", "link": "/collections/quick-ship-floor-display" }
         }
       },
       "block_order": [
