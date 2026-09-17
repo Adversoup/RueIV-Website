@@ -7,8 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "theme-check --fail-level error theme",
-    "theme-check": "theme-check --fail-level error theme",
+    "test": "shopify theme check --fail-level error",
+    "theme-check": "shopify theme check --fail-level error",
+    "staging:simulate": "node scripts/staging_simulation.js",
     "image:normalize": "node scripts/image_normalize.js",
     "image:preview": "node scripts/image_normalize.js --limit 5",
     "image:batch": "node scripts/image_normalize.js --upload",
