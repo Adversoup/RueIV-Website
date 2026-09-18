@@ -50,6 +50,12 @@
             "collection": "arte"
           }
         },
+        "artistic_frame_breaker": {
+          "type": "brand_breaker",
+          "settings": {
+            "collection": "artistic-frame"
+          }
+        },
         "fabricut_breaker": {
           "type": "brand_breaker",
           "settings": {
@@ -77,6 +83,7 @@
       },
       "block_order": [
         "arte_breaker",
+        "artistic_frame_breaker",
         "fabricut_breaker",
         "porta_romana_breaker",
         "verellen_breaker",

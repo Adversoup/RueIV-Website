@@ -209,6 +209,7 @@ function buildMenuItems(colMap) {
       col('Altura', 'altura', colMap),
       col('Area Environments', 'area-environments', colMap),
       col('Arte', 'arte', colMap),
+      col('Artistic Frame', 'artistic-frame', colMap),
       col('C&C Milano', 'c-c-milano', colMap),
       col('Casamance', 'casamance', colMap),
       col('Chase Erwin', 'chase-erwin', colMap),

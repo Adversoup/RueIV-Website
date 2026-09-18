@@ -258,6 +258,7 @@ const MENUS = [
     items: [
       item('View All Designers', '/pages/brands'),
       item('Arte',               '/collections/arte'),
+      item('Artistic Frame',     '/collections/artistic-frame'),
       item('Fabricut',           '/collections/fabricut'),
       item('Porta Romana',       '/collections/porta-romana'),
       item('Verellen',           '/collections/verellen'),
@@ -270,6 +271,7 @@ const MENUS = [
     items: [
       item('View All Designers', '/pages/brands'),
       item('Arte',               '/collections/arte'),
+      item('Artistic Frame',     '/collections/artistic-frame'),
       item('Fabricut',           '/collections/fabricut'),
       item('Porta Romana',       '/collections/porta-romana'),
       item('Verellen',           '/collections/verellen'),

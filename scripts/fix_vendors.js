@@ -3,7 +3,7 @@
  * fix_vendors.js — Three operations:
  *  1. Normalize duplicate vendor names (arte→Arte, porta-romana→Porta Romana, etc.)
  *  2. Create missing vendor collections (automated smart collections by vendor)
- *  3. Update Designers menu with all 10 unique vendors
+ *  3. Update Designers menu with all unique vendors (incl. Artistic Frame)
  */
 require('dotenv').config();
 
@@ -120,6 +120,7 @@ const VENDOR_COLLECTIONS = [
   { title: 'Area Environments', handle: 'area-environments', vendor: 'Area Environments' },
   { title: 'Alexander Lamont',  handle: 'alexander-lamont',  vendor: 'Alexander Lamont' },
   { title: 'Altura',            handle: 'altura',             vendor: 'Altura' },
+  { title: 'Artistic Frame',    handle: 'artistic-frame',     vendor: 'Artistic Frame' },
   { title: 'CC Milano',         handle: 'cc-milano',          vendor: 'CC Milano' },
   { title: 'Chase Erwin',       handle: 'chase-erwin',        vendor: 'Chase Erwin' },
 ];
@@ -238,6 +239,7 @@ async function updateDesignersMenu() {
         col('Altura', 'altura'),
         col('Area Environments', 'area-environments'),
         col('Arte', 'arte'),
+        col('Artistic Frame', 'artistic-frame'),
         col('CC Milano', 'cc-milano'),
         col('Chase Erwin', 'chase-erwin'),
         col('Fabricut', 'fabricut'),
