@@ -33,9 +33,9 @@ const {
   STORE,
 } = require('../lib/shopify_admin');
 
-const ROOT = path.resolve(__dirname, '..');
-const FIXTURE_DIR = path.join(ROOT, 'fixtures', 'artistic_frame_demo');
-const OUT_DIR = path.join(ROOT, 'out');
+const { ROOT, fixtureDir, outDir } = require('../lib/af_demo_paths');
+const FIXTURE_DIR = fixtureDir();
+const OUT_DIR = outDir();
 const DEMO_CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'artistic_frame_demo.json'), 'utf8'));
 
 const LIVE = process.argv.includes('--live');
@@ -73,26 +73,27 @@ function assertLiveAuthorized(preflight) {
     throw new Error('Preflight did not pass — live sync blocked');
   }
   if (preflight.source143?.using_scaffold) {
-    throw new Error('Scaffold cohort cannot be used for live sync — ingest Source#146 export first');
+    throw new Error('Scaffold cohort cannot be used for live sync — ingest Source#152 export first');
   }
   if (preflight.source143?.using_bootstrap) {
-    throw new Error('Bootstrap cohort cannot be used for live sync — ingest verified Source#146 export first');
+    throw new Error('Bootstrap cohort cannot be used for live sync — ingest verified Source#152 export first');
   }
   if (preflight.gate !== DEMO_CONFIG.gates.preflight) {
     throw new Error(`Preflight gate mismatch: ${preflight.gate}`);
   }
-  if (preflight.source146?.stale_28_product_fingerprint) {
-    throw new Error('Stale 28-product handoff — live sync blocked until revised 50-product Source#146 ingest');
+  const source152 = preflight.source152 || preflight.source146;
+  if (source152?.stale_legacy_fingerprint || source152?.stale_28_product_fingerprint) {
+    throw new Error('Stale legacy handoff — live sync blocked until Source#152 50-product ingest');
   }
   if (preflight.cohort?.count !== DEMO_CONFIG.limits?.target_products) {
     throw new Error(
       `Cohort count ${preflight.cohort?.count} !== target ${DEMO_CONFIG.limits?.target_products} — live sync blocked`
     );
   }
-  if (preflight.source146 && !preflight.source146.authoritative_price_ok) {
+  if (source152 && !source152.authoritative_price_ok) {
     throw new Error('Authoritative price preflight failed — live sync blocked');
   }
-  if (preflight.source146?.raw_source_media_rejected || preflight.source146?.hub_processed_media_ok === false) {
+  if (source152?.raw_source_media_rejected || source152?.hub_processed_media_ok === false) {
     throw new Error('Hub-processed media preflight failed — live sync blocked until sync-ready handoff');
   }
 }

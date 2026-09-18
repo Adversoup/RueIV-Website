@@ -34,9 +34,9 @@ const {
   getCollectionByHandle,
 } = require('../lib/shopify_admin');
 
-const ROOT = path.resolve(__dirname, '..');
-const FIXTURE_DIR = path.join(ROOT, 'fixtures', 'artistic_frame_demo');
-const OUT_DIR = path.join(ROOT, 'out');
+const { ROOT, fixtureDir, outDir } = require('../lib/af_demo_paths');
+const FIXTURE_DIR = fixtureDir();
+const OUT_DIR = outDir();
 const DEMO_CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'artistic_frame_demo.json'), 'utf8'));
 
 const VERBOSE = process.argv.includes('--verbose');
@@ -86,7 +86,7 @@ async function lookupExistingProducts(products, vendorName) {
 
   const matches = [];
   for (const hub of products) {
-    const mapped = mapHubProduct(hub, { forcePriceHidden: true });
+    const mapped = mapHubProduct(hub, demoMapOptions(DEMO_CONFIG));
     const byHandle = await findProductByHandle(mapped.handle);
     const bySku = await findProductsBySkuVendor(hub.sku, vendorName);
 
@@ -173,28 +173,30 @@ async function main() {
 
   const usingBootstrap = manifest.mode === 'bootstrap_public_refs'
     || manifest.source?.status === 'bootstrap_fallback';
-  const usingSource146 = manifest.mode === 'source146_ingested'
+  const usingSource152 = manifest.mode === 'source152_ingested'
+    || manifest.mode === 'source146_ingested'
+    || manifest.source?.upstream?.includes('#152')
     || manifest.source?.upstream?.includes('#146');
   const requiredGate = DEMO_CONFIG.upstream?.required_gate;
   const mediaHandoffMode = manifest.source?.media_handoff_mode
     || DEMO_CONFIG.media_handoff?.mode
     || HUB_PROCESSED_MEDIA_MODE;
-  const handoffValidation = usingSource146
+  const handoffValidation = usingSource152
     ? validateHubProcessedMediaHandoff(products, { media_handoff_mode: mediaHandoffMode }, {
       expectedMode: DEMO_CONFIG.media_handoff?.mode || HUB_PROCESSED_MEDIA_MODE,
     })
     : { ok: true, issues: [] };
-  const priceValidation = usingSource146 && DEMO_CONFIG.policy?.require_authoritative_price
+  const priceValidation = usingSource152 && DEMO_CONFIG.policy?.require_authoritative_price
     ? validateAuthoritativePrices(products)
     : { ok: true, issues: [] };
-  const staleFingerprint = usingSource146
+  const staleFingerprint = usingSource152
     && manifest.source?.export_fingerprint
     && (DEMO_CONFIG.upstream?.legacy_payload_fingerprints || []).includes(manifest.source.export_fingerprint);
   const targetProducts = DEMO_CONFIG.limits?.target_products;
-  const cohortCountOk = !usingSource146
+  const cohortCountOk = !usingSource152
     || !targetProducts
     || products.length === targetProducts;
-  const source146Ready = usingSource146
+  const source152Ready = usingSource152
     && manifest.source?.status === 'ingested'
     && manifest.source?.required_gate === requiredGate
     && manifest.source?.media_handoff_mode === (DEMO_CONFIG.media_handoff?.mode || HUB_PROCESSED_MEDIA_MODE)
@@ -203,18 +205,20 @@ async function main() {
     && !staleFingerprint
     && cohortCountOk
     && products.some((p) => p.sku === DEMO_CONFIG.cohort?.smoke_sku)
-    && (manifest.gate === 'ARTISTIC_FRAME_SOURCE146_COHORT_INGESTED'
+    && (manifest.gate === 'ARTISTIC_FRAME_SOURCE152_COHORT_INGESTED'
+      || manifest.gate === 'ARTISTIC_FRAME_SOURCE146_COHORT_INGESTED'
+      || manifest.mode === 'source152_ingested'
       || manifest.mode === 'source146_ingested');
   const source143Ready = !usingBootstrap
-    && !usingSource146
+    && !usingSource152
     && manifest.source?.status === 'ingested'
     && Boolean(manifest.source?.fingerprint);
-  const cohortReady = source146Ready || source143Ready || (usingScaffold && ALLOW_SCAFFOLD) || usingBootstrap;
+  const cohortReady = source152Ready || source143Ready || (usingScaffold && ALLOW_SCAFFOLD) || usingBootstrap;
   const preflightPass = mappingOk
     && quarantineCount === 0
     && products.length <= maxProducts
     && cohortReady
-    && (!usingSource146 || (handoffValidation.ok && priceValidation.ok && !staleFingerprint && cohortCountOk));
+    && (!usingSource152 || (handoffValidation.ok && priceValidation.ok && !staleFingerprint && cohortCountOk));
 
   const gate = preflightPass
     ? (usingScaffold
@@ -231,8 +235,8 @@ async function main() {
       ? 'scaffold_dry_run'
       : usingBootstrap
         ? 'bootstrap_dry_run'
-        : usingSource146
-          ? 'source146_preflight'
+        : usingSource152
+          ? 'source152_preflight'
           : 'source143_preflight',
     live_mutation: false,
     prerequisite_gates: [
@@ -246,19 +250,22 @@ async function main() {
       using_scaffold: usingScaffold,
       using_bootstrap: usingBootstrap,
     },
-    source146: {
-      ready: source146Ready,
+    source152: {
+      ready: source152Ready,
       upstream_gate: manifest.source?.required_gate || DEMO_CONFIG.upstream?.required_gate || null,
+      expected_gate: requiredGate,
       media_handoff_mode: mediaHandoffMode,
       hub_processed_media_ok: handoffValidation.ok,
       hub_processed_media_issues: handoffValidation.issues || [],
       raw_source_media_rejected: mediaHandoffMode === 'remote_source_url_import',
       authoritative_price_ok: priceValidation.ok,
       authoritative_price_issues: priceValidation.issues || [],
-      stale_28_product_fingerprint: staleFingerprint || false,
+      stale_legacy_fingerprint: staleFingerprint || false,
+      manifest_fingerprint: manifest.source?.manifest_fingerprint || null,
       export_fingerprint: manifest.source?.export_fingerprint || null,
+      expected_manifest_fingerprint: DEMO_CONFIG.upstream?.manifest_fingerprint || null,
+      expected_export_fingerprint: DEMO_CONFIG.upstream?.payload_fingerprint || null,
       theme_price_visibility: 'unchanged (existing Modiva login-based resolver)',
-      excluded_skus: manifest.source?.excluded_skus || DEMO_CONFIG.cohort?.excluded_skus || [],
       smoke_sku: DEMO_CONFIG.cohort?.smoke_sku || null,
       target_products: DEMO_CONFIG.limits?.target_products || null,
     },
@@ -351,13 +358,14 @@ async function main() {
   console.log(`Cohort: ${products.length}/${maxProducts} (${vendorName})`);
   console.log(`Source#143: ${manifest.source?.status || 'pending'}${usingScaffold ? ' (scaffold)' : ''}`);
   console.log(`Mapping: ${mappingOk ? 'OK' : 'FAIL'} | Quarantine: ${quarantined.length}`);
-  if (usingSource146) {
+  if (usingSource152) {
     console.log(`Hub-processed media: ${handoffValidation.ok ? 'OK' : 'FAIL'} (${mediaHandoffMode})`);
     console.log(`Authoritative price: ${priceValidation.ok ? 'OK' : 'FAIL'}`);
     if (mediaHandoffMode === 'remote_source_url_import') {
       console.log('BLOCKED: raw remote_source_url_import — wait for Hub-processed sync-ready handoff');
     }
-    if (staleFingerprint) console.log('BLOCKED: stale 28-product payload fingerprint — wait for revised 50-product handoff');
+    if (staleFingerprint) console.log('BLOCKED: stale legacy payload fingerprint — wait for Source#152 50-product handoff');
+    if (!cohortCountOk) console.log(`BLOCKED: cohort count ${products.length} !== target ${targetProducts}`);
   }
   console.log(`Actions: create=${createCount} update=${updateCount} quarantine=${quarantineCount}`);
   console.log(`Preflight pass: ${preflightPass ? 'YES' : 'NO'}`);
@@ -374,12 +382,12 @@ async function main() {
     }
   }
 
-  if (!source146Ready && !source143Ready && !usingScaffold && !usingBootstrap) {
-    console.log('\nBLOCKED: Source#146 cohort not ingested. Run ingest_source146_af_cohort.js first.');
+  if (!source152Ready && !source143Ready && !usingScaffold && !usingBootstrap) {
+    console.log('\nBLOCKED: Source#152 cohort not ingested. Run npm run af-demo:ingest:152 first.');
   } else if (usingBootstrap) {
-    console.log('\nBOOTSTRAP OK (dry-run only): ingest verified Source#146 export before live sync.');
-  } else if (source146Ready) {
-    console.log(`\nSource#146 ready (${products.length} products). Live path: smoke ${DEMO_CONFIG.cohort?.smoke_sku} → remaining cohort.`);
+    console.log('\nBOOTSTRAP OK (dry-run only): ingest verified Source#152 export before live sync.');
+  } else if (source152Ready) {
+    console.log(`\nSource#152 ready (${products.length} products). Live path: smoke ${DEMO_CONFIG.cohort?.smoke_sku} → remaining cohort.`);
   }
 
   process.exit(preflightPass ? 0 : 1);

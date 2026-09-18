@@ -23,8 +23,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.resolve(__dirname, '..');
-const FIXTURE_DIR = path.join(ROOT, 'fixtures', 'artistic_frame_demo');
+const { ROOT, fixtureDir } = require('../lib/af_demo_paths');
+const FIXTURE_DIR = fixtureDir();
 const DEMO_CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'artistic_frame_demo.json'), 'utf8'));
 const MAX_PRODUCTS = DEMO_CONFIG.limits.max_products;
 const VENDOR_NAME = DEMO_CONFIG.vendor.display_name;

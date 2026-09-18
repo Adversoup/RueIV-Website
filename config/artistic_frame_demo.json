@@ -1,21 +1,23 @@
 {
-  "version": "1.1.0",
-  "description": "Bounded Artistic Frame client demo configuration (Issue #11 / Source#146).",
+  "version": "1.2.0",
+  "description": "Bounded Artistic Frame client demo configuration (Issue #11 / Source#152).",
   "upstream": {
-    "source_issue": "Adversoup/RueIV-Source#146",
+    "source_issue": "Adversoup/RueIV-Source#152",
     "source_repo": "Adversoup/RueIV-Source",
-    "source_ref": "main",
-    "prior_source_issue": "Adversoup/RueIV-Source#143",
+    "source_ref": "cursor/artistic-frame-client-demo-152",
+    "prior_source_issue": "Adversoup/RueIV-Source#146",
     "website_issue": "Adversoup/RueIV-Website#11",
-    "required_gate": "ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT",
+    "required_gate": "ARTISTIC_FRAME_DEMO_TEXT_PRICE_HUB_PROCESSED_MEDIA_READY_FOR_SHOPIFY_SYNC",
     "legacy_gates": [
+      "ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT",
       "ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC"
     ],
     "source_paths": {
-      "payload": "docs/ai/readiness/issue-146/artistic_frame_demo_enriched_payload.json",
-      "manifest": "docs/ai/readiness/issue-146/artistic_frame_demo_enrichment_manifest.json"
+      "payload": "docs/ai/readiness/issue-152/artistic_frame_shopify_export_payload.json",
+      "manifest": "docs/ai/readiness/issue-152/artistic_frame_showcase_cohort_manifest.json"
     },
-    "payload_fingerprint": null,
+    "manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+    "payload_fingerprint": "5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff",
     "legacy_payload_fingerprints": [
       "5f0b2771bc015c04f74cdc6bafaad04cccf39fadf572ba1748850f0a0e210b6d"
     ]
@@ -39,8 +41,7 @@
     "target_products": 50
   },
   "cohort": {
-    "smoke_sku": "2505A",
-    "excluded_skus": ["2532A", "2588S"]
+    "smoke_sku": "2505A"
   },
   "media_handoff": {
     "mode": "hub_processed_media_sync_ready",
@@ -54,7 +55,7 @@
     "media_poll_interval_ms": 2000,
     "media_poll_max_attempts": 30
   },
-  "handoff_dir": "fixtures/artistic_frame_demo/source146_handoff",
+  "handoff_dir": "fixtures/artistic_frame_demo/source152_handoff",
   "policy": {
     "price_hidden": false,
     "require_authoritative_price": true,
