@@ -19,17 +19,6 @@
     assign rueiv_price_hidden = true
   endif
 
-  assign _auth_only_meta = product.metafields.override.price_auth_only.value
-  if _auth_only_meta == true or _auth_only_meta == 'true' or _auth_only_meta == 1
-    unless customer
-      assign rueiv_price_hidden = true
-    endunless
-  elsif product.tags contains 'demo:artistic-frame'
-    unless customer
-      assign rueiv_price_hidden = true
-    endunless
-  endif
-
   assign _variant = product.selected_or_first_available_variant
   assign _price = _variant.price
 

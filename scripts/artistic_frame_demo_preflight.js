@@ -22,8 +22,8 @@ const {
   hubToShopifyProduct,
 } = require('../lib/hub_shopify_mapper');
 const {
-  REMOTE_MEDIA_HANDOFF_MODE,
-  validateRemoteMediaHandoff,
+  HUB_PROCESSED_MEDIA_MODE,
+  validateHubProcessedMediaHandoff,
   validateAuthoritativePrices,
 } = require('../lib/af_demo_handoff');
 const { demoMapOptions } = require('../lib/af_demo_mapping');
@@ -178,9 +178,11 @@ async function main() {
   const requiredGate = DEMO_CONFIG.upstream?.required_gate;
   const mediaHandoffMode = manifest.source?.media_handoff_mode
     || DEMO_CONFIG.media_handoff?.mode
-    || REMOTE_MEDIA_HANDOFF_MODE;
+    || HUB_PROCESSED_MEDIA_MODE;
   const handoffValidation = usingSource146
-    ? validateRemoteMediaHandoff(products, { media_handoff_mode: mediaHandoffMode })
+    ? validateHubProcessedMediaHandoff(products, { media_handoff_mode: mediaHandoffMode }, {
+      expectedMode: DEMO_CONFIG.media_handoff?.mode || HUB_PROCESSED_MEDIA_MODE,
+    })
     : { ok: true, issues: [] };
   const priceValidation = usingSource146 && DEMO_CONFIG.policy?.require_authoritative_price
     ? validateAuthoritativePrices(products)
@@ -195,7 +197,7 @@ async function main() {
   const source146Ready = usingSource146
     && manifest.source?.status === 'ingested'
     && manifest.source?.required_gate === requiredGate
-    && manifest.source?.media_handoff_mode === REMOTE_MEDIA_HANDOFF_MODE
+    && manifest.source?.media_handoff_mode === (DEMO_CONFIG.media_handoff?.mode || HUB_PROCESSED_MEDIA_MODE)
     && handoffValidation.ok
     && priceValidation.ok
     && !staleFingerprint
@@ -248,13 +250,14 @@ async function main() {
       ready: source146Ready,
       upstream_gate: manifest.source?.required_gate || DEMO_CONFIG.upstream?.required_gate || null,
       media_handoff_mode: mediaHandoffMode,
-      remote_media_handoff_ok: handoffValidation.ok,
-      remote_media_issues: handoffValidation.issues || [],
+      hub_processed_media_ok: handoffValidation.ok,
+      hub_processed_media_issues: handoffValidation.issues || [],
+      raw_source_media_rejected: mediaHandoffMode === 'remote_source_url_import',
       authoritative_price_ok: priceValidation.ok,
       authoritative_price_issues: priceValidation.issues || [],
       stale_28_product_fingerprint: staleFingerprint || false,
       export_fingerprint: manifest.source?.export_fingerprint || null,
-      price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
+      theme_price_visibility: 'unchanged (existing Modiva login-based resolver)',
       excluded_skus: manifest.source?.excluded_skus || DEMO_CONFIG.cohort?.excluded_skus || [],
       smoke_sku: DEMO_CONFIG.cohort?.smoke_sku || null,
       target_products: DEMO_CONFIG.limits?.target_products || null,
@@ -349,8 +352,11 @@ async function main() {
   console.log(`Source#143: ${manifest.source?.status || 'pending'}${usingScaffold ? ' (scaffold)' : ''}`);
   console.log(`Mapping: ${mappingOk ? 'OK' : 'FAIL'} | Quarantine: ${quarantined.length}`);
   if (usingSource146) {
-    console.log(`Remote media handoff: ${handoffValidation.ok ? 'OK' : 'FAIL'} (${mediaHandoffMode})`);
-    console.log(`Authoritative price: ${priceValidation.ok ? 'OK' : 'FAIL'} (${DEMO_CONFIG.policy?.price_visibility || 'auth_only'})`);
+    console.log(`Hub-processed media: ${handoffValidation.ok ? 'OK' : 'FAIL'} (${mediaHandoffMode})`);
+    console.log(`Authoritative price: ${priceValidation.ok ? 'OK' : 'FAIL'}`);
+    if (mediaHandoffMode === 'remote_source_url_import') {
+      console.log('BLOCKED: raw remote_source_url_import — wait for Hub-processed sync-ready handoff');
+    }
     if (staleFingerprint) console.log('BLOCKED: stale 28-product payload fingerprint — wait for revised 50-product handoff');
   }
   console.log(`Actions: create=${createCount} update=${updateCount} quarantine=${quarantineCount}`);

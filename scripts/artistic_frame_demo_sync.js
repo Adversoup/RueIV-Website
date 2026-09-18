@@ -92,6 +92,9 @@ function assertLiveAuthorized(preflight) {
   if (preflight.source146 && !preflight.source146.authoritative_price_ok) {
     throw new Error('Authoritative price preflight failed — live sync blocked');
   }
+  if (preflight.source146?.raw_source_media_rejected || preflight.source146?.hub_processed_media_ok === false) {
+    throw new Error('Hub-processed media preflight failed — live sync blocked until sync-ready handoff');
+  }
 }
 
 function smokePriceChecks(hub) {
@@ -102,9 +105,7 @@ function smokePriceChecks(hub) {
     authoritative_price: authoritative?.price || null,
     shopify_variant_price: variantPrice != null ? String(variantPrice) : null,
     price_carried: authoritative?.price != null && parseFloat(variantPrice) > 0,
-    price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
-    guest_price_hidden: true,
-    authenticated_price_visible: true,
+    theme_price_visibility: 'unchanged (existing Modiva login-based resolver)',
   };
 }
 
@@ -319,8 +320,7 @@ async function syncProduct(hub, preflight, summary) {
       would_update: action === 'update',
       image_count: product.images.length,
       shopify_price: product.variants?.[0]?.price ?? null,
-      price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
-      media_attach: 'productCreateMedia.originalSource (+ proxy fallback if remote fetch fails)',
+      media_attach: 'Hub-processed sync-ready refs only',
     });
     if (action === 'create') summary.created++;
     if (action === 'update') summary.updated++;
@@ -400,10 +400,9 @@ async function runPhase(phase, products, preflight) {
     policy: {
       no_theme_publish: true,
       no_menu_changes: true,
-      price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
       require_authoritative_price: DEMO_CONFIG.policy?.require_authoritative_price === true,
-      remote_media: 'productCreateMedia.originalSource',
-      proxy_fallback: DEMO_CONFIG.sync?.proxy_fallback !== false,
+      hub_processed_media_only: DEMO_CONFIG.sync?.hub_processed_media_only === true,
+      theme_price_visibility: 'unchanged',
     },
   };
 

@@ -1,51 +1,45 @@
-# Source#146 text-enriched handoff slot
+# Source#146 handoff slot (50-product revised cohort)
 
-Checked-in bridge directory for `Adversoup/RueIV-Source#146` / PR #148.
+Checked-in bridge directory for `Adversoup/RueIV-Source#146`.
 
 ## Required upstream gate
 
-`ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT`
+`ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT` (or successor gate from revised 50-product handoff)
 
-## Expected files (one manifest + one export)
+## Expected files
 
-| Manifest (any one) | Export (any one) |
-|--------------------|------------------|
-| `artistic_frame_demo_text_enriched_cohort_manifest.json` | `artistic_frame_demo_text_enriched_export.json` |
-| `artistic_frame_demo_remote_media_handoff_manifest.json` | `artistic_frame_demo_remote_media_export.json` |
-| `manifest.json` | `products.json` |
+| Manifest | Export |
+|----------|--------|
+| `artistic_frame_demo_enrichment_manifest.json` | `artistic_frame_demo_enriched_payload.json` |
 
-Legacy enriched file names from prior Source#146 iterations are also accepted by the ingest script.
+## Export contract (exactly 50 products)
 
-## Export record contract (50 products)
-
-Each product record must include:
+Each record must include:
 
 - `sku`, `title`, `canonical_vendor: "Artistic Frame"`
-- `category`, `status: "APPROVED"`, `price: "0"`, `price_authority` (`trade`|`quote`|`hidden`)
-- `description_html` (text-enriched copy)
-- authoritative `price` and/or `variants[].price` (never invented by Website ingest)
-- `media_handoff_mode: "remote_source_url_import"`
-- `primary_image_source_url` and/or `primary_image_source_urls` and/or `gallery_image_source_urls`
-- optional: `variants[]`, `tearsheet_pdf`, `brand`
+- authoritative `price` and/or `variants[].price` (Website never invents prices)
+- `media_handoff_mode: "hub_processed_media_sync_ready"`
+- Hub-processed sync-ready media refs in `images[]`, `hub_processed_images[]`, or `processed_media_refs[]`
+- `media_status: "sync_ready"` (or equivalent per Source manifest)
 
-**Excluded SKUs (applied at ingest):** `2532A`, `2588S`
+**Rejected at ingest/preflight:**
 
-**Smoke SKU (live media gate):** `2505A`
+- `media_handoff_mode: "remote_source_url_import"` (raw Artistic Frame URLs only)
+- Stale 28-product payload fingerprint `5f0b2771…`
+- Raw `primary_image_source_url(s)` without Hub-processed refs
 
-No manual media files — Shopify imports via `productCreateMedia(originalSource)`.
+**Excluded SKUs:** `2532A`, `2588S` (unless Source manifest documents additional hard failures)
 
-## Ingest
+**Smoke SKU:** `2505A`
 
-```bash
-npm run af-demo:ingest:146
-# or
-node scripts/ingest_source146_af_cohort.js --from fixtures/artistic_frame_demo/source146_handoff
-```
+**Theme:** existing Modiva login-based price visibility — Website does not add price gating metafields/tags.
 
-Then:
+## Commands
 
 ```bash
+npm run af-demo:bridge:146
 npm run af-demo:preflight
-npm run af-demo:sync          # dry-run
-npm run af-demo:sync:live     # smoke 2505A → remaining 49 + collection (auth-only price visibility)
+npm run af-demo:sync          # dry-run only until revised handoff passes preflight
 ```
+
+No live sync until revised 50-product Hub-processed handoff is ingested and preflight is green.

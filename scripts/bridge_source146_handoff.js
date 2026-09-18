@@ -15,7 +15,10 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
-const { REMOTE_MEDIA_HANDOFF_MODE } = require('../lib/af_demo_handoff');
+const {
+  HUB_PROCESSED_MEDIA_MODE,
+  RAW_MEDIA_HANDOFF_MODE,
+} = require('../lib/af_demo_handoff');
 
 const ROOT = path.resolve(__dirname, '..');
 const DEMO_CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'artistic_frame_demo.json'), 'utf8'));
@@ -147,7 +150,15 @@ function main() {
     fs.writeFileSync(path.join(HANDOFF_DIR, LOCAL_PAYLOAD_NAME), JSON.stringify(payload, null, 2));
 
     report.bridged_files = [LOCAL_MANIFEST_NAME, LOCAL_PAYLOAD_NAME];
-    report.media_handoff_mode = payload.media_handoff_mode || REMOTE_MEDIA_HANDOFF_MODE;
+    report.media_handoff_mode = payload.media_handoff_mode || null;
+    if (report.media_handoff_mode === RAW_MEDIA_HANDOFF_MODE) {
+      throw new Error(
+        `Raw ${RAW_MEDIA_HANDOFF_MODE} handoff rejected — wait for revised ${TARGET_PRODUCTS}-product Hub-processed sync-ready payload`
+      );
+    }
+    if (report.media_handoff_mode && report.media_handoff_mode !== HUB_PROCESSED_MEDIA_MODE) {
+      throw new Error(`Unexpected media_handoff_mode ${report.media_handoff_mode} — expected ${HUB_PROCESSED_MEDIA_MODE}`);
+    }
     report.status = 'bridged';
 
     console.log(`Bridged to ${HANDOFF_DIR}`);

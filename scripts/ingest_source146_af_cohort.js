@@ -6,7 +6,7 @@
  * Requires upstream gate:
  *   ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT
  *
- * Handoff contract: primary_image_source_url(s) + media_handoff_mode=remote_source_url_import
+ * Handoff contract: Hub-processed sync-ready media + authoritative price (no raw-source-only media)
  * Automatic exclusions: 2532A, 2588S
  *
  * Usage:
@@ -23,9 +23,9 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const {
-  REMOTE_MEDIA_HANDOFF_MODE,
+  HUB_PROCESSED_MEDIA_MODE,
   normalizeHandoffProducts,
-  validateRemoteMediaHandoff,
+  validateHubProcessedMediaHandoff,
   validateAuthoritativePrices,
 } = require('../lib/af_demo_handoff');
 
@@ -181,8 +181,8 @@ function main() {
   const { kept, excluded } = filterExcluded(products);
   products = normalizeHandoffProducts(kept, exportDoc);
 
-  const handoffValidation = validateRemoteMediaHandoff(products, exportDoc, {
-    expectedMode: DEMO_CONFIG.media_handoff?.mode || REMOTE_MEDIA_HANDOFF_MODE,
+  const handoffValidation = validateHubProcessedMediaHandoff(products, exportDoc, {
+    expectedMode: DEMO_CONFIG.media_handoff?.mode || HUB_PROCESSED_MEDIA_MODE,
   });
   if (!handoffValidation.ok) {
     throw new Error(`Remote media handoff validation failed:\n- ${handoffValidation.issues.join('\n- ')}`);
@@ -240,14 +240,14 @@ function main() {
   fs.writeFileSync(path.join(stagingDir, 'manifest.json'), JSON.stringify({
     ...srcManifest,
     gate: REQUIRED_GATE,
-    media_handoff_mode: REMOTE_MEDIA_HANDOFF_MODE,
+    media_handoff_mode: HUB_PROCESSED_MEDIA_MODE,
     manifest: {
       ...(srcManifest.manifest || {}),
       selected_records: products.length,
       excluded_skus: excluded,
       checksum_sha256: sha256Json(products),
       products_file: 'products.json',
-      media_handoff_mode: REMOTE_MEDIA_HANDOFF_MODE,
+      media_handoff_mode: HUB_PROCESSED_MEDIA_MODE,
     },
   }, null, 2));
 
@@ -268,7 +268,7 @@ function main() {
     upstream: DEMO_CONFIG.upstream.source_issue,
     status: 'ingested',
     required_gate: REQUIRED_GATE,
-    media_handoff_mode: REMOTE_MEDIA_HANDOFF_MODE,
+    media_handoff_mode: HUB_PROCESSED_MEDIA_MODE,
     excluded_skus: excluded,
     ingested_at: new Date().toISOString(),
     ingest_from: fromDir,
@@ -278,13 +278,12 @@ function main() {
     },
     manifest_fingerprint: manifestFingerprint || srcManifest.fingerprint || null,
     export_fingerprint: resolvedExportFingerprint,
-    price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
   };
   fs.writeFileSync(fixtureManifestPath, JSON.stringify(fixtureManifest, null, 2));
 
   console.log('\nSource#146 ingest complete.');
   console.log(`Records: ${products.length} (excluded ${excluded.length}, target ${DEMO_CONFIG.limits.target_products})`);
-  console.log(`Media handoff: ${REMOTE_MEDIA_HANDOFF_MODE}`);
+  console.log(`Media handoff: ${HUB_PROCESSED_MEDIA_MODE}`);
   console.log(`Smoke SKU target: ${smokeSku}`);
   console.log('Next: npm run af-demo:preflight');
 }

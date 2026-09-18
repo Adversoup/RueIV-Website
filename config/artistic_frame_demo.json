@@ -43,21 +43,22 @@
     "excluded_skus": ["2532A", "2588S"]
   },
   "media_handoff": {
-    "mode": "remote_source_url_import",
-    "primary_field": "primary_image_source_url",
-    "gallery_field": "gallery_image_source_urls"
+    "mode": "hub_processed_media_sync_ready",
+    "legacy_raw_modes": ["remote_source_url_import"],
+    "ready_statuses": ["sync_ready", "ready", "processed"]
   },
   "sync": {
-    "remote_media_first": true,
-    "proxy_fallback": true,
+    "remote_media_first": false,
+    "hub_processed_media_only": true,
+    "proxy_fallback": false,
     "media_poll_interval_ms": 2000,
     "media_poll_max_attempts": 30
   },
   "handoff_dir": "fixtures/artistic_frame_demo/source146_handoff",
   "policy": {
-    "price_visibility": "auth_only",
     "price_hidden": false,
     "require_authoritative_price": true,
+    "theme_price_visibility_unchanged": true,
     "default_product_status": "ACTIVE",
     "no_theme_publish": true,
     "no_menu_changes": true,
