@@ -15,7 +15,10 @@
       "payload": "docs/ai/readiness/issue-146/artistic_frame_demo_enriched_payload.json",
       "manifest": "docs/ai/readiness/issue-146/artistic_frame_demo_enrichment_manifest.json"
     },
-    "payload_fingerprint": "5f0b2771bc015c04f74cdc6bafaad04cccf39fadf572ba1748850f0a0e210b6d"
+    "payload_fingerprint": null,
+    "legacy_payload_fingerprints": [
+      "5f0b2771bc015c04f74cdc6bafaad04cccf39fadf572ba1748850f0a0e210b6d"
+    ]
   },
   "vendor": {
     "display_name": "Artistic Frame",
@@ -33,7 +36,7 @@
   },
   "limits": {
     "max_products": 50,
-    "target_products": 28
+    "target_products": 50
   },
   "cohort": {
     "smoke_sku": "2505A",
@@ -52,7 +55,9 @@
   },
   "handoff_dir": "fixtures/artistic_frame_demo/source146_handoff",
   "policy": {
-    "price_hidden": true,
+    "price_visibility": "auth_only",
+    "price_hidden": false,
+    "require_authoritative_price": true,
     "default_product_status": "ACTIVE",
     "no_theme_publish": true,
     "no_menu_changes": true,

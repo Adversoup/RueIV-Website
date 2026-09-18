@@ -30,6 +30,8 @@ const PAYLOAD_PATH = DEMO_CONFIG.upstream.source_paths?.payload
 const MANIFEST_PATH = DEMO_CONFIG.upstream.source_paths?.manifest
   || 'docs/ai/readiness/issue-146/artistic_frame_demo_enrichment_manifest.json';
 const EXPECTED_PAYLOAD_FINGERPRINT = DEMO_CONFIG.upstream.payload_fingerprint || null;
+const LEGACY_PAYLOAD_FINGERPRINTS = new Set(DEMO_CONFIG.upstream.legacy_payload_fingerprints || []);
+const TARGET_PRODUCTS = DEMO_CONFIG.limits?.target_products || 50;
 
 const LOCAL_MANIFEST_NAME = 'artistic_frame_demo_enrichment_manifest.json';
 const LOCAL_PAYLOAD_NAME = 'artistic_frame_demo_enriched_payload.json';
@@ -109,11 +111,35 @@ function main() {
     }
 
     const payloadFingerprint = sha256Json(payload);
+    const manifestFingerprint = manifest.payload_fingerprint
+      || manifest.manifest?.payload_fingerprint
+      || manifest.export_fingerprint
+      || null;
+    const expectedFingerprint = manifestFingerprint || EXPECTED_PAYLOAD_FINGERPRINT;
+
     report.payload_fingerprint_computed = payloadFingerprint;
-    if (EXPECTED_PAYLOAD_FINGERPRINT && payloadFingerprint !== EXPECTED_PAYLOAD_FINGERPRINT) {
+    report.manifest_payload_fingerprint = manifestFingerprint;
+    report.expected_payload_fingerprint = expectedFingerprint;
+
+    if (LEGACY_PAYLOAD_FINGERPRINTS.has(payloadFingerprint)) {
       throw new Error(
-        `Payload fingerprint mismatch: expected ${EXPECTED_PAYLOAD_FINGERPRINT}, computed ${payloadFingerprint}`
+        `Stale 28-product payload fingerprint ${payloadFingerprint} — wait for revised ${TARGET_PRODUCTS}-product Source#146 handoff`
       );
+    }
+    if (expectedFingerprint && payloadFingerprint !== expectedFingerprint) {
+      throw new Error(
+        `Payload fingerprint mismatch: expected ${expectedFingerprint}, computed ${payloadFingerprint}`
+      );
+    }
+
+    const productCount = manifest.manifest?.selected_records
+      || manifest.product_count
+      || payload.product_count
+      || (Array.isArray(payload.products) ? payload.products.length : null)
+      || (Array.isArray(payload.records) ? payload.records.length : null);
+    report.product_count = productCount;
+    if (productCount != null && productCount !== TARGET_PRODUCTS) {
+      throw new Error(`Cohort product_count must be ${TARGET_PRODUCTS}: manifest/payload reports ${productCount}`);
     }
 
     if (!fs.existsSync(HANDOFF_DIR)) fs.mkdirSync(HANDOFF_DIR, { recursive: true });

@@ -16,13 +16,14 @@ Checked-in bridge directory for `Adversoup/RueIV-Source#146` / PR #148.
 
 Legacy enriched file names from prior Source#146 iterations are also accepted by the ingest script.
 
-## Export record contract (28 products)
+## Export record contract (50 products)
 
 Each product record must include:
 
 - `sku`, `title`, `canonical_vendor: "Artistic Frame"`
 - `category`, `status: "APPROVED"`, `price: "0"`, `price_authority` (`trade`|`quote`|`hidden`)
 - `description_html` (text-enriched copy)
+- authoritative `price` and/or `variants[].price` (never invented by Website ingest)
 - `media_handoff_mode: "remote_source_url_import"`
 - `primary_image_source_url` and/or `primary_image_source_urls` and/or `gallery_image_source_urls`
 - optional: `variants[]`, `tearsheet_pdf`, `brand`
@@ -46,5 +47,5 @@ Then:
 ```bash
 npm run af-demo:preflight
 npm run af-demo:sync          # dry-run
-npm run af-demo:sync:live     # smoke 2505A → remaining 27 + collection
+npm run af-demo:sync:live     # smoke 2505A → remaining 49 + collection (auth-only price visibility)
 ```

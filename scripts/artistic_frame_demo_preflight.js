@@ -24,7 +24,9 @@ const {
 const {
   REMOTE_MEDIA_HANDOFF_MODE,
   validateRemoteMediaHandoff,
+  validateAuthoritativePrices,
 } = require('../lib/af_demo_handoff');
+const { demoMapOptions } = require('../lib/af_demo_mapping');
 const {
   hasShopifyCredentials,
   findProductByHandle,
@@ -131,10 +133,11 @@ async function main() {
     throw new Error(`${wrongVendor.length} records are not ${vendorName} — quarantine required`);
   }
 
+  const mapOptions = demoMapOptions(DEMO_CONFIG);
   const mappedResults = products.map((hub) => {
-    const mapped = mapHubProduct(hub, { forcePriceHidden: DEMO_CONFIG.policy.price_hidden });
+    const mapped = mapHubProduct(hub, mapOptions);
     const shopify = hubToShopifyProduct(hub, {
-      forcePriceHidden: DEMO_CONFIG.policy.price_hidden,
+      ...mapOptions,
       productStatus: DEMO_CONFIG.policy.default_product_status,
     });
     return {
@@ -179,6 +182,12 @@ async function main() {
   const handoffValidation = usingSource146
     ? validateRemoteMediaHandoff(products, { media_handoff_mode: mediaHandoffMode })
     : { ok: true, issues: [] };
+  const priceValidation = usingSource146 && DEMO_CONFIG.policy?.require_authoritative_price
+    ? validateAuthoritativePrices(products)
+    : { ok: true, issues: [] };
+  const staleFingerprint = usingSource146
+    && manifest.source?.export_fingerprint
+    && (DEMO_CONFIG.upstream?.legacy_payload_fingerprints || []).includes(manifest.source.export_fingerprint);
   const targetProducts = DEMO_CONFIG.limits?.target_products;
   const cohortCountOk = !usingSource146
     || !targetProducts
@@ -188,6 +197,8 @@ async function main() {
     && manifest.source?.required_gate === requiredGate
     && manifest.source?.media_handoff_mode === REMOTE_MEDIA_HANDOFF_MODE
     && handoffValidation.ok
+    && priceValidation.ok
+    && !staleFingerprint
     && cohortCountOk
     && products.some((p) => p.sku === DEMO_CONFIG.cohort?.smoke_sku)
     && (manifest.gate === 'ARTISTIC_FRAME_SOURCE146_COHORT_INGESTED'
@@ -201,7 +212,7 @@ async function main() {
     && quarantineCount === 0
     && products.length <= maxProducts
     && cohortReady
-    && (!usingSource146 || (handoffValidation.ok && cohortCountOk));
+    && (!usingSource146 || (handoffValidation.ok && priceValidation.ok && !staleFingerprint && cohortCountOk));
 
   const gate = preflightPass
     ? (usingScaffold
@@ -239,6 +250,11 @@ async function main() {
       media_handoff_mode: mediaHandoffMode,
       remote_media_handoff_ok: handoffValidation.ok,
       remote_media_issues: handoffValidation.issues || [],
+      authoritative_price_ok: priceValidation.ok,
+      authoritative_price_issues: priceValidation.issues || [],
+      stale_28_product_fingerprint: staleFingerprint || false,
+      export_fingerprint: manifest.source?.export_fingerprint || null,
+      price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
       excluded_skus: manifest.source?.excluded_skus || DEMO_CONFIG.cohort?.excluded_skus || [],
       smoke_sku: DEMO_CONFIG.cohort?.smoke_sku || null,
       target_products: DEMO_CONFIG.limits?.target_products || null,
@@ -334,6 +350,8 @@ async function main() {
   console.log(`Mapping: ${mappingOk ? 'OK' : 'FAIL'} | Quarantine: ${quarantined.length}`);
   if (usingSource146) {
     console.log(`Remote media handoff: ${handoffValidation.ok ? 'OK' : 'FAIL'} (${mediaHandoffMode})`);
+    console.log(`Authoritative price: ${priceValidation.ok ? 'OK' : 'FAIL'} (${DEMO_CONFIG.policy?.price_visibility || 'auth_only'})`);
+    if (staleFingerprint) console.log('BLOCKED: stale 28-product payload fingerprint — wait for revised 50-product handoff');
   }
   console.log(`Actions: create=${createCount} update=${updateCount} quarantine=${quarantineCount}`);
   console.log(`Preflight pass: ${preflightPass ? 'YES' : 'NO'}`);

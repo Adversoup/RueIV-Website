@@ -26,6 +26,7 @@ const {
   REMOTE_MEDIA_HANDOFF_MODE,
   normalizeHandoffProducts,
   validateRemoteMediaHandoff,
+  validateAuthoritativePrices,
 } = require('../lib/af_demo_handoff');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -58,9 +59,7 @@ function parseArgs() {
   const args = process.argv.slice(2);
   let fromDir = process.env.SOURCE146_DIR || null;
   let manifestFingerprint = process.env.SOURCE146_MANIFEST_FINGERPRINT || null;
-  let exportFingerprint = process.env.SOURCE146_EXPORT_FINGERPRINT
-    || DEMO_CONFIG.upstream?.payload_fingerprint
-    || null;
+  let exportFingerprint = process.env.SOURCE146_EXPORT_FINGERPRINT || null;
   let skipGate = false;
 
   for (let i = 0; i < args.length; i++) {
@@ -189,6 +188,13 @@ function main() {
     throw new Error(`Remote media handoff validation failed:\n- ${handoffValidation.issues.join('\n- ')}`);
   }
 
+  if (DEMO_CONFIG.policy?.require_authoritative_price) {
+    const priceValidation = validateAuthoritativePrices(products);
+    if (!priceValidation.ok) {
+      throw new Error(`Authoritative price validation failed:\n- ${priceValidation.issues.join('\n- ')}`);
+    }
+  }
+
   if (excluded.length) {
     console.log(`Excluded SKUs (${excluded.length}): ${excluded.join(', ')}`);
   }
@@ -208,8 +214,24 @@ function main() {
     throw new Error(`Smoke SKU ${smokeSku} missing from cohort after exclusions — cannot run live media smoke`);
   }
 
+  const resolvedExportFingerprint = exportFingerprint
+    || srcManifest.payload_fingerprint
+    || srcManifest.manifest?.payload_fingerprint
+    || srcManifest.export_fingerprint
+    || exportDoc.fingerprint
+    || exportDoc.export_fingerprint
+    || DEMO_CONFIG.upstream?.payload_fingerprint
+    || null;
+
   verifyFingerprint('Manifest', manifestFingerprint, srcManifest);
-  verifyFingerprint('Export', exportFingerprint, exportDoc);
+  verifyFingerprint('Export', resolvedExportFingerprint, exportDoc);
+
+  if (resolvedExportFingerprint
+    && (DEMO_CONFIG.upstream?.legacy_payload_fingerprints || []).includes(resolvedExportFingerprint)) {
+    throw new Error(
+      `Stale 28-product payload fingerprint ${resolvedExportFingerprint} — wait for revised 50-product Source#146 handoff`
+    );
+  }
 
   const stagingDir = path.join(ROOT, 'out', 'source146_ingest_staging');
   if (!fs.existsSync(stagingDir)) fs.mkdirSync(stagingDir, { recursive: true });
@@ -255,7 +277,8 @@ function main() {
       export: path.basename(exportPath),
     },
     manifest_fingerprint: manifestFingerprint || srcManifest.fingerprint || null,
-    export_fingerprint: exportFingerprint || exportDoc.fingerprint || exportDoc.export_fingerprint || null,
+    export_fingerprint: resolvedExportFingerprint,
+    price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
   };
   fs.writeFileSync(fixtureManifestPath, JSON.stringify(fixtureManifest, null, 2));
 

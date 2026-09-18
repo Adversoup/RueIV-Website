@@ -21,6 +21,8 @@ const fs = require('fs');
 const path = require('path');
 
 const { hubToShopifyProduct, normalizeImageUrl } = require('../lib/hub_shopify_mapper');
+const { demoMapOptions } = require('../lib/af_demo_mapping');
+const { resolveAuthoritativePrice } = require('../lib/af_demo_handoff');
 const { attachRemoteProductImages } = require('../lib/shopify_remote_media');
 const {
   hasShopifyCredentials,
@@ -79,6 +81,31 @@ function assertLiveAuthorized(preflight) {
   if (preflight.gate !== DEMO_CONFIG.gates.preflight) {
     throw new Error(`Preflight gate mismatch: ${preflight.gate}`);
   }
+  if (preflight.source146?.stale_28_product_fingerprint) {
+    throw new Error('Stale 28-product handoff — live sync blocked until revised 50-product Source#146 ingest');
+  }
+  if (preflight.cohort?.count !== DEMO_CONFIG.limits?.target_products) {
+    throw new Error(
+      `Cohort count ${preflight.cohort?.count} !== target ${DEMO_CONFIG.limits?.target_products} — live sync blocked`
+    );
+  }
+  if (preflight.source146 && !preflight.source146.authoritative_price_ok) {
+    throw new Error('Authoritative price preflight failed — live sync blocked');
+  }
+}
+
+function smokePriceChecks(hub) {
+  const authoritative = resolveAuthoritativePrice(hub);
+  const mapped = hubToShopifyProduct(hub, demoMapOptions(DEMO_CONFIG));
+  const variantPrice = mapped?.variants?.[0]?.price;
+  return {
+    authoritative_price: authoritative?.price || null,
+    shopify_variant_price: variantPrice != null ? String(variantPrice) : null,
+    price_carried: authoritative?.price != null && parseFloat(variantPrice) > 0,
+    price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
+    guest_price_hidden: true,
+    authenticated_price_visible: true,
+  };
 }
 
 async function createProduct(product, options = {}) {
@@ -267,8 +294,9 @@ function selectCohortProducts(products, phase) {
 }
 
 async function syncProduct(hub, preflight, summary) {
+  const mapOptions = demoMapOptions(DEMO_CONFIG);
   const product = hubToShopifyProduct(hub, {
-    forcePriceHidden: DEMO_CONFIG.policy.price_hidden,
+    ...mapOptions,
     productStatus: DEMO_CONFIG.policy.default_product_status,
   });
   product.images = product.images.map(normalizeImageUrl);
@@ -290,6 +318,8 @@ async function syncProduct(hub, preflight, summary) {
       would_create: action === 'create',
       would_update: action === 'update',
       image_count: product.images.length,
+      shopify_price: product.variants?.[0]?.price ?? null,
+      price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
       media_attach: 'productCreateMedia.originalSource (+ proxy fallback if remote fetch fails)',
     });
     if (action === 'create') summary.created++;
@@ -370,7 +400,8 @@ async function runPhase(phase, products, preflight) {
     policy: {
       no_theme_publish: true,
       no_menu_changes: true,
-      price_hidden: true,
+      price_visibility: DEMO_CONFIG.policy?.price_visibility || 'auth_only',
+      require_authoritative_price: DEMO_CONFIG.policy?.require_authoritative_price === true,
       remote_media: 'productCreateMedia.originalSource',
       proxy_fallback: DEMO_CONFIG.sync?.proxy_fallback !== false,
     },
@@ -410,18 +441,21 @@ async function runPhase(phase, products, preflight) {
   return { summary, productIds };
 }
 
-function writeSmokeReport(summary) {
+function writeSmokeReport(summary, smokeHub) {
   const smokeProduct = summary.products.find((p) => p.sku === SMOKE_SKU);
+  const priceChecks = smokeHub ? smokePriceChecks(smokeHub) : null;
+  const priceOk = !priceChecks || priceChecks.price_carried;
   const report = {
-    gate: summary.failed === 0 && smokeProduct?.status === 'ok'
+    gate: summary.failed === 0 && smokeProduct?.status === 'ok' && priceOk
       ? 'ARTISTIC_FRAME_REMOTE_MEDIA_SMOKE_READY'
       : 'ARTISTIC_FRAME_REMOTE_MEDIA_SMOKE_FAILED',
     generated_at: new Date().toISOString(),
     smoke_sku: SMOKE_SKU,
     store: STORE || null,
-    status: summary.failed === 0 ? 'pass' : 'fail',
-    blocker: summary.blocker || null,
+    status: summary.failed === 0 && priceOk ? 'pass' : 'fail',
+    blocker: summary.blocker || (priceOk ? null : 'Smoke SKU authoritative price not carried to Shopify variant'),
     product: smokeProduct || null,
+    price_checks: priceChecks,
     media: smokeProduct?.media || null,
     sync_summary: summary,
   };
@@ -445,7 +479,7 @@ async function main() {
     finalSummary = (await runPhase('full', products, preflight)).summary;
   } else if (SMOKE_ONLY) {
     finalSummary = (await runPhase('smoke', products, preflight)).summary;
-    const smokeReport = writeSmokeReport(finalSummary);
+    const smokeReport = writeSmokeReport(finalSummary, products.find((p) => p.sku === SMOKE_SKU));
     if (smokeReport.status !== 'pass') {
       console.error(`SMOKE FAILED: ${smokeReport.blocker || 'see report'}`);
       process.exit(1);
@@ -458,13 +492,14 @@ async function main() {
     finalSummary = (await runPhase('remaining', products, preflight)).summary;
   } else {
     const smokeResult = await runPhase('smoke', products, preflight);
-    const smokeReport = writeSmokeReport(smokeResult.summary);
+    const smokeHub = products.find((p) => p.sku === SMOKE_SKU);
+    const smokeReport = writeSmokeReport(smokeResult.summary, smokeHub);
     if (smokeReport.status !== 'pass') {
       console.error(`SMOKE FAILED — full cohort blocked: ${smokeReport.blocker || 'see smoke report'}`);
       console.error(`Smoke report: ${SMOKE_REPORT_PATH}`);
       process.exit(1);
     }
-    console.log(`Smoke SKU ${SMOKE_SKU} media READY — proceeding with remaining ${products.length - 1} products…`);
+    console.log(`Smoke SKU ${SMOKE_SKU} media+price READY — proceeding with remaining ${products.length - 1} products…`);
     const remainingResult = await runPhase('remaining', products, preflight);
     finalSummary = {
       ...remainingResult.summary,
