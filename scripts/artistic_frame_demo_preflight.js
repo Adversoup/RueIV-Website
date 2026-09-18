@@ -26,6 +26,7 @@ const {
   validateHubProcessedMediaHandoff,
   validateAuthoritativePrices,
 } = require('../lib/af_demo_handoff');
+const { probeProductMediaAccessibility } = require('../lib/hub_media_resolver');
 const { demoMapOptions } = require('../lib/af_demo_mapping');
 const {
   hasShopifyCredentials,
@@ -128,7 +129,10 @@ async function main() {
     throw new Error(`Cohort count ${products.length} exceeds max ${maxProducts}`);
   }
 
-  const wrongVendor = products.filter((p) => (p.canonical_vendor || p.brand) !== vendorName);
+  const wrongVendor = products.filter((p) => {
+    const vendor = p.canonical_vendor || (typeof p.brand === 'string' ? p.brand : p.brand?.display_name);
+    return vendor !== vendorName;
+  });
   if (wrongVendor.length) {
     throw new Error(`${wrongVendor.length} records are not ${vendorName} — quarantine required`);
   }
@@ -177,13 +181,18 @@ async function main() {
     || manifest.mode === 'source146_ingested'
     || manifest.source?.upstream?.includes('#152')
     || manifest.source?.upstream?.includes('#146');
-  const requiredGate = DEMO_CONFIG.upstream?.required_gate;
   const mediaHandoffMode = manifest.source?.media_handoff_mode
     || DEMO_CONFIG.media_handoff?.mode
     || HUB_PROCESSED_MEDIA_MODE;
+  const handoffOptions = {
+    handoffDir: path.join(ROOT, DEMO_CONFIG.handoff_dir || 'fixtures/artistic_frame_demo/source152_handoff'),
+    root: ROOT,
+    hubOrigins: DEMO_CONFIG.media_handoff?.hub_public_origins || [],
+  };
   const handoffValidation = usingSource152
     ? validateHubProcessedMediaHandoff(products, { media_handoff_mode: mediaHandoffMode }, {
       expectedMode: DEMO_CONFIG.media_handoff?.mode || HUB_PROCESSED_MEDIA_MODE,
+      ...handoffOptions,
     })
     : { ok: true, issues: [] };
   const priceValidation = usingSource152 && DEMO_CONFIG.policy?.require_authoritative_price
@@ -196,9 +205,26 @@ async function main() {
   const cohortCountOk = !usingSource152
     || !targetProducts
     || products.length === targetProducts;
+  let mediaAccessibility = null;
+  if (usingSource152) {
+    const smokeSku = DEMO_CONFIG.cohort?.smoke_sku;
+    const smokeProduct = products.find((p) => p.sku === smokeSku) || products[0];
+    const smokeProbe = smokeProduct
+      ? await probeProductMediaAccessibility(smokeProduct, handoffOptions)
+      : { ok: false, blocker: 'no products to probe' };
+    mediaAccessibility = {
+      smoke_sku: smokeSku,
+      smoke_probe_ok: smokeProbe.ok,
+      selected_url: smokeProbe.selectedUrl || null,
+      selected_source: smokeProbe.selectedSource || null,
+      attempts: smokeProbe.attempts || [],
+      live_sync_ready: smokeProbe.ok,
+      blocker: smokeProbe.ok ? null : (smokeProbe.blocker || 'Hub media not fetchable for smoke SKU'),
+    };
+  }
+
   const source152Ready = usingSource152
     && manifest.source?.status === 'ingested'
-    && manifest.source?.required_gate === requiredGate
     && manifest.source?.media_handoff_mode === (DEMO_CONFIG.media_handoff?.mode || HUB_PROCESSED_MEDIA_MODE)
     && handoffValidation.ok
     && priceValidation.ok
@@ -206,9 +232,7 @@ async function main() {
     && cohortCountOk
     && products.some((p) => p.sku === DEMO_CONFIG.cohort?.smoke_sku)
     && (manifest.gate === 'ARTISTIC_FRAME_SOURCE152_COHORT_INGESTED'
-      || manifest.gate === 'ARTISTIC_FRAME_SOURCE146_COHORT_INGESTED'
-      || manifest.mode === 'source152_ingested'
-      || manifest.mode === 'source146_ingested');
+      || manifest.mode === 'source152_ingested');
   const source143Ready = !usingBootstrap
     && !usingSource152
     && manifest.source?.status === 'ingested'
@@ -252,9 +276,8 @@ async function main() {
     },
     source152: {
       ready: source152Ready,
-      upstream_gate: manifest.source?.required_gate || DEMO_CONFIG.upstream?.required_gate || null,
-      expected_gate: requiredGate,
       media_handoff_mode: mediaHandoffMode,
+      price_policy: manifest.source?.price_policy || null,
       hub_processed_media_ok: handoffValidation.ok,
       hub_processed_media_issues: handoffValidation.issues || [],
       raw_source_media_rejected: mediaHandoffMode === 'remote_source_url_import',
@@ -263,8 +286,10 @@ async function main() {
       stale_legacy_fingerprint: staleFingerprint || false,
       manifest_fingerprint: manifest.source?.manifest_fingerprint || null,
       export_fingerprint: manifest.source?.export_fingerprint || null,
+      cohort_manifest_fingerprint: manifest.source?.cohort_manifest_fingerprint || null,
       expected_manifest_fingerprint: DEMO_CONFIG.upstream?.manifest_fingerprint || null,
       expected_export_fingerprint: DEMO_CONFIG.upstream?.payload_fingerprint || null,
+      media_accessibility: mediaAccessibility,
       theme_price_visibility: 'unchanged (existing Modiva login-based resolver)',
       smoke_sku: DEMO_CONFIG.cohort?.smoke_sku || null,
       target_products: DEMO_CONFIG.limits?.target_products || null,
@@ -361,8 +386,12 @@ async function main() {
   if (usingSource152) {
     console.log(`Hub-processed media: ${handoffValidation.ok ? 'OK' : 'FAIL'} (${mediaHandoffMode})`);
     console.log(`Authoritative price: ${priceValidation.ok ? 'OK' : 'FAIL'}`);
+    if (mediaAccessibility) {
+      console.log(`Media accessibility (smoke): ${mediaAccessibility.smoke_probe_ok ? 'OK' : 'BLOCKED'}${mediaAccessibility.selected_url ? ` via ${mediaAccessibility.selected_source}` : ''}`);
+      if (mediaAccessibility.blocker) console.log(`Media blocker: ${mediaAccessibility.blocker}`);
+    }
     if (mediaHandoffMode === 'remote_source_url_import') {
-      console.log('BLOCKED: raw remote_source_url_import — wait for Hub-processed sync-ready handoff');
+      console.log('BLOCKED: raw remote_source_url_import — Hub-processed media required');
     }
     if (staleFingerprint) console.log('BLOCKED: stale legacy payload fingerprint — wait for Source#152 50-product handoff');
     if (!cohortCountOk) console.log(`BLOCKED: cohort count ${products.length} !== target ${targetProducts}`);

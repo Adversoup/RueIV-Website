@@ -1,19 +1,18 @@
 #!/usr/bin/env node
 /**
  * ingest_source152_af_cohort.js
- * Ingest Source#152 text+price+Hub-processed-media handoff into fixtures/artistic_frame_demo/.
+ * Ingest merged Source#152 (issue-146 paths) handoff into fixtures/artistic_frame_demo/.
  *
- * Requires upstream gate:
- *   ARTISTIC_FRAME_DEMO_TEXT_PRICE_HUB_PROCESSED_MEDIA_READY_FOR_SHOPIFY_SYNC
- *
- * Handoff contract: exactly 50 products, Hub-processed sync-ready media + authoritative price.
- * Raw vendor image URLs are lineage only — MUST NOT be the final Shopify media source.
+ * Validates embedded provenance fingerprints and Source#152 product contract:
+ *   - exactly 50 products
+ *   - media_handoff_mode=hub_processed_media
+ *   - media_sync_ready=true on every product
+ *   - authoritative price + price_source
+ *   - Hub-processed media refs only (raw vendor URLs are lineage)
  *
  * Usage:
  *   node scripts/ingest_source152_af_cohort.js
  *   node scripts/ingest_source152_af_cohort.js --from fixtures/artistic_frame_demo/source152_handoff
- *   node scripts/ingest_source152_af_cohort.js --from /path/to/source152/export \
- *     --manifest-fingerprint <hash> --export-fingerprint <hash>
  */
 
 'use strict';
@@ -25,6 +24,7 @@ const { spawnSync } = require('child_process');
 const {
   HUB_PROCESSED_MEDIA_MODE,
   normalizeHandoffProducts,
+  validateSource152Provenance,
   validateHubProcessedMediaHandoff,
   validateAuthoritativePrices,
 } = require('../lib/af_demo_handoff');
@@ -32,47 +32,27 @@ const {
 const ROOT = path.resolve(__dirname, '..');
 const DEMO_CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'artistic_frame_demo.json'), 'utf8'));
 const DEFAULT_HANDOFF_DIR = path.join(ROOT, DEMO_CONFIG.handoff_dir || 'fixtures/artistic_frame_demo/source152_handoff');
-const REQUIRED_GATE = DEMO_CONFIG.upstream.required_gate;
-const LEGACY_GATES = new Set(DEMO_CONFIG.upstream.legacy_gates || []);
 
 const SOURCE152_MANIFEST_NAMES = [
-  'artistic_frame_showcase_cohort_manifest.json',
-  'artistic_frame_demo_text_price_hub_processed_manifest.json',
+  'artistic_frame_demo_cohort_50_manifest.json',
   'artistic_frame_demo_cohort_manifest.json',
-  'artistic_frame_demo_enrichment_manifest.json',
+  'artistic_frame_showcase_cohort_manifest.json',
   'manifest.json',
 ];
 const SOURCE152_EXPORT_NAMES = [
-  'artistic_frame_shopify_export_payload.json',
-  'artistic_frame_demo_text_price_hub_processed_payload.json',
   'artistic_frame_demo_enriched_payload.json',
-  'artistic_frame_demo_shopify_export_payload.json',
+  'artistic_frame_shopify_export_payload.json',
   'products.json',
 ];
 
 function parseArgs() {
   const args = process.argv.slice(2);
   let fromDir = process.env.SOURCE152_DIR || null;
-  let manifestFingerprint = process.env.SOURCE152_MANIFEST_FINGERPRINT
-    || DEMO_CONFIG.upstream.manifest_fingerprint
-    || null;
-  let exportFingerprint = process.env.SOURCE152_EXPORT_FINGERPRINT
-    || DEMO_CONFIG.upstream.payload_fingerprint
-    || null;
-  let skipGate = false;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--from' && args[i + 1]) {
       fromDir = args[i + 1];
       i++;
-    } else if (args[i] === '--manifest-fingerprint' && args[i + 1]) {
-      manifestFingerprint = args[i + 1];
-      i++;
-    } else if (args[i] === '--export-fingerprint' && args[i + 1]) {
-      exportFingerprint = args[i + 1];
-      i++;
-    } else if (args[i] === '--skip-gate-check') {
-      skipGate = true;
     }
   }
 
@@ -81,18 +61,12 @@ function parseArgs() {
       fromDir = DEFAULT_HANDOFF_DIR;
     } else {
       console.error(`Usage: node scripts/ingest_source152_af_cohort.js [--from /path/to/source152/export]
-       Default handoff dir (when present): ${DEFAULT_HANDOFF_DIR}
-       [--manifest-fingerprint <hash>] [--export-fingerprint <hash>] [--skip-gate-check]`);
+       Default handoff dir (when present): ${DEFAULT_HANDOFF_DIR}`);
       process.exit(1);
     }
   }
 
-  return {
-    fromDir: path.resolve(fromDir),
-    manifestFingerprint,
-    exportFingerprint,
-    skipGate,
-  };
+  return { fromDir: path.resolve(fromDir) };
 }
 
 function loadJson(filePath, label) {
@@ -132,41 +106,29 @@ function sha256Json(value) {
   return crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }
 
-function verifyFingerprint(label, expected, actualDoc) {
-  if (!expected) return;
-  const computed = sha256Json(actualDoc);
-  if (computed !== expected) {
-    throw new Error(`${label} fingerprint mismatch: expected ${expected}, computed ${computed}`);
-  }
-}
-
-function assertGate(manifest, exportDoc, skipGate) {
-  if (skipGate) {
-    console.warn('WARN: --skip-gate-check — upstream gate not verified');
-    return;
-  }
-  const gate = manifest.gate || exportDoc.gate || manifest.manifest?.gate || exportDoc.handoff?.gate;
-  if (gate === REQUIRED_GATE) return;
-  if (LEGACY_GATES.has(gate)) {
-    throw new Error(
-      `Upstream gate is legacy (${gate}). Expected ${REQUIRED_GATE} from Source#152 PR #152 handoff.`
-    );
-  }
-  throw new Error(`Upstream gate mismatch: expected ${REQUIRED_GATE}, got ${gate || '(none)'}`);
-}
-
 function main() {
-  const { fromDir, manifestFingerprint, exportFingerprint, skipGate } = parseArgs();
+  const { fromDir } = parseArgs();
   const { manifestPath, exportPath } = resolveSourceFiles(fromDir);
 
   const srcManifest = loadJson(manifestPath, 'Source#152 manifest');
   const exportDoc = loadJson(exportPath, 'Source#152 export');
-  assertGate(srcManifest, exportDoc, skipGate);
 
-  const products = normalizeHandoffProducts(extractProducts(exportDoc), exportDoc);
+  const provenance = validateSource152Provenance(srcManifest, exportDoc, DEMO_CONFIG);
+  if (!provenance.ok) {
+    throw new Error(`Source#152 provenance validation failed:\n- ${provenance.issues.join('\n- ')}`);
+  }
+
+  const handoffOptions = {
+    handoffDir: fromDir,
+    root: ROOT,
+    hubOrigins: DEMO_CONFIG.media_handoff?.hub_public_origins || [],
+  };
+
+  const products = normalizeHandoffProducts(extractProducts(exportDoc), exportDoc, handoffOptions);
 
   const handoffValidation = validateHubProcessedMediaHandoff(products, exportDoc, {
     expectedMode: DEMO_CONFIG.media_handoff?.mode || HUB_PROCESSED_MEDIA_MODE,
+    ...handoffOptions,
   });
   if (!handoffValidation.ok) {
     throw new Error(`Hub-processed media handoff validation failed:\n- ${handoffValidation.issues.join('\n- ')}`);
@@ -195,10 +157,7 @@ function main() {
     throw new Error(`Smoke SKU ${smokeSku} missing from cohort — cannot run live media smoke`);
   }
 
-  verifyFingerprint('Manifest', manifestFingerprint, srcManifest);
-  verifyFingerprint('Export', exportFingerprint, exportDoc);
-
-  const resolvedExportFingerprint = exportFingerprint || sha256Json(exportDoc);
+  const resolvedExportFingerprint = provenance.fingerprints.payload_fingerprint_sha256;
   if ((DEMO_CONFIG.upstream?.legacy_payload_fingerprints || []).includes(resolvedExportFingerprint)) {
     throw new Error(
       `Stale legacy payload fingerprint ${resolvedExportFingerprint} — wait for Source#152 50-product handoff`
@@ -211,7 +170,6 @@ function main() {
   fs.writeFileSync(path.join(stagingDir, 'products.json'), JSON.stringify(products, null, 2));
   fs.writeFileSync(path.join(stagingDir, 'manifest.json'), JSON.stringify({
     ...srcManifest,
-    gate: REQUIRED_GATE,
     media_handoff_mode: HUB_PROCESSED_MEDIA_MODE,
     manifest: {
       ...(srcManifest.manifest || {}),
@@ -222,12 +180,10 @@ function main() {
     },
   }, null, 2));
 
-  const ingestArgs = [
+  const ingest = spawnSync(process.execPath, [
     path.join(__dirname, 'ingest_source143_af_cohort.js'),
     '--from', stagingDir,
-  ];
-
-  const ingest = spawnSync(process.execPath, ingestArgs, { stdio: 'inherit', cwd: ROOT });
+  ], { stdio: 'inherit', cwd: ROOT });
   if (ingest.status !== 0) process.exit(ingest.status || 1);
 
   const { fixtureDir } = require('../lib/af_demo_paths');
@@ -239,22 +195,26 @@ function main() {
     ...(fixtureManifest.source || {}),
     upstream: DEMO_CONFIG.upstream.source_issue,
     status: 'ingested',
-    required_gate: REQUIRED_GATE,
     media_handoff_mode: HUB_PROCESSED_MEDIA_MODE,
+    price_policy: exportDoc.price_policy || null,
     ingested_at: new Date().toISOString(),
     ingest_from: fromDir,
     source_files: {
       manifest: path.basename(manifestPath),
       export: path.basename(exportPath),
     },
-    manifest_fingerprint: manifestFingerprint || srcManifest.fingerprint || sha256Json(srcManifest),
-    export_fingerprint: resolvedExportFingerprint,
+    manifest_fingerprint: provenance.fingerprints.manifest_fingerprint_sha256,
+    export_fingerprint: provenance.fingerprints.payload_fingerprint_sha256,
+    cohort_manifest_fingerprint: provenance.fingerprints.cohort_manifest_fingerprint,
+    provenance,
   };
   fs.writeFileSync(fixtureManifestPath, JSON.stringify(fixtureManifest, null, 2));
 
   console.log('\nSource#152 ingest complete.');
   console.log(`Records: ${products.length} (target ${DEMO_CONFIG.limits.target_products})`);
   console.log(`Media handoff: ${HUB_PROCESSED_MEDIA_MODE}`);
+  console.log(`Manifest fingerprint: ${provenance.fingerprints.manifest_fingerprint_sha256}`);
+  console.log(`Payload fingerprint: ${provenance.fingerprints.payload_fingerprint_sha256}`);
   console.log(`Smoke SKU target: ${smokeSku}`);
   console.log('Next: npm run af-demo:preflight');
 }

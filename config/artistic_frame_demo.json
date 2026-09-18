@@ -1,20 +1,15 @@
 {
-  "version": "1.2.0",
-  "description": "Bounded Artistic Frame client demo configuration (Issue #11 / Source#152).",
+  "version": "1.3.0",
+  "description": "Bounded Artistic Frame client demo configuration (Issue #11 / Source#152 merged handoff).",
   "upstream": {
     "source_issue": "Adversoup/RueIV-Source#152",
     "source_repo": "Adversoup/RueIV-Source",
-    "source_ref": "cursor/artistic-frame-client-demo-152",
+    "source_ref": "main",
     "prior_source_issue": "Adversoup/RueIV-Source#146",
     "website_issue": "Adversoup/RueIV-Website#11",
-    "required_gate": "ARTISTIC_FRAME_DEMO_TEXT_PRICE_HUB_PROCESSED_MEDIA_READY_FOR_SHOPIFY_SYNC",
-    "legacy_gates": [
-      "ARTISTIC_FRAME_DEMO_TEXT_ENRICHED_READY_FOR_SHOPIFY_REMOTE_MEDIA_IMPORT",
-      "ARTISTIC_FRAME_DEMO_POPULATED_ENRICHED_READY_FOR_SHOPIFY_SYNC"
-    ],
     "source_paths": {
-      "payload": "docs/ai/readiness/issue-152/artistic_frame_shopify_export_payload.json",
-      "manifest": "docs/ai/readiness/issue-152/artistic_frame_showcase_cohort_manifest.json"
+      "manifest": "docs/ai/readiness/issue-146/artistic_frame_demo_cohort_50_manifest.json",
+      "payload": "docs/ai/readiness/issue-146/artistic_frame_demo_enriched_payload.json"
     },
     "manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
     "payload_fingerprint": "5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff",
@@ -44,14 +39,14 @@
     "smoke_sku": "2505A"
   },
   "media_handoff": {
-    "mode": "hub_processed_media_sync_ready",
-    "legacy_raw_modes": ["remote_source_url_import"],
-    "ready_statuses": ["sync_ready", "ready", "processed"]
+    "mode": "hub_processed_media",
+    "legacy_modes": ["hub_processed_media_sync_ready", "remote_source_url_import"],
+    "hub_public_origins": []
   },
   "sync": {
-    "remote_media_first": false,
+    "remote_media_first": true,
     "hub_processed_media_only": true,
-    "proxy_fallback": false,
+    "proxy_fallback": true,
     "media_poll_interval_ms": 2000,
     "media_poll_max_attempts": 30
   },

@@ -1,18 +1,38 @@
 {
   "version": "1.0.0",
-  "gate": "ARTISTIC_FRAME_SOURCE143_BOOTSTRAP_PUBLIC_REFS",
-  "generated_at": "2026-09-17T14:41:58.071Z",
-  "mode": "bootstrap_public_refs",
+  "gate": "ARTISTIC_FRAME_SOURCE152_COHORT_INGESTED",
+  "generated_at": "2026-09-18T06:55:28.313Z",
+  "mode": "source152_ingested",
   "live_mutation": false,
   "source": {
-    "upstream": "Adversoup/RueIV-Source#143",
-    "status": "bootstrap_fallback",
+    "upstream": "Adversoup/RueIV-Source#152",
+    "status": "ingested",
     "fingerprint": null,
-    "export_fingerprint": null,
-    "ingested_at": "2026-09-17T14:41:58.071Z",
-    "note": "Public-ref bootstrap — NOT Source#143 verified. Live sync blocked until real export ingested with matching fingerprints.",
-    "expected_manifest_fingerprint": "c07ee64f47fc0dc9359389cc52f1d7a1e06de6bc0528dade8715a78f3d632989",
-    "expected_export_fingerprint": "23fe31223434e84d9e677a2bc0efccb41c43e4a6ed6e0f500b833168ffcba434"
+    "export_fingerprint": "5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff",
+    "ingested_at": "2026-09-18T06:55:28.316Z",
+    "ingest_from": "/workspace/fixtures/artistic_frame_demo/source152_handoff",
+    "source_files": {
+      "manifest": "artistic_frame_demo_cohort_manifest.json",
+      "export": "artistic_frame_demo_enriched_payload.json"
+    },
+    "source_commit": null,
+    "media_handoff_mode": "hub_processed_media",
+    "price_policy": "authenticated_only_display",
+    "manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+    "cohort_manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+    "provenance": {
+      "ok": true,
+      "issues": [],
+      "fingerprints": {
+        "manifest_fingerprint_sha256": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+        "payload_fingerprint_sha256": "5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff",
+        "cohort_manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a"
+      },
+      "counts": {
+        "manifest_cohort_size": 50,
+        "payload_product_count": 50
+      }
+    }
   },
   "demo": {
     "vendor_display_name": "Artistic Frame",
@@ -20,21 +40,19 @@
     "collection_handle": "artistic-frame-demo",
     "collection_title": "Artistic Frame — Client Demo",
     "max_products": 50,
-    "target_products": 30,
-    "price_hidden": true,
+    "target_products": 50,
+    "price_hidden": false,
     "hidden_from_navigation": true,
     "default_product_status": "ACTIVE"
   },
   "manifest": {
-    "selected_records": 30,
-    "checksum_sha256": "27a2ec095ba168bc13256d152807b13213f67dbadeb8bb7ad930cd40b5aed25b",
+    "selected_records": 50,
+    "checksum_sha256": "d8a7e8310ab052ce3ad9d97dfb53eb4adf45dc116ac8aa291d5245a540b0ac18",
     "products_file": "products.json",
-    "source143_selection_rules": [
-      "bootstrap_public_refs_sort_by_sku"
-    ]
+    "source143_selection_rules": []
   },
   "scaffold": {
     "enabled": false,
-    "note": "Bootstrap cohort — not scaffold; still blocked for live until Source#143 ingest"
+    "note": "Source#143 cohort ingested — scaffold disabled"
   }
 }

@@ -1,52 +1,63 @@
 # Source#152 handoff slot (50-product cohort)
 
-Checked-in bridge directory for `Adversoup/RueIV-Source#152` / PR #152.
+Checked-in bridge directory for merged `Adversoup/RueIV-Source#152` artifacts on main.
 
-## Required upstream gate
+## Source paths (RueIV-Source main)
 
-`ARTISTIC_FRAME_DEMO_TEXT_PRICE_HUB_PROCESSED_MEDIA_READY_FOR_SHOPIFY_SYNC`
+| Artifact | Path |
+|----------|------|
+| Cohort manifest | `docs/ai/readiness/issue-146/artistic_frame_demo_cohort_50_manifest.json` |
+| Enriched payload | `docs/ai/readiness/issue-146/artistic_frame_demo_enriched_payload.json` |
 
-## Expected fingerprints
+## Embedded fingerprints (do not recompute whole-document JSON hashes)
 
-| Artifact | SHA-256 |
-|----------|---------|
-| Cohort manifest | `665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a` |
-| Export payload | `5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff` |
+| Artifact | Field | SHA-256 |
+|----------|-------|---------|
+| Manifest | `fingerprint_sha256` | `665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a` |
+| Payload | `payload_fingerprint_sha256` | `5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff` |
+| Payload | `cohort_manifest_fingerprint` | `665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a` |
 
-## Expected files
+There is **no top-level `gate`** field in the merged artifacts.
+
+## Checked-in file names
 
 | Manifest | Export |
 |----------|--------|
-| `artistic_frame_showcase_cohort_manifest.json` | `artistic_frame_shopify_export_payload.json` |
+| `artistic_frame_demo_cohort_manifest.json` | `artistic_frame_demo_enriched_payload.json` |
 
 ## Export contract (exactly 50 products)
 
-Each record must include:
+Top-level payload fields:
 
-- `sku`, `title`, `canonical_vendor: "Artistic Frame"`
-- authoritative `price` and/or `variants[].price` (Website never invents prices)
-- `media_handoff_mode: "hub_processed_media_sync_ready"`
-- Hub-processed sync-ready media refs in `hub_processed_images[]`, `processed_media_refs[]`, or `images[]` (Hub refs only)
-- `media_status: "sync_ready"` (or equivalent per Source manifest)
-- raw `primary_image_source_url(s)` allowed as **lineage only** — MUST NOT be the sole media source
+- `product_count: 50`
+- `media_handoff_mode: "hub_processed_media"`
+- `price_policy: "authenticated_only_display"`
 
-**Rejected at ingest/preflight:**
+Each product must include:
 
-- `media_handoff_mode: "remote_source_url_import"` (raw Artistic Frame URLs as final media)
-- Stale 28-product legacy payload fingerprints
-- Cohort count ≠ 50
+- `vendor_sku`, `title`, `brand: "Artistic Frame"`
+- authoritative numeric `price` + `price_source`
+- `media_sync_ready: true`
+- `primary_image_hub_url` (e.g. `/media/images/artistic-frame/2505A.jpg`) and/or `primary_image_processed_ref`
+- raw `primary_image_source_url(s)` are **lineage only** — never the final Shopify media source
 
-**Smoke SKU:** `2505A`
+Optional checked-in processed assets (fallback when Hub public URL is unavailable):
 
-**Theme:** existing Modiva login-based price visibility — Website does not add price gating metafields/tags.
+`media/processed/artistic-frame/{SKU}.jpg`
+
+## Hub media resolution
+
+1. `CONSORTIUM_HUB_PUBLIC_ORIGIN` + `primary_image_hub_url` (Shopify `productCreateMedia.originalSource`)
+2. Local checked-in processed asset under this directory → staged upload (no manual JPEG handoff)
+3. Raw Artistic Frame URLs are never used as final media
 
 ## Commands
 
 ```bash
-npm run af-demo:bridge:152    # fetch from Source repo when accessible
-npm run af-demo:ingest:152    # ingest checked-in handoff files
+npm run af-demo:ingest:152
 npm run af-demo:preflight
-npm run af-demo:sync          # dry-run only until preflight READY + credentials
+npm run af-demo:sync          # dry-run
+npm run af-demo:verify:152    # ingest + preflight + sync + rollback dry-run
 ```
 
-No live sync until Source#152 handoff is ingested and preflight is green.
+Live sync requires preflight READY, fetchable Hub/local media, and Shopify credentials.
