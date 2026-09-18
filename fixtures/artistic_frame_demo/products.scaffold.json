@@ -1,0 +1,54 @@
+[
+  {
+    "sku": "AF-SCAFFOLD-001",
+    "title": "Chambord Chair — Ivory",
+    "canonical_vendor": "Artistic Frame",
+    "category": "furniture",
+    "status": "APPROVED",
+    "price": "0",
+    "price_authority": "trade",
+    "description_html": "<p>Scaffold record for machinery validation only. Replace via Source#143 ingest.</p>",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0000/0001/files/placeholder-chair.jpg"
+    ],
+    "color_family": "Ivory",
+    "end_use": ["Living Room"],
+    "brand": {
+      "tier": "partner",
+      "collection_handle": "artistic-frame"
+    }
+  },
+  {
+    "sku": "AF-SCAFFOLD-002",
+    "title": "Versailles Console — Gilded",
+    "canonical_vendor": "Artistic Frame",
+    "category": "furniture",
+    "status": "APPROVED",
+    "price": "0",
+    "price_authority": "quote",
+    "description_html": "<p>Scaffold record with multi-image gallery for mapping rehearsal.</p>",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0000/0001/files/placeholder-console-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0000/0001/files/placeholder-console-2.jpg"
+    ],
+    "color_family": "Gold",
+    "end_use": ["Entryway"]
+  },
+  {
+    "sku": "AF-SCAFFOLD-003",
+    "title": "Regency Settee — Multi Configuration",
+    "canonical_vendor": "Artistic Frame",
+    "category": "furniture",
+    "status": "APPROVED",
+    "price": "0",
+    "price_authority": "hidden",
+    "description_html": "<p>Scaffold variant/options record for demo sync machinery.</p>",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0000/0001/files/placeholder-settee.jpg"
+    ],
+    "variants": [
+      { "name": "72 inch", "sku": "AF-SCAFFOLD-003-72", "price": "0" },
+      { "name": "84 inch", "sku": "AF-SCAFFOLD-003-84", "price": "0" }
+    ]
+  }
+]

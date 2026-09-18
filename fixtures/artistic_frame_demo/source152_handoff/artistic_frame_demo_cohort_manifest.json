@@ -1,0 +1,685 @@
+{
+  "cohort_size": 50,
+  "cohort_target": 50,
+  "entries": [
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1195.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 1,
+      "title": "Arbalette",
+      "vendor_product_id": "aecb04454ea74add96b1a5e7236ef7df",
+      "vendor_sku": "2505A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1075.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 2,
+      "title": "Athens",
+      "vendor_product_id": "e4ffa44f4e684f2da319d77d9eb56894",
+      "vendor_sku": "2901A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1290.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 3,
+      "title": "Aarhus",
+      "vendor_product_id": "3229ad8462cc462596e9300eae367bb8",
+      "vendor_sku": "2566A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1290.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 4,
+      "title": "Aarhus",
+      "vendor_product_id": "36f47095b705447eb7f117875f8bbc4e",
+      "vendor_sku": "2566S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1085.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 5,
+      "title": "Bradley",
+      "vendor_product_id": "12cfcc6e818845e18c637158528dfb00",
+      "vendor_sku": "2439A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1035.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 6,
+      "title": "Bradley",
+      "vendor_product_id": "168b6b6058224625b9913f5bfdac0169",
+      "vendor_sku": "2439S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1115.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 7,
+      "title": "Caitlyn",
+      "vendor_product_id": "b9600bbbca5a4f0f886ff3cd01e9eebe",
+      "vendor_sku": "2540A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1095.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 8,
+      "title": "Charlotte",
+      "vendor_product_id": "a85147f129144f03b8bfa0ea73c8d9de",
+      "vendor_sku": "2509S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1600.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 9,
+      "title": "Chetham",
+      "vendor_product_id": "e6943fc63ea74947a3d873761d367d2f",
+      "vendor_sku": "2503A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1190.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 10,
+      "title": "Delano",
+      "vendor_product_id": "9c83324ef5ea4b8893fe3e036193929d",
+      "vendor_sku": "2529A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1140.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 11,
+      "title": "Delano",
+      "vendor_product_id": "67c32eb9f9134231bc70774a338f4f18",
+      "vendor_sku": "2529S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1015.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 12,
+      "title": "Einstein",
+      "vendor_product_id": "c3505f02a1aa40c78d08469546b6fcf0",
+      "vendor_sku": "2811S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1045.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 13,
+      "title": "Federal",
+      "vendor_product_id": "54dfe8dea9a34890999d8d48d52b3642",
+      "vendor_sku": "2454A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1000.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 14,
+      "title": "Gaillard",
+      "vendor_product_id": "692146e658ad4cddaeac4bd052e7cdd0",
+      "vendor_sku": "2827A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 975.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 15,
+      "title": "Gaillard",
+      "vendor_product_id": "aa2b76bc48e141819945092dd4622e01",
+      "vendor_sku": "2827S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1015.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 16,
+      "title": "Iribe",
+      "vendor_product_id": "612282c5f7c8480a9cdeb1507fbef8a3",
+      "vendor_sku": "2848A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 995.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 17,
+      "title": "Iribe",
+      "vendor_product_id": "a3a215cb3b1247c1b82574a9b383e6e0",
+      "vendor_sku": "2848S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1065.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 18,
+      "title": "Jacobean",
+      "vendor_product_id": "8f3b6d6e78cb4da2964e676554c1e49d",
+      "vendor_sku": "2380A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1035.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 19,
+      "title": "Molitor",
+      "vendor_product_id": "833c282baf804be3a0ef6b7c1512d92e",
+      "vendor_sku": "2902A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1165.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 20,
+      "title": "Monarque",
+      "vendor_product_id": "5eb75f54c03f4f5394cc4e01e64bc280",
+      "vendor_sku": "2810A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1125.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 21,
+      "title": "Monarque",
+      "vendor_product_id": "4be598f71db240c69b45510710ced775",
+      "vendor_sku": "2810S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1035.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 22,
+      "title": "Normandie",
+      "vendor_product_id": "d4c6fc1a8ba144eabe5edcfd067cfe97",
+      "vendor_sku": "2832A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1065.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 23,
+      "title": "Oxford",
+      "vendor_product_id": "d30e34eef8c74d82a157d27722ab660c",
+      "vendor_sku": "2829A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1105.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 24,
+      "title": "Palacio",
+      "vendor_product_id": "9bb450ddcc0d4fa5b2541b3011740458",
+      "vendor_sku": "2842A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1065.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 25,
+      "title": "Palacio",
+      "vendor_product_id": "3aa0d455f701429dadd4870b1f8eddb2",
+      "vendor_sku": "2842S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1110.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 26,
+      "title": "Sabre",
+      "vendor_product_id": "6847c6c440f14105a2dbdc0a4250d4de",
+      "vendor_sku": "2537A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1095.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 27,
+      "title": "Sabre",
+      "vendor_product_id": "931c9416f60d4a7b8d12713d08612587",
+      "vendor_sku": "2537S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1155.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 28,
+      "title": "Sene",
+      "vendor_product_id": "5ce18b467e3349a59a91a7b36d424e84",
+      "vendor_sku": "2836A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1015.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 29,
+      "title": "Tuxedo",
+      "vendor_product_id": "bf210ae86599410e9c94ed7aa988156b",
+      "vendor_sku": "2428A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1075.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 30,
+      "title": "Versailles",
+      "vendor_product_id": "6cea0eb2b7f641a991326a5646a9ba4e",
+      "vendor_sku": "2026A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1000.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 31,
+      "title": "Westminster",
+      "vendor_product_id": "600a9f2e4429490d9a1e7510491ec958",
+      "vendor_sku": "2482S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1075.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 32,
+      "title": "Ziegfield",
+      "vendor_product_id": "622c61f893084a5c8043ea40ed0384f5",
+      "vendor_sku": "2879A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1015.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 33,
+      "title": "Ziegfield",
+      "vendor_product_id": "f4e535c3a49040aca216dbb740fd02b3",
+      "vendor_sku": "2879S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1115.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 34,
+      "title": "Andre",
+      "vendor_product_id": "85778ee7521d4dcb8ac6ef1f71723f90",
+      "vendor_sku": "2923A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1085.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 35,
+      "title": "Andre",
+      "vendor_product_id": "0289d935fabd49b88234e8dce2713b72",
+      "vendor_sku": "2923S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1145.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 36,
+      "title": "Arbalette",
+      "vendor_product_id": "cb0bc1545bd64501b78c0576bbb13d51",
+      "vendor_sku": "2505S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1035.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 37,
+      "title": "Athens",
+      "vendor_product_id": "93e9eb80660946998ae1dc546ccf4bd6",
+      "vendor_sku": "2901S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 965.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 38,
+      "title": "Avon",
+      "vendor_product_id": "a3cfb7f77ab64143a2e10a630445f80c",
+      "vendor_sku": "2831A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 925.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 39,
+      "title": "Avon",
+      "vendor_product_id": "2f81e1983c1b4eac866c6229f9068efe",
+      "vendor_sku": "2831S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1095.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 40,
+      "title": "Caitlyn",
+      "vendor_product_id": "db6adc840a11481191aaa4904166fc8a",
+      "vendor_sku": "2540S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1095.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 41,
+      "title": "Calais",
+      "vendor_product_id": "9b393afaa1dc4d2c813e517d80f6faf6",
+      "vendor_sku": "2801A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1030.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 42,
+      "title": "Calais",
+      "vendor_product_id": "6f381ade7aff446ea8782f9d156ca514",
+      "vendor_sku": "2801S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1135.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 43,
+      "title": "Charlotte",
+      "vendor_product_id": "8ec1bb5320414bfda80e4907a5a9da51",
+      "vendor_sku": "2509A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1065.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 44,
+      "title": "Classic Revival",
+      "vendor_product_id": "a19ee04cab634e2d91055997276d712f",
+      "vendor_sku": "2826A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1120.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 45,
+      "title": "Connecticut",
+      "vendor_product_id": "6dddcfb0244346a4bc103b289718395e",
+      "vendor_sku": "2920A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1080.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 46,
+      "title": "Connecticut",
+      "vendor_product_id": "10c795c2f8fe44068bb1a6a0694a5204",
+      "vendor_sku": "2920S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1045.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 47,
+      "title": "Dolce",
+      "vendor_product_id": "236ab9d3845243809abe85408f701dc7",
+      "vendor_sku": "2844A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1015.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 48,
+      "title": "Dolce",
+      "vendor_product_id": "c05d7246b35b43bf89cf3f9a8e66a137",
+      "vendor_sku": "2844S"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1090.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 49,
+      "title": "Ducet",
+      "vendor_product_id": "1fdc9e7c7d5749a2a521e15e7504956c",
+      "vendor_sku": "2803A"
+    },
+    {
+      "category": "Dining Chairs",
+      "media_sync_ready": true,
+      "price": 1015.0,
+      "price_source": "price_list_xlsx",
+      "selection_rank": 50,
+      "title": "Ducet",
+      "vendor_product_id": "ce1f5a65b758452cba9f61e50bb77962",
+      "vendor_sku": "2803S"
+    }
+  ],
+  "excluded_skus": [
+    "2532A",
+    "2588S"
+  ],
+  "fingerprint_sha256": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+  "generated_at": "2026-09-18T06:10:19+00:00",
+  "legacy_issue_143_manifest_fingerprint": "c07ee64f47fc0dc9359389cc52f1d7a1e06de6bc0528dade8715a78f3d632989",
+  "rejected_candidate_count": 97,
+  "schema_version": "artistic-frame-demo-enrichment-2026-09-18.1",
+  "skus": [
+    "2505A",
+    "2901A",
+    "2566A",
+    "2566S",
+    "2439A",
+    "2439S",
+    "2540A",
+    "2509S",
+    "2503A",
+    "2529A",
+    "2529S",
+    "2811S",
+    "2454A",
+    "2827A",
+    "2827S",
+    "2848A",
+    "2848S",
+    "2380A",
+    "2902A",
+    "2810A",
+    "2810S",
+    "2832A",
+    "2829A",
+    "2842A",
+    "2842S",
+    "2537A",
+    "2537S",
+    "2836A",
+    "2428A",
+    "2026A",
+    "2482S",
+    "2879A",
+    "2879S",
+    "2923A",
+    "2923S",
+    "2505S",
+    "2901S",
+    "2831A",
+    "2831S",
+    "2540S",
+    "2801A",
+    "2801S",
+    "2509A",
+    "2826A",
+    "2920A",
+    "2920S",
+    "2844A",
+    "2844S",
+    "2803A",
+    "2803S"
+  ],
+  "substitutions": [
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2577A"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2577S"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2612A"
+    },
+    {
+      "detail": "low_resolution",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2948A"
+    },
+    {
+      "detail": "low_resolution",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2948S"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2538A"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2556S"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2553S"
+    },
+    {
+      "detail": "low_resolution",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2813A"
+    },
+    {
+      "detail": "low_resolution",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2847A"
+    },
+    {
+      "detail": "low_resolution",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2847S"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2960A"
+    },
+    {
+      "reason": "missing_authoritative_price",
+      "replaced_sku": "2085S"
+    },
+    {
+      "reason": "missing_authoritative_price",
+      "replaced_sku": "2888S"
+    },
+    {
+      "reason": "missing_authoritative_price",
+      "replaced_sku": "2912S"
+    },
+    {
+      "reason": "missing_authoritative_price",
+      "replaced_sku": "2929A"
+    },
+    {
+      "reason": "missing_authoritative_price",
+      "replaced_sku": "2929S"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2507A"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2549S"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2619"
+    },
+    {
+      "detail": "low_resolution",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2943A"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2918A"
+    },
+    {
+      "reason": "missing_authoritative_price",
+      "replaced_sku": "2510O"
+    },
+    {
+      "detail": "no_download_attempt",
+      "reason": "hub_media_processing_failed",
+      "replaced_sku": "2564CS"
+    }
+  ],
+  "tenant_slug": "rueiv",
+  "vendor_id": "artistic-frame"
+}

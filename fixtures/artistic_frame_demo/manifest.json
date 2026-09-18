@@ -1,0 +1,58 @@
+{
+  "version": "1.0.0",
+  "gate": "ARTISTIC_FRAME_SOURCE152_COHORT_INGESTED",
+  "generated_at": "2026-09-18T06:55:28.313Z",
+  "mode": "source152_ingested",
+  "live_mutation": false,
+  "source": {
+    "upstream": "Adversoup/RueIV-Source#152",
+    "status": "ingested",
+    "fingerprint": null,
+    "export_fingerprint": "5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff",
+    "ingested_at": "2026-09-18T06:55:28.316Z",
+    "ingest_from": "/workspace/fixtures/artistic_frame_demo/source152_handoff",
+    "source_files": {
+      "manifest": "artistic_frame_demo_cohort_manifest.json",
+      "export": "artistic_frame_demo_enriched_payload.json"
+    },
+    "source_commit": null,
+    "media_handoff_mode": "hub_processed_media",
+    "price_policy": "authenticated_only_display",
+    "manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+    "cohort_manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+    "provenance": {
+      "ok": true,
+      "issues": [],
+      "fingerprints": {
+        "manifest_fingerprint_sha256": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+        "payload_fingerprint_sha256": "5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff",
+        "cohort_manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a"
+      },
+      "counts": {
+        "manifest_cohort_size": 50,
+        "payload_product_count": 50
+      }
+    }
+  },
+  "demo": {
+    "vendor_display_name": "Artistic Frame",
+    "vendor_handle": "artistic-frame",
+    "collection_handle": "artistic-frame-demo",
+    "collection_title": "Artistic Frame — Client Demo",
+    "max_products": 50,
+    "target_products": 50,
+    "price_hidden": false,
+    "hidden_from_navigation": true,
+    "default_product_status": "ACTIVE"
+  },
+  "manifest": {
+    "selected_records": 50,
+    "checksum_sha256": "d8a7e8310ab052ce3ad9d97dfb53eb4adf45dc116ac8aa291d5245a540b0ac18",
+    "products_file": "products.json",
+    "source143_selection_rules": []
+  },
+  "scaffold": {
+    "enabled": false,
+    "note": "Source#143 cohort ingested — scaffold disabled"
+  }
+}
