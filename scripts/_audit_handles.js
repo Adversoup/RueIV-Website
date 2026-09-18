@@ -39,7 +39,7 @@ async function main() {
     'furniture','furniture-living-room','furniture-dining-room','furniture-bedroom','furniture-office','furniture-seating','furniture-sofas','furniture-sectionals','furniture-occasional-chairs','furniture-dining-chairs','furniture-stools','furniture-benches-ottomans','furniture-beds','furniture-tables','furniture-dining-tables','furniture-coffee-tables','furniture-side-tables','furniture-bedside-tables','furniture-consoles','furniture-desks','furniture-casegoods','furniture-cabinets','furniture-sideboards','furniture-floor-display','furniture-quick-ship',
     'rugs','rugs-quick-ship',
     'accessories','accessories-cushions','accessories-mirrors','accessories-objects','accessories-throws',
-    'designers','alexander-lamont','altura','area-environments','arte','c-c-milano','casamance','chase-erwin','clarence-house','de-le-cuona','elitis','ferrick-mason','george-spencer','hartmann-forbes','innovations','j-samuel','jab','jean-monro','jennifer-shorto','liberty-of-london','marika-meyer','mark-phillips','mj-atelier','olivia-barry','paola-melendez-casa','porta-romana','powell-bonnell','rosemary-hallgarten','the-vale-london','tomlinson-companies','verellen','victoria-larson','zimmer-rohde',
+    'designers','alexander-lamont','altura','area-environments','arte','artistic-frame','c-c-milano','casamance','chase-erwin','clarence-house','de-le-cuona','elitis','ferrick-mason','george-spencer','hartmann-forbes','innovations','j-samuel','jab','jean-monro','jennifer-shorto','liberty-of-london','marika-meyer','mark-phillips','mj-atelier','olivia-barry','paola-melendez-casa','porta-romana','powell-bonnell','rosemary-hallgarten','the-vale-london','tomlinson-companies','verellen','victoria-larson','zimmer-rohde',
     'quick-ship'
   ];
 
