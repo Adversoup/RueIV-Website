@@ -75,6 +75,7 @@ Legacy Hub JSON blobs may also populate `rueiv.dimensions`, `rueiv.category_attr
 | `color_family` | `taxonomy.color_family` + tag `color:{slug}` | Color |
 | `end_use[]` | `taxonomy.end_use` + tag `end-use:{name}` | Application |
 | `subcategory` | `taxonomy.subcategory` | Type |
+| `collection` | `taxonomy.collection` | Collection |
 | `material_type[]` | `taxonomy.material_type` + tag `material:{name}` | Material |
 | `design` | `taxonomy.design` | Design |
 | `style` | `taxonomy.style` | Style |
