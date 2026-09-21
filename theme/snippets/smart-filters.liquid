@@ -9,7 +9,7 @@
   Filter order by category:
   - Fabric:    Material → Design → Color → Designer
   - Wallpaper: Material → Design → Color → Designer
-  - Furniture: Room → Type → Collection → Material → Style → Designer
+  - Furniture: Room → Type → Collection → Material → Color → Style → Designer
   - Lighting:  Type → Style → Lead Time → Designer
   - Rug:       Size → Material → Color → Designer
   - Accessory: Type → Material → Designer
@@ -74,7 +74,7 @@
     when 'wallpaper'
       assign _filter_order = 'material,pattern,color,designer'
     when 'furniture'
-      assign _filter_order = 'room,type,collection,material,style,designer'
+      assign _filter_order = 'room,type,collection,material,color,style,designer'
     when 'lighting'
       assign _filter_order = 'type,style,color,designer'
     when 'rugs'
