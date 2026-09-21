@@ -9,7 +9,7 @@
   Filter order by category:
   - Fabric:    Material → Design → Color → Designer
   - Wallpaper: Material → Design → Color → Designer
-  - Furniture: Room → Type → Material → Style → Lead Time → Designer
+  - Furniture: Room → Type → Collection → Material → Color → Style → Designer
   - Lighting:  Type → Style → Lead Time → Designer
   - Rug:       Size → Material → Color → Designer
   - Accessory: Type → Material → Designer
@@ -74,7 +74,7 @@
     when 'wallpaper'
       assign _filter_order = 'material,pattern,color,designer'
     when 'furniture'
-      assign _filter_order = 'room,type,material,color,style,designer'
+      assign _filter_order = 'room,type,collection,material,color,style,designer'
     when 'lighting'
       assign _filter_order = 'type,style,color,designer'
     when 'rugs'
@@ -96,6 +96,7 @@
   assign _label_map_designer = 'designer,vendor,brand'
   assign _label_map_room = 'room'
   assign _label_map_type = 'type,subcategory,fixture'
+  assign _label_map_collection = 'collection'
   assign _label_map_style = 'style'
   assign _label_map_size = 'size'
   assign _label_map_lead_time = 'lead time,lead_time'
@@ -173,6 +174,8 @@
               assign _match_keywords = _label_map_room
             when 'type'
               assign _match_keywords = _label_map_type
+            when 'collection'
+              assign _match_keywords = _label_map_collection
             when 'style'
               assign _match_keywords = _label_map_style
             when 'size'

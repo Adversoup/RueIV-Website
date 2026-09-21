@@ -30,7 +30,7 @@
         "Dark":      ["Charcoal", "Black", "Burgundy"],
         "Patterned": ["Multi"]
       },
-      "applies_to": ["Fabric", "Wallpaper", "Rug"]
+      "applies_to": ["Fabric", "Wallpaper", "Furniture", "Rug"]
     },
     "design": {
       "label": "Pattern / Design",
@@ -59,6 +59,13 @@
         "Accessory": ["Object", "Sculpture", "Frame", "Tray", "Bowl", "Decorative Piece"]
       },
       "applies_to": ["Furniture", "Lighting", "Accessory"]
+    },
+    "collection": {
+      "label": "Collection",
+      "metafield": "taxonomy.collection",
+      "tag_prefix": "collection:",
+      "applies_to": ["Furniture"],
+      "note": "Furniture collection / designer-line within a vendor. Example: Benjamin Johnston Design, Guy Chaddock."
     },
     "style": {
       "label": "Style",
@@ -95,7 +102,7 @@
   "category_filter_order": {
     "Fabric":    ["material", "design", "color_family", "designer"],
     "Wallpaper": ["material", "design", "color_family", "designer"],
-    "Furniture": ["room", "furniture_type", "material", "style", "lead_time", "designer"],
+    "Furniture": ["room", "furniture_type", "collection", "material", "color_family", "style", "designer"],
     "Lighting":  ["furniture_type", "style", "lead_time", "designer"],
     "Rug":       ["size", "material", "color_family", "designer"],
     "Accessory": ["furniture_type", "material", "designer"]
@@ -105,6 +112,7 @@
     "designer_filter": "Rendered as collapsed, alphabetical, searchable dropdown. Sourced from product.vendor.",
     "color_consolidation": "24 granular colors consolidated into 5 families for browsing. Granular values kept in taxonomy.color_family for PDP display.",
     "smart_filtering": "Collection pages detect product_type from collection title or first product and render only applicable filters.",
-    "quick_ship": "Cross-cutting concern. Tag-based smart collection + filter value + mega menu links."
+    "quick_ship": "Cross-cutting concern. Tag-based smart collection + filter value + mega menu links.",
+    "collection_filter": "Furniture-only. Distinct from vendor/designer and type/subcategory."
   }
 }
