@@ -30,7 +30,7 @@
         "Dark":      ["Charcoal", "Black", "Burgundy"],
         "Patterned": ["Multi"]
       },
-      "applies_to": ["Fabric", "Wallpaper", "Rug"]
+      "applies_to": ["Fabric", "Wallpaper", "Furniture", "Rug"]
     },
     "design": {
       "label": "Pattern / Design",
@@ -102,7 +102,7 @@
   "category_filter_order": {
     "Fabric":    ["material", "design", "color_family", "designer"],
     "Wallpaper": ["material", "design", "color_family", "designer"],
-    "Furniture": ["room", "furniture_type", "collection", "material", "style", "designer"],
+    "Furniture": ["room", "furniture_type", "collection", "material", "color_family", "style", "designer"],
     "Lighting":  ["furniture_type", "style", "lead_time", "designer"],
     "Rug":       ["size", "material", "color_family", "designer"],
     "Accessory": ["furniture_type", "material", "designer"]
