@@ -3,8 +3,8 @@
   smart-filters.liquid — Category-Aware Horizontal Filter Bar
   ============================================================================
   Renders a horizontal filter bar that adapts filter groups based on the
-  product category. Detects category from collection title/handle and
-  shows only relevant filters.
+  product category. Detects category from product.type first, then
+  collection handle heuristics, and shows only relevant filters.
 
   Filter order by category:
   - Fabric:    Material → Design → Color → Designer
@@ -22,41 +22,53 @@
 {%- liquid
   comment
     ── Detect product category from collection context ──
+    Priority: product.type (frozen + legacy labels) → collection handle heuristics.
+    Handle substrings like "frame" must not override Furniture product.type
+    (e.g. artistic-frame-demo).
   endcomment
 
   assign _cat = ''
-  assign _handle = collection.handle | downcase
 
-  if _handle contains 'textiles' or _handle contains 'fabric' or _handle contains 'upholstery' or _handle contains 'drapery' or _handle contains 'sheer' or _handle contains 'linen' or _handle contains 'cotton' or _handle contains 'silk' or _handle contains 'velvet'
-    assign _cat = 'fabric'
-  elsif _handle contains 'wallcovering' or _handle contains 'wallpaper' or _handle contains 'grasscloth' or _handle contains 'mural'
-    assign _cat = 'wallpaper'
-  elsif _handle contains 'furniture' or _handle contains 'sofa' or _handle contains 'chair' or _handle contains 'table' or _handle contains 'casegood'
-    assign _cat = 'furniture'
-  elsif _handle contains 'lighting' or _handle contains 'lamp' or _handle contains 'pendant' or _handle contains 'sconce'
-    assign _cat = 'lighting'
-  elsif _handle contains 'rug'
-    assign _cat = 'rugs'
-  elsif _handle contains 'accessor' or _handle contains 'decor' or _handle contains 'tabletop' or _handle contains 'sculpture' or _handle contains 'frame'
-    assign _cat = 'accessory'
+  comment
+    ── 1. Authoritative: first product's Shopify product_type ──
+    Frozen nav labels: Textiles, Wallcovering, Furniture, Lighting, Rugs, Accessories.
+    Legacy import labels: Fabric, Wallpaper, Rug, Accessory.
+  endcomment
+  if collection.products.size > 0
+    assign _first_type = collection.products.first.type | downcase
+    case _first_type
+      when 'textiles', 'fabric', 'textile'
+        assign _cat = 'fabric'
+      when 'wallcovering', 'wallpaper'
+        assign _cat = 'wallpaper'
+      when 'furniture'
+        assign _cat = 'furniture'
+      when 'lighting'
+        assign _cat = 'lighting'
+      when 'rugs', 'rug'
+        assign _cat = 'rugs'
+      when 'accessories', 'accessory'
+        assign _cat = 'accessory'
+    endcase
   endif
 
   comment
-    ── Fallback: detect from first product's type ──
+    ── 2. Fallback: collection handle (canonical nav + legacy aliases) ──
   endcomment
-  if _cat == '' and collection.products.size > 0
-    assign _first_type = collection.products.first.type | downcase
-    if _first_type == 'fabric'
+  if _cat == ''
+    assign _handle = collection.handle | downcase
+
+    if _handle contains 'textiles' or _handle contains 'fabric' or _handle contains 'upholstery' or _handle contains 'drapery' or _handle contains 'sheer' or _handle contains 'linen' or _handle contains 'cotton' or _handle contains 'silk' or _handle contains 'velvet'
       assign _cat = 'fabric'
-    elsif _first_type == 'wallpaper'
+    elsif _handle contains 'wallcovering' or _handle contains 'wallpaper' or _handle contains 'grasscloth' or _handle contains 'mural'
       assign _cat = 'wallpaper'
-    elsif _first_type == 'furniture'
+    elsif _handle contains 'furniture' or _handle contains 'sofa' or _handle contains 'chair' or _handle contains 'table' or _handle contains 'casegood'
       assign _cat = 'furniture'
-    elsif _first_type == 'lighting'
+    elsif _handle contains 'lighting' or _handle contains 'lamp' or _handle contains 'pendant' or _handle contains 'sconce'
       assign _cat = 'lighting'
-    elsif _first_type == 'rug'
+    elsif _handle contains 'rug'
       assign _cat = 'rugs'
-    elsif _first_type == 'accessory'
+    elsif _handle contains 'accessor' or _handle contains 'decor' or _handle contains 'tabletop' or _handle contains 'sculpture'
       assign _cat = 'accessory'
     endif
   endif
