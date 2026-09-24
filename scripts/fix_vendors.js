@@ -1,202 +1,259 @@
 #!/usr/bin/env node
 /**
- * fix_vendors.js — Three operations:
- *  1. Normalize duplicate vendor names (arte→Arte, porta-romana→Porta Romana, etc.)
- *  2. Create missing vendor collections (automated smart collections by vendor)
- *  3. Update Designers menu with all 10 unique vendors
+ * fix_vendors.js — data-driven vendor navigation sync.
+ *
+ * 1. Normalize known legacy vendor aliases.
+ * 2. Discover the CURRENT vendor universe from Shopify product.vendor.
+ * 3. Ensure one smart collection per discovered vendor.
+ * 4. Rebuild only the Designers submenu from that discovered vendor set.
+ *
+ * Vendor membership is never hardcoded. New Hub-synced brands appear on the
+ * next run as soon as their Shopify products carry the canonical vendor value.
  */
+'use strict';
+
 require('dotenv').config();
+
+const { buildVendorSpecs } = require('./lib/vendor_navigation');
 
 const STORE = process.env.SHOPIFY_STORE;
 const TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
-const VER   = process.env.SHOPIFY_API_VERSION;
-const GQL   = `https://${STORE}/admin/api/${VER}/graphql.json`;
-const REST  = `https://${STORE}/admin/api/${VER}`;
+const VER = process.env.SHOPIFY_API_VERSION || '2026-04';
+const GQL = `https://${STORE}/admin/api/${VER}/graphql.json`;
+const REST = `https://${STORE}/admin/api/${VER}`;
+const DRY_RUN = process.argv.includes('--dry-run');
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function requireCredentials() {
+  if (!STORE || !TOKEN) {
+    throw new Error('Missing SHOPIFY_STORE or SHOPIFY_ADMIN_ACCESS_TOKEN');
+  }
+}
 
 async function gql(query, variables = {}) {
-  const r = await fetch(GQL, {
+  requireCredentials();
+  const response = await fetch(GQL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': TOKEN },
-    body: JSON.stringify({ query, variables })
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': TOKEN,
+    },
+    body: JSON.stringify({ query, variables }),
   });
-  const json = await r.json();
+  const json = await response.json();
   if (json.errors) {
-    console.error('GQL errors:', JSON.stringify(json.errors, null, 2));
-    throw new Error('GraphQL error');
+    throw new Error(`GraphQL error: ${JSON.stringify(json.errors)}`);
   }
   return json.data;
 }
 
 async function restPost(path, body) {
-  const r = await fetch(`${REST}${path}`, {
+  requireCredentials();
+  const response = await fetch(`${REST}${path}`, {
     method: 'POST',
-    headers: { 'X-Shopify-Access-Token': TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    headers: {
+      'X-Shopify-Access-Token': TOKEN,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
   });
-  return r.json();
+  const json = await response.json();
+  if (!response.ok) {
+    throw new Error(`REST ${response.status}: ${JSON.stringify(json)}`);
+  }
+  return json;
 }
 
-async function restGet(path) {
-  const r = await fetch(`${REST}${path}`, {
-    headers: { 'X-Shopify-Access-Token': TOKEN }
-  });
-  return r.json();
-}
-
-/* ══════════════════════════════════════════════════════════════
-   STEP 1 — Normalize duplicate vendor names
-   ══════════════════════════════════════════════════════════════ */
-
-// Map of wrong vendor name → correct vendor name
+// Alias correction is intentionally separate from vendor discovery.
+// This maps legacy spelling to canonical display spelling; it does NOT define
+// which vendors are allowed to exist.
 const VENDOR_FIXES = {
-  'arte':          'Arte',
-  'porta-romana':  'Porta Romana',
-  'verellen':      'Verellen',
-  'alexander_lamont': 'Alexander Lamont',
-  'cc-milano':     'CC Milano',
-  'chase-erwin':   'Chase Erwin',
-  'altura':        'Altura',
+  arte: 'Arte',
+  'porta-romana': 'Porta Romana',
+  verellen: 'Verellen',
+  alexander_lamont: 'Alexander Lamont',
+  'cc-milano': 'CC Milano',
+  'chase-erwin': 'Chase Erwin',
+  altura: 'Altura',
 };
 
 async function fixVendorNames() {
-  console.log('\n━━━ STEP 1: Normalize vendor names ━━━');
+  console.log('\n━━━ STEP 1: Normalize known legacy vendor aliases ━━━');
 
   for (const [wrong, correct] of Object.entries(VENDOR_FIXES)) {
-    // Collect all product IDs with wrong vendor
     let cursor = null;
     const ids = [];
 
-    for (let page = 0; page < 50; page++) {
-      const after = cursor ? `, after: "${cursor}"` : '';
-      const escapedVendor = wrong.replace(/"/g, '\\"');
-      const data = await gql(`{
-        products(first: 100, query: "vendor:\\"${escapedVendor}\\""${after}) {
-          edges {
-            cursor
-            node { id vendor }
+    for (let page = 0; page < 250; page++) {
+      const query = `
+        query ProductsByVendor($after: String) {
+          products(first: 250, after: $after, query: ${JSON.stringify(`vendor:"${wrong}"`)}) {
+            edges { cursor node { id vendor } }
+            pageInfo { hasNextPage }
           }
-          pageInfo { hasNextPage }
         }
-      }`);
-
-      const edges = data.products.edges;
-      if (edges.length === 0) break;
-
+      `;
+      const data = await gql(query, { after: cursor });
+      const edges = data.products.edges || [];
       for (const edge of edges) {
         if (edge.node.vendor === wrong) ids.push(edge.node.id);
       }
-
-      cursor = edges[edges.length - 1]?.cursor;
-      if (!data.products.pageInfo.hasNextPage) break;
+      if (!data.products.pageInfo.hasNextPage || edges.length === 0) break;
+      cursor = edges[edges.length - 1].cursor;
     }
 
-    if (ids.length === 0) {
-      console.log(`  · "${wrong}" — no products to fix`);
+    if (!ids.length) {
+      console.log(`  · "${wrong}" — no products to normalize`);
       continue;
     }
 
-    console.log(`  … "${wrong}" → "${correct}" — updating ${ids.length} products`);
+    if (DRY_RUN) {
+      console.log(`  · DRY RUN "${wrong}" → "${correct}" (${ids.length} products)`);
+      continue;
+    }
 
-    // Update in batches of 10 concurrently
     for (let i = 0; i < ids.length; i += 10) {
       const batch = ids.slice(i, i + 10);
-      await Promise.all(batch.map(id =>
-        gql(`mutation { productUpdate(input: { id: "${id}", vendor: ${JSON.stringify(correct)} }) { product { id } userErrors { message } } }`)
-      ));
-      process.stdout.write(`    ${Math.min(i + 10, ids.length)}/${ids.length}\r`);
-      await sleep(500);
+      await Promise.all(
+        batch.map((id) =>
+          gql(
+            `mutation UpdateVendor($input: ProductInput!) {
+              productUpdate(input: $input) {
+                product { id vendor }
+                userErrors { field message }
+              }
+            }`,
+            { input: { id, vendor: correct } }
+          )
+        )
+      );
+      await sleep(350);
     }
-    console.log(`  ✓ "${wrong}" → "${correct}" (${ids.length} products)`);
+    console.log(`  ✓ "${wrong}" → "${correct}" (${ids.length})`);
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   STEP 2 — Create missing vendor collections (smart collections)
-   ══════════════════════════════════════════════════════════════ */
+async function fetchVendorNames() {
+  const vendors = [];
+  let cursor = null;
 
-const VENDOR_COLLECTIONS = [
-  { title: 'Area Environments', handle: 'area-environments', vendor: 'Area Environments' },
-  { title: 'Alexander Lamont',  handle: 'alexander-lamont',  vendor: 'Alexander Lamont' },
-  { title: 'Altura',            handle: 'altura',             vendor: 'Altura' },
-  { title: 'CC Milano',         handle: 'cc-milano',          vendor: 'CC Milano' },
-  { title: 'Chase Erwin',       handle: 'chase-erwin',        vendor: 'Chase Erwin' },
-];
+  for (let page = 0; page < 250; page++) {
+    const data = await gql(
+      `query VendorCensus($after: String) {
+        products(first: 250, after: $after) {
+          edges { cursor node { vendor } }
+          pageInfo { hasNextPage }
+        }
+      }`,
+      { after: cursor }
+    );
 
-async function createVendorCollections() {
-  console.log('\n━━━ STEP 2: Create missing vendor collections ━━━');
-
-  // Check what already exists
-  const existing = await gql(`{
-    collections(first: 250) {
-      edges { node { handle title } }
+    const edges = data.products.edges || [];
+    for (const edge of edges) {
+      if (edge.node.vendor && edge.node.vendor.trim()) vendors.push(edge.node.vendor);
     }
-  }`);
-  const existingHandles = new Set(existing.collections.edges.map(e => e.node.handle));
+    if (!data.products.pageInfo.hasNextPage || edges.length === 0) break;
+    cursor = edges[edges.length - 1].cursor;
+  }
 
-  for (const vc of VENDOR_COLLECTIONS) {
-    if (existingHandles.has(vc.handle)) {
-      console.log(`  · ${vc.title} — already exists`);
+  return vendors;
+}
+
+async function fetchCollectionIndex() {
+  const byHandle = new Map();
+  const byTitle = new Map();
+  let cursor = null;
+
+  for (let page = 0; page < 20; page++) {
+    const data = await gql(
+      `query CollectionIndex($after: String) {
+        collections(first: 250, after: $after) {
+          edges { cursor node { id handle title } }
+          pageInfo { hasNextPage }
+        }
+      }`,
+      { after: cursor }
+    );
+
+    const edges = data.collections.edges || [];
+    for (const edge of edges) {
+      const node = edge.node;
+      byHandle.set(node.handle, node);
+      byTitle.set(String(node.title || '').trim().toLowerCase(), node);
+    }
+    if (!data.collections.pageInfo.hasNextPage || edges.length === 0) break;
+    cursor = edges[edges.length - 1].cursor;
+  }
+
+  return { byHandle, byTitle };
+}
+
+function collectionForVendor(spec, index) {
+  return (
+    index.byTitle.get(spec.title.toLowerCase()) ||
+    index.byHandle.get(spec.handle) ||
+    null
+  );
+}
+
+async function ensureVendorCollections(vendorSpecs) {
+  console.log('\n━━━ STEP 2: Ensure vendor smart collections ━━━');
+  let index = await fetchCollectionIndex();
+
+  for (const spec of vendorSpecs) {
+    if (collectionForVendor(spec, index)) {
+      console.log(`  · ${spec.title} — collection exists`);
       continue;
     }
 
-    // Create smart collection via REST (GraphQL doesn't support smart collections well)
+    if (DRY_RUN) {
+      console.log(`  · DRY RUN create ${spec.title} [vendor = "${spec.vendor}"]`);
+      continue;
+    }
+
     const result = await restPost('/smart_collections.json', {
       smart_collection: {
-        title: vc.title,
-        rules: [
-          { column: 'vendor', relation: 'equals', condition: vc.vendor }
-        ],
+        title: spec.title,
+        rules: [{ column: 'vendor', relation: 'equals', condition: spec.vendor }],
         published: true,
-        sort_order: 'best-selling'
-      }
+        sort_order: 'best-selling',
+      },
     });
 
-    if (result.smart_collection) {
-      console.log(`  ✓ Created: ${vc.title} (handle: ${result.smart_collection.handle})`);
-    } else {
-      console.error(`  ✗ Failed: ${vc.title}`, JSON.stringify(result.errors || result));
+    if (!result.smart_collection) {
+      throw new Error(`Failed creating vendor collection for ${spec.title}: ${JSON.stringify(result)}`);
     }
-    await sleep(500);
+    console.log(`  ✓ Created ${spec.title} → ${result.smart_collection.handle}`);
+    await sleep(350);
   }
+
+  if (!DRY_RUN) index = await fetchCollectionIndex();
+  return index;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   STEP 3 — Update Designers menu with all vendors
-   ══════════════════════════════════════════════════════════════ */
+function cloneItem(item) {
+  const cloned = { title: item.title, type: item.type };
+  if (item.resourceId) cloned.resourceId = item.resourceId;
+  else if (item.url) cloned.url = item.url;
+  if (item.items?.length) cloned.items = item.items.map(cloneItem);
+  return cloned;
+}
 
-async function updateDesignersMenu() {
-  console.log('\n━━━ STEP 3: Update Designers menu ━━━');
-
-  // Refetch collection map after creating new ones
-  const colMap = {};
-  let cursor = null;
-  for (let i = 0; i < 10; i++) {
-    const after = cursor ? `, after: "${cursor}"` : '';
-    const data = await gql(`{ collections(first: 250${after}) { edges { cursor node { id handle } } pageInfo { hasNextPage } } }`);
-    for (const edge of data.collections.edges) {
-      colMap[edge.node.handle] = edge.node.id;
-      cursor = edge.cursor;
-    }
-    if (!data.collections.pageInfo.hasNextPage) break;
+function collectionMenuItem(title, collection) {
+  if (collection?.id) {
+    return { title, type: 'COLLECTION', resourceId: collection.id };
   }
+  return {
+    title,
+    type: 'HTTP',
+    url: `https://${STORE}/collections/${collection?.handle || ''}`,
+  };
+}
 
-  // Build collection-linked item
-  function col(title, handle) {
-    const gid = colMap[handle];
-    return gid
-      ? { title, type: 'COLLECTION', resourceId: gid }
-      : { title, type: 'HTTP', url: `https://${STORE}/collections/${handle}` };
-  }
+async function updateDesignersMenu(vendorSpecs, collectionIndex) {
+  console.log('\n━━━ STEP 3: Rebuild Designers submenu from discovered vendors ━━━');
 
-  function http(title, path, children) {
-    const item = { title, type: 'HTTP', url: `https://${STORE}${path}` };
-    if (children && children.length) item.items = children;
-    return item;
-  }
-
-  // Get current main menu
   const { menus } = await gql(`{
     menus(first: 50) {
       nodes {
@@ -212,87 +269,96 @@ async function updateDesignersMenu() {
     }
   }`);
 
-  const mainMenu = menus.nodes.find(m => m.handle === 'main-menu');
-  if (!mainMenu) {
-    console.error('  ✗ main-menu not found');
+  const mainMenu = menus.nodes.find((menu) => menu.handle === 'main-menu');
+  if (!mainMenu) throw new Error('main-menu not found');
+
+  const currentDesigners = mainMenu.items.find((item) => item.title === 'Designers');
+  if (!currentDesigners) throw new Error('Designers item not found on main-menu');
+
+  const allDesignersCollection =
+    collectionIndex.byHandle.get('designers') ||
+    collectionIndex.byTitle.get('designers');
+
+  const children = [
+    allDesignersCollection
+      ? collectionMenuItem('All Designers', allDesignersCollection)
+      : { title: 'All Designers', type: 'HTTP', url: `https://${STORE}/pages/brands` },
+    ...vendorSpecs.map((spec) => {
+      const collection = collectionForVendor(spec, collectionIndex);
+      return collection
+        ? collectionMenuItem(spec.title, collection)
+        : {
+            title: spec.title,
+            type: 'HTTP',
+            url: `https://${STORE}/collections/${spec.handle}`,
+          };
+    }),
+  ];
+
+  console.log(`  Discovered vendor count: ${vendorSpecs.length}`);
+  children.forEach((item) => console.log(`    ├─ ${item.title}`));
+
+  if (DRY_RUN) {
+    console.log('  · DRY RUN — menuUpdate not executed');
     return;
   }
 
-  // Rebuild items — keep everything, just replace Designers children
-  function cloneItem(item) {
-    const cloned = { title: item.title, type: item.type };
-    if (item.resourceId) cloned.resourceId = item.resourceId;
-    else if (item.url) cloned.url = item.url;
-    if (item.items && item.items.length) {
-      cloned.items = item.items.map(cloneItem);
-    }
-    return cloned;
-  }
-
-  const newItems = mainMenu.items.map(item => {
-    if (item.title === 'Designers') {
-      // Replace children with all 10 vendors sorted alphabetically
-      return http('Designers', '/collections', [
-        http('All Designers', '/collections'),
-        col('Alexander Lamont', 'alexander-lamont'),
-        col('Altura', 'altura'),
-        col('Area Environments', 'area-environments'),
-        col('Arte', 'arte'),
-        col('CC Milano', 'cc-milano'),
-        col('Chase Erwin', 'chase-erwin'),
-        col('Fabricut', 'fabricut'),
-        col('Porta Romana', 'porta-romana'),
-        col('Verellen', 'verellen'),
-        col('ZR', 'zr'),
-      ]);
-    }
-    return cloneItem(item);
+  const newItems = mainMenu.items.map((item) => {
+    if (item.title !== 'Designers') return cloneItem(item);
+    const designers = cloneItem(item);
+    designers.items = children;
+    return designers;
   });
 
-  // Update menu
-  const result = await gql(`
-    mutation menuUpdate($id: ID!, $title: String!, $items: [MenuItemUpdateInput!]!) {
+  const result = await gql(
+    `mutation UpdateMainMenu($id: ID!, $title: String!, $items: [MenuItemUpdateInput!]!) {
       menuUpdate(id: $id, title: $title, items: $items) {
         menu {
           id
-          items {
-            title type
-            items { title type }
-          }
+          items { title type items { title type resourceId url } }
         }
         userErrors { field message }
       }
-    }
-  `, { id: mainMenu.id, title: mainMenu.title, items: newItems });
+    }`,
+    { id: mainMenu.id, title: mainMenu.title, items: newItems }
+  );
 
-  const errs = result.menuUpdate?.userErrors;
-  if (errs?.length) {
-    console.error('  ✗ Errors:', JSON.stringify(errs, null, 2));
-    return;
-  }
+  const errors = result.menuUpdate?.userErrors || [];
+  if (errors.length) throw new Error(`menuUpdate failed: ${JSON.stringify(errors)}`);
 
-  // Show Designers section
-  const designers = result.menuUpdate.menu.items.find(i => i.title === 'Designers');
-  console.log('  ✓ Designers menu updated:');
-  (designers?.items || []).forEach(c => {
-    console.log(`    ├─ ${c.title}  [${c.type}]`);
+  const designers = result.menuUpdate.menu.items.find((item) => item.title === 'Designers');
+  console.log(`  ✓ Designers menu updated with ${(designers?.items || []).length - 1} vendors`);
+}
+
+async function main() {
+  console.log('╔════════════════════════════════════════════════════════╗');
+  console.log('║ Dynamic Vendor Navigation — Collections + Designers  ║');
+  console.log('╚════════════════════════════════════════════════════════╝');
+  if (DRY_RUN) console.log('DRY RUN — no Shopify mutation\n');
+
+  await fixVendorNames();
+
+  const vendorNames = await fetchVendorNames();
+  const vendorSpecs = buildVendorSpecs(vendorNames);
+  console.log(`\nVendor census: ${vendorNames.length} product rows → ${vendorSpecs.length} unique vendors`);
+
+  const collectionIndex = await ensureVendorCollections(vendorSpecs);
+  await updateDesignersMenu(vendorSpecs, collectionIndex);
+
+  console.log('\n✅ Dynamic vendor navigation sync complete');
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error('Fatal:', error.message || error);
+    process.exit(1);
   });
 }
 
-/* ══════════════════════════════════════════════════════════════
-   MAIN
-   ══════════════════════════════════════════════════════════════ */
-
-async function main() {
-  console.log('╔══════════════════════════════════════════════════════╗');
-  console.log('║  Fix Vendors — Normalize, Create Collections, Menu   ║');
-  console.log('╚══════════════════════════════════════════════════════╝');
-
-  await fixVendorNames();
-  await createVendorCollections();
-  await updateDesignersMenu();
-
-  console.log('\n✅ All vendor fixes complete!');
-}
-
-main().catch(err => { console.error('Fatal:', err); process.exit(1); });
+module.exports = {
+  fetchVendorNames,
+  fetchCollectionIndex,
+  ensureVendorCollections,
+  updateDesignersMenu,
+  collectionForVendor,
+};
