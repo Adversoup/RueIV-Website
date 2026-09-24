@@ -12,6 +12,8 @@
  */
 require('dotenv').config();
 
+const { buildVendorSpecs } = require('./lib/vendor_navigation');
+const { fetchVendorNames } = require('./fix_vendors');
 const https = require('https');
 const STORE = process.env.SHOPIFY_STORE;
 const TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
@@ -56,6 +58,7 @@ async function gql(query, variables = {}) {
 /* ── Fetch all collections → handle:GID map ──────────────── */
 async function fetchCollectionMap() {
   const map = {};
+  const byTitle = {};
   let cursor = null;
   for (let i = 0; i < 10; i++) {
     const after = cursor ? `, after: "${cursor}"` : '';
@@ -63,10 +66,12 @@ async function fetchCollectionMap() {
     const { collections } = await gql(q);
     for (const edge of collections.edges) {
       map[edge.node.handle] = edge.node.id;
+      byTitle[String(edge.node.title || '').trim().toLowerCase()] = edge.node.id;
       cursor = edge.cursor;
     }
     if (!collections.pageInfo.hasNextPage) break;
   }
+  Object.defineProperty(map, '__byTitle', { value: byTitle, enumerable: false });
   return map;
 }
 
@@ -78,6 +83,13 @@ function col(title, handle, colMap, children) {
     : { title, type: 'HTTP', url: `https://${STORE}/collections/${handle}` };
   if (children && children.length) item.items = children;
   return item;
+}
+
+function vendorCol(spec, colMap) {
+  const gid = colMap.__byTitle?.[spec.title.toLowerCase()] || colMap[spec.handle];
+  return gid
+    ? { title: spec.title, type: 'COLLECTION', resourceId: gid }
+    : { title: spec.title, type: 'HTTP', url: `https://${STORE}/collections/${spec.handle}` };
 }
 
 function http(title, path, children) {
@@ -96,7 +108,7 @@ function header(title, fallbackPath, children) {
    MENU STRUCTURE — Derived from Menu.csv
    ══════════════════════════════════════════════════════════════ */
 
-function buildMenuItems(colMap) {
+function buildMenuItems(colMap, vendorSpecs = []) {
   return [
 
     /* ── 1. TEXTILES ─────────────────────────────────────── */
@@ -202,41 +214,10 @@ function buildMenuItems(colMap) {
     /* ── 7. SHOP THE VIBE ────────────────────────────────── */
     http('Shop The Vibe', '/pages/vibe-studio'),
 
-    /* ── 8. DESIGNERS ────────────────────────────────────── */
+    /* ── 8. DESIGNERS — data-driven from Shopify product.vendor ── */
     col('Designers', 'designers', colMap, [
       col('All Designers', 'designers', colMap),
-      col('Alexander Lamont', 'alexander-lamont', colMap),
-      col('Altura', 'altura', colMap),
-      col('Area Environments', 'area-environments', colMap),
-      col('Arte', 'arte', colMap),
-      col('C&C Milano', 'c-c-milano', colMap),
-      col('Casamance', 'casamance', colMap),
-      col('Chase Erwin', 'chase-erwin', colMap),
-      col('Clarence House', 'clarence-house', colMap),
-      col('de Le Cuona', 'de-le-cuona', colMap),
-      col('Elitis', 'elitis', colMap),
-      col('Ferrick Mason', 'ferrick-mason', colMap),
-      col('George Spencer', 'george-spencer', colMap),
-      col('Hartmann & Forbes', 'hartmann-forbes', colMap),
-      col('Innovations', 'innovations', colMap),
-      col('J.Samuel', 'j-samuel', colMap),
-      col('JAB', 'jab', colMap),
-      col('Jean Monro', 'jean-monro', colMap),
-      col('Jennifer Shorto', 'jennifer-shorto', colMap),
-      col('Liberty of London', 'liberty-of-london', colMap),
-      col('Marika Meyer', 'marika-meyer', colMap),
-      col('Mark Phillips', 'mark-phillips', colMap),
-      col('MJ Atelier', 'mj-atelier', colMap),
-      col('Olivia Barry', 'olivia-barry', colMap),
-      col('Paola Melendez Casa', 'paola-melendez-casa', colMap),
-      col('Porta Romana', 'porta-romana', colMap),
-      col('Powell & Bonnell', 'powell-bonnell', colMap),
-      col('Rosemary Hallgarten', 'rosemary-hallgarten', colMap),
-      col('The Vale London', 'the-vale-london', colMap),
-      col('Tomlinson Companies', 'tomlinson-companies', colMap),
-      col('Verellen', 'verellen', colMap),
-      col('Victoria Larson', 'victoria-larson', colMap),
-      col('Zimmer + Rohde', 'zimmer-rohde', colMap),
+      ...vendorSpecs.map((spec) => vendorCol(spec, colMap)),
     ]),
 
     /* ── 9. QUICK SHIP ───────────────────────────────────── */
@@ -260,8 +241,12 @@ async function main() {
   const colMap = await fetchCollectionMap();
   console.log(`  Found ${Object.keys(colMap).length} collections\n`);
 
-  // 2. Build menu item tree
-  const items = buildMenuItems(colMap);
+  // 2. Discover current vendor universe and build menu item tree.
+  // Vendor membership is not hardcoded: newly synced product.vendor values
+  // automatically become Designers children on the next rebuild.
+  const vendorSpecs = buildVendorSpecs(await fetchVendorNames());
+  console.log(`  Discovered ${vendorSpecs.length} unique vendors\n`);
+  const items = buildMenuItems(colMap, vendorSpecs);
   console.log('━━━ Menu structure ━━━');
   items.forEach(item => {
     console.log(`  ${item.title}  [${item.type}]`);
