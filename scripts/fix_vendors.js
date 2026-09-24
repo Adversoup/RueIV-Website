@@ -85,16 +85,18 @@ async function fixVendorNames() {
     let cursor = null;
     const ids = [];
 
+    const search = `vendor:"${wrong.replace(/"/g, '\\"')}"`;
+
     for (let page = 0; page < 250; page++) {
       const query = `
-        query ProductsByVendor($after: String) {
-          products(first: 250, after: $after, query: ${JSON.stringify(`vendor:"${wrong}"`)}) {
+        query ProductsByVendor($after: String, $search: String!) {
+          products(first: 250, after: $after, query: $search) {
             edges { cursor node { id vendor } }
             pageInfo { hasNextPage }
           }
         }
       `;
-      const data = await gql(query, { after: cursor });
+      const data = await gql(query, { after: cursor, search });
       const edges = data.products.edges || [];
       for (const edge of edges) {
         if (edge.node.vendor === wrong) ids.push(edge.node.id);
@@ -115,7 +117,7 @@ async function fixVendorNames() {
 
     for (let i = 0; i < ids.length; i += 10) {
       const batch = ids.slice(i, i + 10);
-      await Promise.all(
+      const results = await Promise.all(
         batch.map((id) =>
           gql(
             `mutation UpdateVendor($input: ProductInput!) {
@@ -128,6 +130,10 @@ async function fixVendorNames() {
           )
         )
       );
+      const errors = results.flatMap((result) => result.productUpdate?.userErrors || []);
+      if (errors.length) {
+        throw new Error(`productUpdate failed for "${wrong}": ${JSON.stringify(errors)}`);
+      }
       await sleep(350);
     }
     console.log(`  ✓ "${wrong}" → "${correct}" (${ids.length})`);
