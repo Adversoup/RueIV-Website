@@ -19,6 +19,9 @@
  */
 require('dotenv').config();
 
+const { buildVendorSpecs, buildDesignerHttpItems } = require('./lib/vendor_navigation');
+const { fetchVendorNames } = require('./fix_vendors');
+
 const STORE = process.env.SHOPIFY_STORE;
 const TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
 const API_V = process.env.SHOPIFY_API_VERSION || '2026-04';
@@ -417,6 +420,18 @@ async function updateMainMenu(existing) {
 
 async function main() {
   console.log('═══ Creating / Updating Navigation Menus ═══\n');
+
+  // Designers menus are generated from the current Shopify vendor universe.
+  // This prevents onboarding a new vendor from requiring source edits.
+  const vendorSpecs = buildVendorSpecs(await fetchVendorNames());
+  const dynamicDesignerItems = buildDesignerHttpItems(vendorSpecs, item);
+  for (const menuDef of MENUS) {
+    if (menuDef.handle === 'designers-featured' || menuDef.handle === 'designers-all') {
+      menuDef.items = dynamicDesignerItems.map((entry) => ({ ...entry }));
+    }
+  }
+  console.log(`Discovered ${vendorSpecs.length} vendors for Designers menus\n`);
+
   const existing = await getExistingMenus();
   console.log(`Found ${existing.length} existing menus\n`);
 
