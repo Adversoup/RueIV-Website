@@ -22,6 +22,7 @@ const VER = process.env.SHOPIFY_API_VERSION || '2026-04';
 const GQL = `https://${STORE}/admin/api/${VER}/graphql.json`;
 const REST = `https://${STORE}/admin/api/${VER}`;
 const DRY_RUN = process.argv.includes('--dry-run');
+const FIXTURE_MODE = process.argv.includes('--fixture');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -246,15 +247,146 @@ function cloneItem(item) {
   return cloned;
 }
 
-function collectionMenuItem(title, collection) {
+function collectionMenuItem(title, collection, storeHost = STORE) {
   if (collection?.id) {
     return { title, type: 'COLLECTION', resourceId: collection.id };
   }
   return {
     title,
     type: 'HTTP',
-    url: `https://${STORE}/collections/${collection?.handle || ''}`,
+    url: `https://${storeHost}/collections/${collection?.handle || ''}`,
   };
+}
+
+function buildDesignersSubmenuChildren(vendorSpecs, collectionIndex, options = {}) {
+  const storeHost = options.storeHost || STORE || 'example.myshopify.com';
+  const allDesignersCollection =
+    collectionIndex.byHandle.get('designers') ||
+    collectionIndex.byTitle.get('designers');
+
+  return [
+    allDesignersCollection
+      ? collectionMenuItem('All Designers', allDesignersCollection, storeHost)
+      : { title: 'All Designers', type: 'HTTP', url: `https://${storeHost}/pages/brands` },
+    ...vendorSpecs.map((spec) => {
+      const collection = collectionForVendor(spec, collectionIndex);
+      return collection
+        ? collectionMenuItem(spec.title, collection, storeHost)
+        : {
+            title: spec.title,
+            type: 'HTTP',
+            url: `https://${storeHost}/collections/${spec.handle}`,
+          };
+    }),
+  ];
+}
+
+function assertValidMenuItemInput(item, path = 'item') {
+  if (!item.title || !item.type) {
+    throw new Error(`${path} missing title or type`);
+  }
+  if (item.type === 'COLLECTION' && !item.resourceId) {
+    throw new Error(`${path} COLLECTION missing resourceId`);
+  }
+  if (item.type === 'HTTP' && !item.url) {
+    throw new Error(`${path} HTTP missing url`);
+  }
+  for (const child of item.items || []) {
+    assertValidMenuItemInput(child, `${path}.${child.title}`);
+  }
+}
+
+function planVendorNavigationSync(vendorNames, collectionIndex, options = {}) {
+  const vendorSpecs = buildVendorSpecs(vendorNames);
+  const collectionsToCreate = vendorSpecs.filter(
+    (spec) => !collectionForVendor(spec, collectionIndex)
+  );
+  const designersChildren = buildDesignersSubmenuChildren(
+    vendorSpecs,
+    collectionIndex,
+    options
+  );
+  designersChildren.forEach((item) => assertValidMenuItemInput(item, `Designers.${item.title}`));
+
+  return {
+    vendorSpecs,
+    collectionsToCreate,
+    designersChildren,
+  };
+}
+
+const FIXTURE_VENDOR_NAMES = [
+  'Arte',
+  'Artistic Frame',
+  'Alexander Lamont',
+  'Fabricut',
+  'Porta Romana',
+  'Verellen',
+  'Zimmer + Rohde',
+];
+
+const FIXTURE_COLLECTION_INDEX = {
+  byHandle: new Map([
+    ['designers', { id: 'gid://shopify/Collection/1', handle: 'designers', title: 'Designers' }],
+    ['arte', { id: 'gid://shopify/Collection/2', handle: 'arte', title: 'Arte' }],
+    ['fabricut', { id: 'gid://shopify/Collection/3', handle: 'fabricut', title: 'Fabricut' }],
+    ['porta-romana', { id: 'gid://shopify/Collection/4', handle: 'porta-romana', title: 'Porta Romana' }],
+    ['verellen', { id: 'gid://shopify/Collection/5', handle: 'verellen', title: 'Verellen' }],
+  ]),
+  byTitle: new Map([
+    ['designers', { id: 'gid://shopify/Collection/1', handle: 'designers', title: 'Designers' }],
+    ['arte', { id: 'gid://shopify/Collection/2', handle: 'arte', title: 'Arte' }],
+    ['fabricut', { id: 'gid://shopify/Collection/3', handle: 'fabricut', title: 'Fabricut' }],
+    ['porta romana', { id: 'gid://shopify/Collection/4', handle: 'porta-romana', title: 'Porta Romana' }],
+    ['verellen', { id: 'gid://shopify/Collection/5', handle: 'verellen', title: 'Verellen' }],
+  ]),
+};
+
+function runFixtureDryRunProof() {
+  console.log('╔════════════════════════════════════════════════════════╗');
+  console.log('║ Dynamic Vendor Navigation — Fixture Dry Run (offline) ║');
+  console.log('╚════════════════════════════════════════════════════════╝');
+  console.log('FIXTURE — no Shopify API calls\n');
+
+  const plan = planVendorNavigationSync(FIXTURE_VENDOR_NAMES, FIXTURE_COLLECTION_INDEX, {
+    storeHost: 'ruefour.myshopify.com',
+  });
+
+  console.log(
+    `Vendor census: ${FIXTURE_VENDOR_NAMES.length} fixture rows → ${plan.vendorSpecs.length} unique vendors`
+  );
+
+  console.log('\n━━━ STEP 2: Ensure vendor smart collections ━━━');
+  for (const spec of plan.vendorSpecs) {
+    if (collectionForVendor(spec, FIXTURE_COLLECTION_INDEX)) {
+      console.log(`  · ${spec.title} — collection exists`);
+    } else {
+      console.log(`  · DRY RUN create ${spec.title} [vendor = "${spec.vendor}"]`);
+    }
+  }
+
+  console.log('\n━━━ STEP 3: Rebuild Designers submenu from discovered vendors ━━━');
+  console.log(`  Discovered vendor count: ${plan.vendorSpecs.length}`);
+  plan.designersChildren.forEach((item) => console.log(`    ├─ ${item.title}`));
+  console.log('  · DRY RUN — menuUpdate not executed');
+
+  const artisticFrame = plan.vendorSpecs.find((spec) => spec.title === 'Artistic Frame');
+  if (!artisticFrame) {
+    throw new Error('Artistic Frame missing from discovered vendor specs');
+  }
+  if (artisticFrame.handle !== 'artistic-frame') {
+    throw new Error(`Unexpected Artistic Frame handle: ${artisticFrame.handle}`);
+  }
+
+  const artisticMenuItem = plan.designersChildren.find((item) => item.title === 'Artistic Frame');
+  if (!artisticMenuItem) {
+    throw new Error('Artistic Frame missing from planned Designers submenu');
+  }
+  if (artisticMenuItem.type !== 'HTTP' || !artisticMenuItem.url.includes('/collections/artistic-frame')) {
+    throw new Error('Artistic Frame menu item is not the expected HTTP collection link');
+  }
+
+  console.log('\n✅ Fixture dry-run proof complete — Artistic Frame appears without hardcoding');
 }
 
 async function updateDesignersMenu(vendorSpecs, collectionIndex) {
@@ -281,25 +413,7 @@ async function updateDesignersMenu(vendorSpecs, collectionIndex) {
   const currentDesigners = mainMenu.items.find((item) => item.title === 'Designers');
   if (!currentDesigners) throw new Error('Designers item not found on main-menu');
 
-  const allDesignersCollection =
-    collectionIndex.byHandle.get('designers') ||
-    collectionIndex.byTitle.get('designers');
-
-  const children = [
-    allDesignersCollection
-      ? collectionMenuItem('All Designers', allDesignersCollection)
-      : { title: 'All Designers', type: 'HTTP', url: `https://${STORE}/pages/brands` },
-    ...vendorSpecs.map((spec) => {
-      const collection = collectionForVendor(spec, collectionIndex);
-      return collection
-        ? collectionMenuItem(spec.title, collection)
-        : {
-            title: spec.title,
-            type: 'HTTP',
-            url: `https://${STORE}/collections/${spec.handle}`,
-          };
-    }),
-  ];
+  const children = buildDesignersSubmenuChildren(vendorSpecs, collectionIndex);
 
   console.log(`  Discovered vendor count: ${vendorSpecs.length}`);
   children.forEach((item) => console.log(`    ├─ ${item.title}`));
@@ -337,6 +451,11 @@ async function updateDesignersMenu(vendorSpecs, collectionIndex) {
 }
 
 async function main() {
+  if (FIXTURE_MODE) {
+    runFixtureDryRunProof();
+    return;
+  }
+
   console.log('╔════════════════════════════════════════════════════════╗');
   console.log('║ Dynamic Vendor Navigation — Collections + Designers  ║');
   console.log('╚════════════════════════════════════════════════════════╝');
@@ -367,4 +486,9 @@ module.exports = {
   ensureVendorCollections,
   updateDesignersMenu,
   collectionForVendor,
+  buildDesignersSubmenuChildren,
+  planVendorNavigationSync,
+  runFixtureDryRunProof,
+  FIXTURE_VENDOR_NAMES,
+  FIXTURE_COLLECTION_INDEX,
 };

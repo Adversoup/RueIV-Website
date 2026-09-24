@@ -15,7 +15,8 @@
     "image:batch": "node scripts/image_normalize.js --upload",
     "image:dry-run": "node scripts/image_normalize.js --dry-run",
     "designers:verify-dynamic": "node scripts/verify_dynamic_vendor_navigation.js",
-    "designers:preview": "node scripts/preview_dynamic_vendor_navigation.js"
+    "designers:preview": "node scripts/preview_dynamic_vendor_navigation.js",
+    "designers:fixture-dry-run": "node scripts/fix_vendors.js --fixture"
   },
   "repository": {
     "type": "git",
