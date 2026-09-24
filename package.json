@@ -13,7 +13,8 @@
     "image:normalize": "node scripts/image_normalize.js",
     "image:preview": "node scripts/image_normalize.js --limit 5",
     "image:batch": "node scripts/image_normalize.js --upload",
-    "image:dry-run": "node scripts/image_normalize.js --dry-run"
+    "image:dry-run": "node scripts/image_normalize.js --dry-run",
+    "designers:verify-dynamic": "node scripts/verify_dynamic_vendor_navigation.js"
   },
   "repository": {
     "type": "git",
