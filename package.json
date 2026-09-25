@@ -16,7 +16,8 @@
     "image:dry-run": "node scripts/image_normalize.js --dry-run",
     "designers:verify-dynamic": "node scripts/verify_dynamic_vendor_navigation.js",
     "designers:preview": "node scripts/preview_dynamic_vendor_navigation.js",
-    "designers:fixture-dry-run": "node scripts/fix_vendors.js --fixture"
+    "designers:fixture-dry-run": "node scripts/fix_vendors.js --fixture",
+    "audit:live-storefront": "node scripts/audit_live_storefront.js"
   },
   "repository": {
     "type": "git",

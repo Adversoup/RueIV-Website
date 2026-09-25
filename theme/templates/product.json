@@ -175,6 +175,7 @@
         "title",
         "color_chip",
         "sku_block",
+        "price",
         "inventory",
         "description",
         "variant_picker",

@@ -1,9 +1,20 @@
 {%- comment -%}
   snippets/rueiv-price-resolver.liquid
   ────────────────────────────────────
-  Determines whether a product should show price UI.
-  Data-driven via override.price_hidden metafield; also treats zero/blank
-  variant price as hidden (trade/quote catalog convention).
+  Locked storefront price policy (PR #12 / owner):
+  - Guest (Liquid `customer` absent): never show price UI or JSON-LD offers
+  - Authenticated storefront customer: show authoritative variant price when > 0
+  - Zero/blank variant price: always hidden (trade/quote catalog convention)
+
+  override.price_hidden semantic:
+  Hub maps price_authority quote|hidden|trade → override.price_hidden for trade/quote
+  catalog labeling. Repo contract (hub_shopify_field_mapping.md, metafield schema)
+  describes guest/showroom suppression only — it does NOT document force-hidden
+  behavior for authenticated storefront customers. Under the locked policy,
+  price_hidden therefore does NOT override authenticated-customer visibility.
+
+  Shopify Admin/staff login does NOT populate Liquid `customer`; verify with a
+  real storefront customer session.
 
   Sets: rueiv_show_price (boolean), rueiv_price_hidden (boolean)
 
@@ -12,22 +23,17 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign rueiv_price_hidden = false
-  assign _hidden_meta = product.metafields.override.price_hidden.value
-
-  if _hidden_meta == true or _hidden_meta == 'true' or _hidden_meta == 1
-    assign rueiv_price_hidden = true
-  endif
-
   assign _variant = product.selected_or_first_available_variant
   assign _price = _variant.price
 
-  if _price == blank or _price == 0
-    assign rueiv_price_hidden = true
-  endif
+  assign rueiv_show_price = false
+  assign rueiv_price_hidden = true
 
-  assign rueiv_show_price = true
-  if rueiv_price_hidden
+  if _price == blank or _price == 0
     assign rueiv_show_price = false
+    assign rueiv_price_hidden = true
+  elsif customer
+    assign rueiv_show_price = true
+    assign rueiv_price_hidden = false
   endif
 -%}
