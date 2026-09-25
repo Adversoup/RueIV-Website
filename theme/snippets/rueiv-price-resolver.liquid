@@ -5,6 +5,13 @@
   Data-driven via override.price_hidden metafield; also treats zero/blank
   variant price as hidden (trade/quote catalog convention).
 
+  Approved storefront customers may see authoritative variant price when:
+  - customer tag is trade / trade-approved / price-visible, OR
+  - customer metafield rueiv.price_access == approved
+
+  Shopify Admin staff login does NOT populate Liquid `customer`; verify with a
+  real storefront customer account tagged for trade access.
+
   Sets: rueiv_show_price (boolean), rueiv_price_hidden (boolean)
 
   Usage:
@@ -29,5 +36,20 @@
   assign rueiv_show_price = true
   if rueiv_price_hidden
     assign rueiv_show_price = false
+  endif
+
+  if customer and rueiv_show_price == false and _price != blank and _price > 0
+    assign _price_access = customer.metafields.rueiv.price_access.value
+    if _price_access == 'approved' or _price_access == true or _price_access == 'true'
+      assign rueiv_show_price = true
+    endif
+
+    for _tag in customer.tags
+      assign _tag_key = _tag | downcase | strip
+      if _tag_key == 'trade' or _tag_key == 'trade-approved' or _tag_key == 'price-visible'
+        assign rueiv_show_price = true
+        break
+      endif
+    endfor
   endif
 -%}
