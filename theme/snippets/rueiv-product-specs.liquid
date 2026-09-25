@@ -7,7 +7,10 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign _dims   = product.metafields.rueiv.dimensions.value
+  assign _dims = product.metafields.rueiv.dimensions.value
+  if _dims == blank
+    assign _dims = product.metafields.rueiv.dimensions_json.value
+  endif
   assign _fiber  = product.metafields.rueiv.fiber_content.value
   assign _catattr = product.metafields.rueiv.category_attributes.value
   assign _attrs  = product.metafields.rueiv.attributes.value
