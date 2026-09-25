@@ -1,0 +1,4 @@
+{
+  "name": "RueIV Website",
+  "install": "npm install\ncommand -v shopify >/dev/null 2>&1 || sudo env \"PATH=$PATH\" npm install -g @shopify/cli"
+}
