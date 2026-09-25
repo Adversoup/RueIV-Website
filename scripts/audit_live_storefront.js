@@ -187,16 +187,10 @@ async function auditJacksonProduct() {
   console.log(`  Variant SKU: ${variant?.sku} | Price: ${variant?.price} (${Number(variant?.price || 0) / 100})`);
 
   const hiddenMeta = product.priceHidden?.value;
-  const hidden =
-    hiddenMeta === true ||
-    hiddenMeta === 'true' ||
-    hiddenMeta === 1 ||
-    hiddenMeta === '1' ||
-    !variant?.price ||
-    Number(variant.price) === 0;
-
-  console.log(`  Theme rueiv-price-resolver would hide price: ${hidden}`);
-  console.log('  Note: even when resolver shows price, PDP hides it if product.json block_order omits "price"');
+  console.log(`  Legacy override.price_hidden flag: ${hiddenMeta ? 'set' : 'unset'} (ignored for auth customers under locked policy)`);
+  console.log(`  Zero/blank variant price: ${!variant?.price || Number(variant.price) === 0}`);
+  console.log('  Locked policy: guest=no price; authenticated customer=show when price > 0');
+  console.log('  Note: PDP also requires "price" in product.json block_order');
 
   const pubs = product.resourcePublications?.edges || [];
   if (pubs.length) {
@@ -206,7 +200,7 @@ async function auditJacksonProduct() {
     });
   }
 
-  return { product, variant, hidden };
+  return { product, variant };
 }
 
 async function auditCustomerAccess() {
@@ -220,7 +214,6 @@ async function auditCustomerAccess() {
             id
             state
             tags
-            metafield(namespace: "rueiv", key: "price_access") { value }
           }
         }
       }
@@ -236,14 +229,11 @@ async function auditCustomerAccess() {
   }
 
   const tags = customer.tags || [];
-  const hasTradeTag = tags.some((t) =>
-    ['trade', 'trade-approved', 'price-visible', 'approved'].includes(String(t).toLowerCase())
-  );
   console.log(`  Found: id=${customer.id} state=${customer.state}`);
   console.log(`  Tags: ${tags.length ? tags.join(', ') : '(none)'}`);
-  console.log(`  rueiv.price_access metafield: ${customer.metafield?.value ?? '(unset)'}`);
-  console.log(`  Would pass proposed trade price gate: ${hasTradeTag || customer.metafield?.value === 'approved'}`);
-  return { customer, hasTradeTag };
+  console.log(`  Locked policy: any authenticated storefront customer sees price when variant price > 0`);
+  console.log(`  Admin/staff login does NOT populate Liquid customer — storefront login required`);
+  return { customer };
 }
 
 async function auditDesignersMenu() {
