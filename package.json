@@ -7,8 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node scripts/run_theme_check.js",
+    "test": "node scripts/verify_specs_dimensions_compat.js && node scripts/run_theme_check.js",
     "theme-check": "node scripts/run_theme_check.js",
+    "verify:specs-dimensions": "node scripts/verify_specs_dimensions_compat.js",
     "staging:simulate": "node scripts/staging_simulation.js",
     "image:normalize": "node scripts/image_normalize.js",
     "image:preview": "node scripts/image_normalize.js --limit 5",
