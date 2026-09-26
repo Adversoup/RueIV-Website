@@ -6,6 +6,10 @@ Use when Hub downstream publish is authorized. Complete in order. **Do not renam
 
 ## Pre-Publish — Hub & Data
 
+- [ ] Synthetic staging simulation green: `npm run staging:simulate` → gate `RUEIV_SHOPIFY_STAGING_SIMULATION_READY_FOR_BOUNDED_GO_LIVE_GATE`
+- [ ] Real Hub rehearsal green: `npm run staging:rehearsal` → gate `RUEIV_REAL_HUB_DATA_STAGING_REHEARSAL_READY_FOR_BOUNDED_GO_LIVE_GATE`
+- [ ] Rehearsal checksum unchanged unless Hub export intentionally updated (`fixtures/real_hub_rehearsal/manifest.json`)
+- [ ] Pending Hub export vendors added to rehearsal (Artistic Frame, JAB, Innovations, Chaddock/Powell & Bonnell, child-brand, tearsheet PDFs) — see `docs/rueiv_real_hub_staging_rehearsal_report.md`
 - [ ] Hub canonical vendor list matches `config/represented_vendors.json` (display names exact)
 - [ ] All products pass Hub → Shopify mapping per `docs/hub_shopify_field_mapping.md`
 - [ ] SKU uniqueness verified; handles deterministic (`slugify(title)-slugify(sku)`)
