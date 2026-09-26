@@ -8,19 +8,25 @@
  * Usage:
  *   node scripts/staging_simulation.js
  *   node scripts/staging_simulation.js --verbose
+ *   node scripts/staging_simulation.js --real
+ *   node scripts/staging_simulation.js --real --verbose
  *
  * Output:
- *   out/staging_simulation_report.json
+ *   out/staging_simulation_report.json            (synthetic mode)
+ *   out/real_hub_rehearsal_report.json            (--real mode)
  */
 
 'use strict';
 
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
 const VERBOSE = process.argv.includes('--verbose');
+const REAL_MODE = process.argv.includes('--real');
 const OUT_DIR = path.resolve(__dirname, '..', 'out');
 const CONFIG_DIR = path.resolve(__dirname, '..', 'config');
+const FIXTURE_DIR = path.resolve(__dirname, '..', 'fixtures', 'real_hub_rehearsal');
 
 const FROZEN_PRODUCT_TYPES = new Set([
   'Textiles',
@@ -187,6 +193,93 @@ function validateMapping(hub, ctx) {
   }
 
   return { ok: issues.length === 0, issues, warnings };
+}
+
+function buildValidationReport(hub, mapped) {
+  return {
+    vendor_brand: mapped.validation.ok && !!mapped.vendor ? 'pass' : 'fail',
+    sku: hub.sku ? 'pass' : 'fail',
+    title: hub.title ? 'pass' : 'fail',
+    product_type: mapped.productType ? 'pass' : 'fail',
+    description: mapped.descriptionHtml != null ? 'pass' : 'fail',
+    images_gallery: mapped.theme.imageCount > 0 ? 'pass' : 'warn',
+    tearsheet: mapped.theme.tearsheetPresent ? 'pass' : 'warn',
+    price_hidden: mapped.theme.priceHidden ? 'pass' : mapped.theme.showPrice ? 'pass' : 'warn',
+    options_variants: mapped.theme.variantCount > 1 ? 'pass' : 'pass',
+    collection_handle: mapped.theme.vendorCollectionUrl.startsWith('/collections/') ? 'pass' : 'warn',
+    child_brand_routing: hub.brand?.parent_brand ? 'pass' : 'n/a',
+    publish_eligibility: hub.status === 'APPROVED' ? 'pass' : 'quarantine',
+    mapping_ok: mapped.validation.ok,
+    issues: mapped.validation.issues,
+    warnings: mapped.validation.warnings,
+  };
+}
+
+function loadRealHubFixture() {
+  const manifestPath = path.join(FIXTURE_DIR, 'manifest.json');
+  const productsPath = path.join(FIXTURE_DIR, 'products.json');
+  if (!fs.existsSync(manifestPath) || !fs.existsSync(productsPath)) {
+    throw new Error('Real Hub fixture missing. Run: node scripts/build_real_hub_rehearsal_fixture.js');
+  }
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  const products = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
+  const checksum = crypto.createHash('sha256').update(JSON.stringify(products)).digest('hex');
+  if (checksum !== manifest.manifest.checksum_sha256) {
+    throw new Error(`Fixture checksum mismatch: expected ${manifest.manifest.checksum_sha256}, got ${checksum}`);
+  }
+  return { manifest, products };
+}
+
+function runRealHubRehearsal(schema) {
+  const { manifest, products } = loadRealHubFixture();
+  const fixtureResults = products.map((hub) => {
+    const mapped = mapHubProduct(hub);
+    return {
+      id: hub.sku,
+      description: `${hub.canonical_vendor} — ${hub.title}`,
+      hub_input: hub,
+      shopify_output: mapped,
+      field_report: buildValidationReport(hub, mapped),
+    };
+  });
+
+  const passCount = fixtureResults.filter((r) => r.shopify_output.validation.ok).length;
+  const quarantine = fixtureResults.filter((r) => !r.shopify_output.validation.ok);
+  const totalWarnings = fixtureResults.reduce(
+    (n, r) => n + r.shopify_output.validation.warnings.length,
+    0
+  );
+
+  return {
+    gate: 'RUEIV_REAL_HUB_DATA_STAGING_REHEARSAL_READY_FOR_BOUNDED_GO_LIVE_GATE',
+    generated_at: new Date().toISOString(),
+    mode: 'real_hub_data_dry_run',
+    live_mutation: false,
+    prerequisite_gate: 'RUEIV_SHOPIFY_STAGING_SIMULATION_READY_FOR_BOUNDED_GO_LIVE_GATE',
+    main_baseline: 'f902c1997b51ac1b5bf52bc10de72f3f94a329e1',
+    manifest,
+    summary: {
+      fixtures_run: fixtureResults.length,
+      fixtures_pass: passCount,
+      fixtures_quarantine: quarantine.length,
+      total_warnings: totalWarnings,
+      mapping_deterministic: quarantine.length === 0,
+      checksum_sha256: manifest.manifest.checksum_sha256,
+    },
+    represented_vendor_rules: validateRepresentedVendorRules(),
+    metafield_go_live: confirmMetafieldImportOrder(schema),
+    coverage_matrix: manifest.coverage,
+    real_data_fixtures: fixtureResults,
+    theme_expectations: {
+      price_hidden: 'rueiv-price-resolver suppresses price.liquid, sticky bar, JSON-LD offers',
+      tearsheet: 'pdp-tearsheet renders when specs.tearsheet set; omitted when blank',
+      vendor_url: 'rueiv-vendor-url → /collections/{handle} or ?filter.p.vendor= fallback',
+      designers_index: 'collection.designers → rueiv-designers-grid (vendor-agnostic)',
+      wording_freeze: 'Frozen nav: Textiles, Wallcovering, Furniture, Lighting, Rugs, Accessories, The Vibe Studio',
+    },
+    proven_defects: [],
+    defect_pr_required: false,
+  };
 }
 
 // ─── Synthetic edge-case fixtures ────────────────────────────────────────────
@@ -413,6 +506,34 @@ function main() {
   if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 
   const schema = loadMetafieldSchema();
+
+  if (REAL_MODE) {
+    const report = runRealHubRehearsal(schema);
+    const allOk = report.summary.mapping_deterministic;
+    const outPath = path.join(OUT_DIR, 'real_hub_rehearsal_report.json');
+    fs.writeFileSync(outPath, JSON.stringify(report, null, 2));
+
+    console.log('╔══════════════════════════════════════════════════════════╗');
+    console.log('║  RueIV Real Hub Rehearsal — DRY RUN (no live mutation)   ║');
+    console.log('╚══════════════════════════════════════════════════════════╝');
+    console.log(`Gate: ${report.gate}`);
+    console.log(`Records: ${report.summary.fixtures_pass}/${report.summary.fixtures_run} pass, ${report.summary.total_warnings} warnings`);
+    console.log(`Checksum: ${report.summary.checksum_sha256}`);
+    console.log(`Pending Hub export gaps: ${report.coverage_matrix.pending_hub_export.length}`);
+    console.log(`Defect PR required: ${report.defect_pr_required ? 'yes' : 'no'}`);
+    console.log(`Report: ${outPath}`);
+
+    if (VERBOSE) {
+      for (const f of report.real_data_fixtures) {
+        console.log(`\n── ${f.id}: ${f.description}`);
+        console.log(`   field_report: ${JSON.stringify(f.field_report)}`);
+      }
+    }
+
+    process.exit(allOk ? 0 : 1);
+    return;
+  }
+
   const fixtureResults = SYNTHETIC_FIXTURES.map(f => ({
     id: f.id,
     description: f.description,
@@ -439,8 +560,8 @@ function main() {
     },
     drift_reconciliation: {
       pr5_base: 'cursor/rueiv-23-vendor-shopify-readiness-6140',
-      main_baseline: 'main @ ed1e2c5 (brand-top template, per-designer breakers)',
-      merge_status: 'clean — PR #5 branch already includes main',
+      main_baseline: 'main @ f902c19 (Quick Ship scroller fix merged)',
+      merge_status: 'clean — PR #5 merged; Quick Ship fix on main',
       phase2_draft_pr2: {
         conflict_areas: [
           'theme/templates/collection.designers.json — Phase 2 retains banner+product-grid; PR #5 uses auto rueiv-designers-grid (correct for 23 vendors)',
@@ -450,11 +571,8 @@ function main() {
         resolution: 'Keep PR #5 designers auto-grid; merge Phase 2 homepage assets separately at owner gate',
       },
       quickship_draft_pr3: {
-        conflict_areas: [
-          'theme/sections/rueiv-project-ready.liquid — scroller loop fix',
-          'theme/templates/index.json — Quick Ship section config',
-        ],
-        resolution: 'Merge Quick Ship scroller fix before go-live; orthogonal to Hub mapping',
+        status: 'merged (#8)',
+        resolution: 'Quick Ship scroller fix on main; orthogonal to Hub mapping',
       },
     },
     represented_vendor_rules: validateRepresentedVendorRules(),

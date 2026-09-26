@@ -1,0 +1,175 @@
+{
+  "version": "1.0.0",
+  "gate": "RUEIV_REAL_HUB_DATA_STAGING_REHEARSAL_READY_FOR_BOUNDED_GO_LIVE_GATE",
+  "generated_at": "2026-09-17T12:23:57.672Z",
+  "mode": "read_only_hub_csv_export",
+  "live_mutation": false,
+  "source": {
+    "export_dir": "mnt/data",
+    "export_files": [
+      "core_products.csv",
+      "fabric_attributes.csv",
+      "furniture_attributes.csv",
+      "furniture_variants.csv",
+      "lighting_attributes.csv",
+      "wallpaper_attributes.csv"
+    ],
+    "source_product_count": 120,
+    "snapshot_note": "Checked-in operator artifact from production-complete vendors; no Hub writes performed"
+  },
+  "manifest": {
+    "target_records": 75,
+    "selected_records": 84,
+    "selection_rules": [
+      "Must-include edge-case SKUs (no-image, multi-variant, retail-price)",
+      "Deterministic fill: sort by vendor, category, sku until target count"
+    ],
+    "must_include_skus": [
+      "TWL52S",
+      "FAB-FAB-8099AEA2",
+      "ADR OTTO",
+      "CRW SECT",
+      "TWL174",
+      "11037415",
+      "97912",
+      "3170002",
+      "VER-FUR-37AF0949"
+    ],
+    "checksum_sha256": "f337492b6db674c67efcf2e355534698b55d0882426ac3d8f2c878b8847b40a9"
+  },
+  "coverage": {
+    "scenarios": [
+      {
+        "id": "zr-family",
+        "label": "ZR family",
+        "covered": true,
+        "sample_skus": [
+          "11037415",
+          "11038664",
+          "11039894"
+        ],
+        "count": 16
+      },
+      {
+        "id": "arte",
+        "label": "Arte",
+        "covered": true,
+        "sample_skus": [
+          "18300",
+          "18310",
+          "18321"
+        ],
+        "count": 16
+      },
+      {
+        "id": "missing-image",
+        "label": "Missing image",
+        "covered": true,
+        "sample_skus": [
+          "FAB-FAB-8099AEA2",
+          "TWL52S"
+        ],
+        "count": 2
+      },
+      {
+        "id": "gallery-present",
+        "label": "Image/gallery present",
+        "covered": true,
+        "sample_skus": [
+          "11037415",
+          "11038664",
+          "11039894"
+        ],
+        "count": 81
+      },
+      {
+        "id": "price-hidden",
+        "label": "Price-hidden / no-price",
+        "covered": true,
+        "sample_skus": [
+          "11037415",
+          "11038664",
+          "11039894"
+        ],
+        "count": 68
+      },
+      {
+        "id": "retail-price",
+        "label": "Retail price visible",
+        "covered": true,
+        "sample_skus": [
+          "CLB62",
+          "CLB64",
+          "GLB100"
+        ],
+        "count": 16
+      },
+      {
+        "id": "variants",
+        "label": "Variant/options-like data",
+        "covered": true,
+        "sample_skus": [
+          "ADR OTTO",
+          "AME BANQ",
+          "AME CNR BANQ"
+        ],
+        "count": 13
+      },
+      {
+        "id": "tearsheet-missing",
+        "label": "Tearsheet missing",
+        "covered": true,
+        "sample_skus": [
+          "11037415",
+          "11038664",
+          "11039894"
+        ],
+        "count": 84
+      }
+    ],
+    "vendors_in_fixture": {
+      "ZR": 16,
+      "Arte": 16,
+      "Fabricut": 17,
+      "Verellen": 18,
+      "Porta Romana": 17
+    },
+    "pending_hub_export": [
+      {
+        "id": "artistic-frame",
+        "label": "Artistic Frame",
+        "reason": "Vendor not present in current Hub CSV export snapshot"
+      },
+      {
+        "id": "jab-family",
+        "label": "JAB family + child identities",
+        "reason": "Vendor not present in current Hub CSV export snapshot"
+      },
+      {
+        "id": "innovations",
+        "label": "Innovations",
+        "reason": "Vendor not present in current Hub CSV export snapshot"
+      },
+      {
+        "id": "chaddock-powell-bonnell",
+        "label": "Chaddock / Powell & Bonnell",
+        "reason": "Vendor not present in current Hub CSV export snapshot"
+      },
+      {
+        "id": "child-brand-routing",
+        "label": "Child-brand routing (e.g. Altura under Jeffrey Michaels)",
+        "reason": "No parent_brand rows in current export; covered by synthetic fixture child-brand-routing"
+      },
+      {
+        "id": "tearsheet-present",
+        "label": "Tearsheet present",
+        "reason": "No tearsheet_pdf/spec_pdf in current export; covered by synthetic fixture tearsheet-present"
+      }
+    ],
+    "all_required_scenarios_covered": true
+  },
+  "wording_freeze": {
+    "preserved": true,
+    "note": "Fixture generation does not modify theme or customer-visible labels"
+  }
+}

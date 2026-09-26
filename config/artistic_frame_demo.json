@@ -1,0 +1,71 @@
+{
+  "version": "1.3.0",
+  "description": "Bounded Artistic Frame client demo configuration (Issue #11 / Source#152 merged handoff).",
+  "upstream": {
+    "source_issue": "Adversoup/RueIV-Source#152",
+    "source_repo": "Adversoup/RueIV-Source",
+    "source_ref": "main",
+    "prior_source_issue": "Adversoup/RueIV-Source#146",
+    "website_issue": "Adversoup/RueIV-Website#11",
+    "source_paths": {
+      "manifest": "docs/ai/readiness/issue-146/artistic_frame_demo_cohort_50_manifest.json",
+      "payload": "docs/ai/readiness/issue-146/artistic_frame_demo_enriched_payload.json"
+    },
+    "manifest_fingerprint": "665336f252075f07f77373df08c642973be11339fd2d3160a226ff77a393883a",
+    "payload_fingerprint": "5846a10beb8a73da0380281694ce0fd91ee7af26667337c06fe0c233fea898ff",
+    "legacy_payload_fingerprints": [
+      "5f0b2771bc015c04f74cdc6bafaad04cccf39fadf572ba1748850f0a0e210b6d"
+    ]
+  },
+  "vendor": {
+    "display_name": "Artistic Frame",
+    "handle": "artistic-frame",
+    "tier": "partner",
+    "categories": ["Furniture"],
+    "status": "demo"
+  },
+  "collection": {
+    "handle": "artistic-frame-demo",
+    "title": "Artistic Frame — Client Demo",
+    "description_html": "<p>Bounded client showcase cohort. Not linked from main navigation.</p>",
+    "hidden_from_navigation": true,
+    "demo_tag": "demo:artistic-frame"
+  },
+  "limits": {
+    "max_products": 50,
+    "target_products": 50
+  },
+  "cohort": {
+    "smoke_sku": "2505A"
+  },
+  "media_handoff": {
+    "mode": "hub_processed_media",
+    "legacy_modes": ["hub_processed_media_sync_ready", "remote_source_url_import"],
+    "hub_public_origins": []
+  },
+  "sync": {
+    "remote_media_first": true,
+    "hub_processed_media_only": true,
+    "proxy_fallback": true,
+    "media_poll_interval_ms": 2000,
+    "media_poll_max_attempts": 30
+  },
+  "handoff_dir": "fixtures/artistic_frame_demo/source152_handoff",
+  "policy": {
+    "price_hidden": false,
+    "require_authoritative_price": true,
+    "theme_price_visibility_unchanged": true,
+    "default_product_status": "ACTIVE",
+    "no_theme_publish": true,
+    "no_menu_changes": true,
+    "no_other_vendors": true,
+    "no_hub_mutation": true,
+    "no_production_media_processing": true,
+    "no_manual_image_downloads": true
+  },
+  "fixture_dir": "fixtures/artistic_frame_demo",
+  "gates": {
+    "preflight": "ARTISTIC_FRAME_CLIENT_DEMO_PREFLIGHT_READY",
+    "live_verified": "ARTISTIC_FRAME_CLIENT_DEMO_LIVE_BOUNDED_SHOWCASE_VERIFIED_READY_FOR_FRIDAY"
+  }
+}
