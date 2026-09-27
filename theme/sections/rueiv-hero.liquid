@@ -7,8 +7,16 @@
     {%- for block in section.blocks -%}
       <div class="rueiv-hero__slide" data-slide-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
         {%- if block.settings.image != blank -%}
+          {%- comment -%}
+            Only tag desktop image with --desktop when a mobile crop exists.
+            Otherwise mobile CSS would hide it with nothing to show.
+          {%- endcomment -%}
+          {%- assign hero_img_class = 'rueiv-hero__img' -%}
+          {%- if block.settings.image_mobile != blank -%}
+            {%- assign hero_img_class = hero_img_class | append: ' rueiv-hero__img--desktop' -%}
+          {%- endif -%}
           {{ block.settings.image | image_url: width: 2400 | image_tag:
-             loading: 'eager', class: 'rueiv-hero__img rueiv-hero__img--desktop',
+             loading: 'eager', class: hero_img_class,
              alt: block.settings.heading }}
           {%- if block.settings.image_mobile != blank -%}
             {{ block.settings.image_mobile | image_url: width: 1200 | image_tag:
@@ -17,7 +25,7 @@
           {%- endif -%}
         {%- else -%}
           <img src="{{ 'hero-image.jpg' | asset_url }}" loading="eager"
-               class="rueiv-hero__img rueiv-hero__img--desktop"
+               class="rueiv-hero__img"
                alt="{{ section.settings.hero_heading }}">
         {%- endif -%}
         <div class="rueiv-hero__overlay"></div>
@@ -27,7 +35,7 @@
     <!-- No slide blocks — show default hero image -->
     <div class="rueiv-hero__slide is-active">
       <img src="{{ 'hero-image.jpg' | asset_url }}" loading="eager"
-           class="rueiv-hero__img rueiv-hero__img--desktop"
+           class="rueiv-hero__img"
            alt="{{ section.settings.hero_heading }}">
       <div class="rueiv-hero__overlay"></div>
     </div>
