@@ -1,0 +1,34 @@
+{% comment %}Only used by ?view=rueiv-filter; disabled until a staging endpoint is set.{% endcomment %}
+{% if section.settings.enabled and section.settings.endpoint != blank %}
+  {{ 'rueiv-filter-engine.css' | asset_url | stylesheet_tag }}
+  <rueiv-filter-engine class="page-width--full"
+    data-endpoint="{{ section.settings.endpoint | escape }}"
+    data-collection="{{ collection.handle | escape }}"
+    data-root="{{ routes.root_url | escape }}"
+    data-native="#shopify-section-main-collection-product-grid">
+    <h1>{{ collection.title | escape }}</h1>
+    <form class="rf-search" role="search">
+      <label>Search this collection <input name="q" type="search" maxlength="120"></label>
+      <button type="submit">Search</button>
+      <label>Sort <select name="sort"><option value="title-ascending">Name, A–Z</option><option value="title-descending">Name, Z–A</option></select></label>
+      <button type="button" data-clear>Clear filters</button>
+    </form>
+    <p class="rf-status" role="status" aria-live="polite">Loading filters…</p>
+    <div class="rf-facets" data-facets></div>
+    <div class="rf-grid products-list f-grid f-grid--gap-medium" data-grid></div>
+    <nav class="rf-pages" aria-label="Product pages">
+      <button type="button" data-prev>Previous</button><span data-page></span><button type="button" data-next>Next</button>
+    </nav>
+    <noscript><p>Enable JavaScript for advanced filters. Products are available below.</p></noscript>
+  </rueiv-filter-engine>
+  <script src="{{ 'rueiv-filter-engine.js' | asset_url }}" defer="defer"></script>
+{% endif %}
+{% schema %}
+{
+  "name": "RueIV Filter Engine v1",
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Enable preview filters", "default": false },
+    { "type": "url", "id": "endpoint", "label": "Staging filter API endpoint" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,7 @@
+{% layout none %}
+{% comment %}Same-origin, customer-session-aware native card. No public index prices.{% endcomment %}
+{% if product != blank %}
+  <div class="f-column card" data-rueiv-card="{{ product.handle | escape }}">
+    {% render 'card-product', product: product, section_index: 3, index: 1, enable_quick_add: false, enable_quick_view: false %}
+  </div>
+{% endif %}
