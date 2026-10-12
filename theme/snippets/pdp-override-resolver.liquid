@@ -75,9 +75,61 @@
 {%- endif -%}
 
 {%- comment -%}
-  Show other color variants if the product has multiple variants with images
+  Cross-product colorways are separate, authoritative Shopify products, not
+  necessarily variants of one Shopify product. Hub publishes the exact,
+  G6-readback-verified siblings to rueiv.colorway_products as
+  list.product_reference. Fail closed if keys do not match: never infer from
+  product title, collection or fuzzy SKU prefix.
+
+  Without verified linked products, keep the original in-product variant UI.
 {%- endcomment -%}
-{%- if product.variants.size > 1 -%}
+{%- assign _current_group = product.metafields.rueiv.colorway_group_key.value -%}
+{%- assign _related_colorways = product.metafields.rueiv.colorway_products.value -%}
+{%- assign _has_linked_colorways = false -%}
+{%- if _current_group != blank and _related_colorways != blank -%}
+  {%- for sibling in _related_colorways -%}
+    {%- if sibling != blank and sibling.id != product.id -%}
+      {%- assign _sibling_group = sibling.metafields.rueiv.colorway_group_key.value -%}
+      {%- if _sibling_group == _current_group and sibling.featured_image != blank and sibling.url != blank -%}
+        {%- assign _has_linked_colorways = true -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- if _has_linked_colorways -%}
+  <div class="pdp-color-variants" role="group" aria-label="Available colors">
+    <span class="pdp-color-variants__label">Available colors</span>
+    {%- if product.featured_image != blank -%}
+      {%- assign _current_color_label = product.metafields.rueiv.color_name.value | default: product.title -%}
+      <a href="{{ product.url }}" class="pdp-color-variants__swatch is-active"
+         title="{{ _current_color_label | escape }}" aria-label="{{ _current_color_label | escape }} — current color"
+         aria-current="page">
+        <img src="{{ product.featured_image | image_url: width: 96 }}" alt="{{ _current_color_label | escape }}"
+             width="40" height="40" loading="lazy">
+      </a>
+    {%- endif -%}
+    {%- assign _seen_ids = product.id | prepend: '|' | append: '|' -%}
+    {%- for sibling in _related_colorways -%}
+      {%- if sibling != blank and sibling.id != product.id -%}
+        {%- assign _sibling_group = sibling.metafields.rueiv.colorway_group_key.value -%}
+        {%- assign _sibling_id_token = sibling.id | prepend: '|' | append: '|' -%}
+        {%- if _sibling_group == _current_group and sibling.featured_image != blank and sibling.url != blank -%}
+          {%- unless _seen_ids contains _sibling_id_token -%}
+            {%- assign _seen_ids = _seen_ids | append: _sibling_id_token -%}
+            {%- assign _sibling_color_label = sibling.metafields.rueiv.color_name.value | default: sibling.title -%}
+            <a href="{{ sibling.url }}" class="pdp-color-variants__swatch"
+               title="{{ _sibling_color_label | escape }}" aria-label="View {{ _sibling_color_label | escape }}">
+              <img src="{{ sibling.featured_image | image_url: width: 96 }}"
+                   alt="{{ _sibling_color_label | escape }}" width="40" height="40" loading="lazy">
+            </a>
+          {%- endunless -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- elsif product.variants.size > 1 -%}
   {%- assign _has_variant_images = false -%}
   {%- for variant in product.variants -%}
     {%- if variant.image != blank -%}

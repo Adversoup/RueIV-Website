@@ -127,6 +127,14 @@
   gap: 8px;
   margin-top: 8px;
 }
+.pdp-color-variants__label {
+  flex-basis: 100%;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
 .pdp-color-variants__swatch {
   display: block;
   width: 40px;
