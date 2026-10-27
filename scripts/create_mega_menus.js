@@ -21,7 +21,7 @@ require('dotenv').config();
 
 const { buildVendorSpecs } = require('./lib/vendor_navigation');
 const { fetchVendorNames, fetchCollectionIndex, discoverSubBrandNames, buildDesignersSubmenuChildren } = require('./fix_vendors');
-const { planCategoryNavigation } = require('./lib/category_nav_contract');
+const { planCategoryNavigation, facetCandidates, verifyFacetProduct } = require('./lib/category_nav_contract');
 
 const STORE = process.env.SHOPIFY_STORE;
 const TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
@@ -39,6 +39,38 @@ async function gql(query, variables = {}) {
   const json = await r.json();
   if (json.errors) throw new Error('GQL: ' + JSON.stringify(json.errors, null, 2));
   return json.data;
+}
+
+
+// Read-only, bounded proof that a canonical taxonomy filter has a published
+// SKU in the *actual* parent Shopify collection. A menu label alone is never
+// enough to create a navigation URL.
+async function fetchVerifiedFacetProofs(menuDefs, collectionIndex) {
+  const probes = menuDefs.flatMap((menuDef) => facetCandidates(menuDef,collectionIndex));
+  const proofs = {};
+  for (const candidate of probes) {
+    const search = 'tag:"' + candidate.tag.replace(/"/g,'') + '"';
+    const data = await gql(`
+      query RueIVMenuFacetProof($search:String!,$key:String!) {
+        products(first:10,query:$search) {
+          nodes {
+            id productType status publishedAt tags
+            collections(first:100) { nodes { handle } }
+            taxonomyValue:metafield(namespace:"taxonomy",key:$key) { type value }
+          }
+        }
+      }`,{search,key:candidate.key});
+    const nodes = data.products?.nodes || [];
+    const values = nodes
+      .map((node)=>verifyFacetProduct(candidate,node))
+      .filter(Boolean);
+    const distinct=[...new Set(values)];
+    // Multiple competing canonical values require G3 reconciliation.
+    if (distinct.length === 1) {
+      proofs[candidate.menu+'/'+candidate.label] = distinct[0];
+    }
+  }
+  return {proofs, checked:probes.length};
 }
 
 // Helper: full URL
@@ -432,13 +464,16 @@ async function main() {
   const dynamicDesignerItems = buildDesignersSubmenuChildren(
     vendorSpecs, collectionIndex, { storeHost: STORE }
   );
+  // Probe only missing collection targets, not the entire Shopify catalog.
+  const facets=await fetchVerifiedFacetProofs(MENUS,collectionIndex);
+  console.log(`Verified native taxonomy link probes: ${Object.keys(facets.proofs).length}/${facets.checked}`);
   const blocked = [];
   for (const menuDef of MENUS) {
     if (menuDef.handle === 'designers-featured' || menuDef.handle === 'designers-all') {
       menuDef.items = dynamicDesignerItems.map((entry) => ({ ...entry }));
       continue;
     }
-    const plan = planCategoryNavigation(menuDef, collectionIndex);
+    const plan = planCategoryNavigation(menuDef, collectionIndex, {facetProofs:facets.proofs,storeHost:STORE});
     blocked.push(...plan.blocked);
     menuDef.items = plan.menu.items;
   }
