@@ -123,6 +123,13 @@ function verifyFacetProduct(candidate,product) {
   if (!product || product.status!=='ACTIVE' || !product.publishedAt ||
       product.productType!==CANONICAL_PRODUCT_TYPES[candidate.root]) return null;
   if (!(product.tags||[]).includes(candidate.tag)) return null;
+  // Shopify search is global, while the menu URL is collection-scoped:
+  // never advertise a product that is not in the destination collection.
+  const memberOfRoot=(product.collections?.nodes||[])
+    .some(collection=>collection.handle===candidate.root);
+  if (!memberOfRoot) return null;
+  if (Number.isNaN(Date.parse(product.publishedAt)) ||
+      Date.parse(product.publishedAt)>Date.now()) return null;
   const field=product.taxonomyValue;
   if (!field || !['single_line_text_field','list.single_line_text_field'].includes(field.type)) return null;
   let vals;
