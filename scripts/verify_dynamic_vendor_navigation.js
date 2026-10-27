@@ -10,6 +10,7 @@ const {
 } = require('./lib/vendor_navigation');
 const {
   collectionForVendor,
+  discoverSubBrandNames,
   planVendorNavigationSync,
   runFixtureDryRunProof,
   FIXTURE_VENDOR_NAMES,
@@ -82,6 +83,29 @@ const staleIndex = { byHandle: new Map([['jab', jabEmpty]]), byTitle: new Map([[
 const fallback = planVendorNavigationSync(['JAB'], staleIndex, { storeHost: 'ruefour.myshopify.com' });
 assert.strictEqual(fallback.collectionsToCreate.length, 0);
 assert.ok(fallback.designersChildren.find((x) => x.title === 'JAB').url.includes('/collections/vendors?q=JAB'));
+
+
+const jabChivasso = { id:'gid://shopify/Collection/195', handle:'jab-chivasso', title:'JAB — Chivasso', productCount:44 };
+const jabCarlucci = { id:'gid://shopify/Collection/196', handle:'jab-carlucci', title:'JAB — Carlucci', productCount:19 };
+const ignoredEmpty = { id:'gid://shopify/Collection/197', handle:'jab-dead', title:'JAB — Dead', productCount:0 };
+const hierarchyIndex = {
+  byHandle:new Map([[jabEmpty.handle,jabEmpty],[jabLive.handle,jabLive],
+                    [jabChivasso.handle,jabChivasso],[jabCarlucci.handle,jabCarlucci],
+                    [ignoredEmpty.handle,ignoredEmpty]]),
+  byTitle:new Map([['jab',jabEmpty],['jab — chivasso',jabChivasso],['jab — carlucci',jabCarlucci]])
+};
+assert.deepStrictEqual(
+  discoverSubBrandNames(['JAB'],hierarchyIndex),
+  ['JAB','Chivasso','Carlucci']
+);
+const expandedPlan=planVendorNavigationSync(['JAB'],hierarchyIndex,{storeHost:'ruefour.myshopify.com'});
+assert.deepStrictEqual(
+  expandedPlan.vendorSpecs.map(x=>x.title),
+  ['Carlucci','Chivasso','JAB']
+);
+assert.strictEqual(expandedPlan.designersChildren.find(x=>x.title==='Chivasso').resourceId,jabChivasso.id);
+assert.strictEqual(expandedPlan.designersChildren.find(x=>x.title==='Carlucci').resourceId,jabCarlucci.id);
+assert.ok(!expandedPlan.designersChildren.some(x=>x.title==='Dead'));
 
 runFixtureDryRunProof();
 
