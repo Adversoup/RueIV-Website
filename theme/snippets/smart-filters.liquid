@@ -53,6 +53,23 @@
   endif
 
   comment
+    ── Vendor collections can contain multiple top-level product categories.
+    Do not let the first product's type hide every other category's filters.
+    Use the native collection.filters list, which is already scoped to this
+    exact Shopify collection; never fetch cross-vendor products here.
+  endcomment
+  if collection.products.size > 1
+    assign first_type = collection.products.first.type | downcase
+    for candidate in collection.products limit: 50
+      assign candidate_type = candidate.type | downcase
+      if candidate_type != first_type
+        assign _cat = 'mixed'
+        break
+      endif
+    endfor
+  endif
+
+  comment
     ── 2. Fallback: collection handle (canonical nav + legacy aliases) ──
   endcomment
   if _cat == ''
@@ -93,6 +110,8 @@
       assign _filter_order = 'size,material,color,designer'
     when 'accessory'
       assign _filter_order = 'type,material,color,designer'
+    when 'mixed'
+      assign _filter_order = 'category,type,material,pattern,color,room,size,style,lead time,designer'
     else
       assign _filter_order = 'material,color,designer'
   endcase
@@ -107,7 +126,8 @@
   assign _label_map_color = 'color'
   assign _label_map_designer = 'designer,vendor,brand'
   assign _label_map_room = 'room'
-  assign _label_map_type = 'type,subcategory,fixture'
+  assign _label_map_category = 'product type,category'
+  assign _label_map_type = 'subcategory,furniture type,lighting type,fixture type'
   assign _label_map_collection = 'collection'
   assign _label_map_style = 'style'
   assign _label_map_size = 'size'
@@ -174,6 +194,8 @@
           assign _match_keywords = ''
 
           case ordered_key_trimmed
+            when 'category'
+              assign _match_keywords = _label_map_category
             when 'material'
               assign _match_keywords = _label_map_material
             when 'pattern'
