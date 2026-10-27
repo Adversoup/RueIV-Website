@@ -70,6 +70,26 @@
   endif
 
   comment
+    ── Designer collections are category-mixed navigation contexts, even when
+    the first product page contains only one type. The Shopify designers-all
+    menu is the verified collection registry, not a heuristic vendor name.
+    Only facets actually present in collection.filters will be displayed.
+  endcomment
+  assign _designer_menu = linklists['designers-all']
+  if _designer_menu != blank
+    for _designer_link in _designer_menu.links
+      assign _designer_path = _designer_link.url | split: '?' | first
+      if _designer_link.type == 'collection_link' and _designer_link.object.handle == collection.handle
+        assign _cat = 'mixed'
+        break
+      elsif _designer_path == collection.url
+        assign _cat = 'mixed'
+        break
+      endif
+    endfor
+  endif
+
+  comment
     ── 2. Fallback: collection handle (canonical nav + legacy aliases) ──
   endcomment
   if _cat == ''
