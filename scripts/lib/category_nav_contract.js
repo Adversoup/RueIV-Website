@@ -17,7 +17,7 @@ const DESTINATIONS = Object.freeze({
     'Outdoor':'textiles-outdoor',
   },
   'wallcovering-materials': {
-    'All Wallcovering':'wallpaper', 'Wallpapers':'wallpaper',
+    'All Wallcovering':'wallpaper', 'Wallpapers':'wallcovering-wallpapers',
     'Naturals':'wallcovering-naturals', 'Hand Painted':'wallcovering-hand-painted',
     'Vinyl':'wallcovering-vinyl', 'Murals':'wallcovering-murals',
     'Leather':'wallcovering-leather', 'Metallic':'wallcovering-metallic'
@@ -65,8 +65,13 @@ const FACET_DESTINATIONS=Object.freeze({
   'textiles-quality':{
     'Upholstery':{root:'fabric',key:'application',tag:'application:upholstery'},
     'Drapery':{root:'fabric',key:'application',tag:'application:drapery'},
+    'Sheers':{root:'fabric',key:'application',tag:'application:sheer'},
+    'Decorative':{root:'fabric',key:'application',tag:'application:decorative'},
+    'Performance':{root:'fabric',key:'application',tag:'application:performance'},
+    'Outdoor':{root:'fabric',key:'application',tag:'application:outdoor'},
   },
   'wallcovering-materials':{
+    'Wallpapers':{root:'wallpaper',key:'material_type',tag:'material:paper'},
     'Vinyl':{root:'wallpaper',key:'material_type',tag:'material:vinyl'},
     'Leather':{root:'wallpaper',key:'material_type',tag:'material:leather'},
   },
