@@ -515,6 +515,12 @@ async function main() {
     console.log('DRY RUN ONLY: no collection or menu mutations. --apply and RUEIV_MENU_APPLY_APPROVED=1 are both required.');
     return;
   }
+  // Owner-locked navigation is invariant across vendor uploads.  A missing
+  // Shopify collection or unmaterialized Hub mapping blocks the menu write;
+  // never replace the established submenu with only currently populated links.
+  if (blocked.length > 0) {
+    throw new Error('OWNER_FIXED_SUBMENU_UNMATERIALIZED: '+blocked.length+' destinations blocked; no Shopify menu writes');
+  }
   // Do not silently publish a menu with zero resolved links.
   if (MENUS.some((entry) => entry.items.length === 0)) {
     throw new Error('Empty navigation submenu after membership readback; refusing Shopify mutations');
