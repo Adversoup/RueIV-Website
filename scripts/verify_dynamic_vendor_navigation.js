@@ -10,6 +10,7 @@ const {
 } = require('./lib/vendor_navigation');
 const {
   collectionForVendor,
+  discoverSubBrandNames,
   planVendorNavigationSync,
   runFixtureDryRunProof,
   FIXTURE_VENDOR_NAMES,
@@ -62,6 +63,49 @@ plan.designersChildren.forEach((item) => {
   if (item.type === 'COLLECTION') assert.ok(item.resourceId);
   if (item.type === 'HTTP') assert.ok(item.url);
 });
+
+// Regression: JAB's canonical handle exists but is empty; a numbered
+// Shopify collection contains the actual product assortment.
+const jab = { title: 'JAB', vendor: 'JAB', handle: 'jab' };
+const jabEmpty = { id: 'gid://shopify/Collection/101', handle: 'jab', title: 'JAB', productCount: 0 };
+const jabLive = { id: 'gid://shopify/Collection/172', handle: 'jab-172', title: 'JAB', productCount: 180 };
+const jabIndex = {
+  byHandle: new Map([['jab', jabEmpty], ['jab-172', jabLive]]),
+  byTitle: new Map([['jab', jabLive]]),
+};
+assert.strictEqual(collectionForVendor(jab, jabIndex).handle, 'jab-172');
+assert.strictEqual(
+  planVendorNavigationSync(['JAB'], jabIndex, { storeHost: 'ruefour.myshopify.com' })
+    .designersChildren.find((x) => x.title === 'JAB').resourceId,
+  jabLive.id
+);
+const staleIndex = { byHandle: new Map([['jab', jabEmpty]]), byTitle: new Map([['jab', jabEmpty]]) };
+const fallback = planVendorNavigationSync(['JAB'], staleIndex, { storeHost: 'ruefour.myshopify.com' });
+assert.strictEqual(fallback.collectionsToCreate.length, 0);
+assert.ok(fallback.designersChildren.find((x) => x.title === 'JAB').url.includes('/collections/vendors?q=JAB'));
+
+
+const jabChivasso = { id:'gid://shopify/Collection/195', handle:'jab-chivasso', title:'JAB — Chivasso', productCount:44 };
+const jabCarlucci = { id:'gid://shopify/Collection/196', handle:'jab-carlucci', title:'JAB — Carlucci', productCount:19 };
+const ignoredEmpty = { id:'gid://shopify/Collection/197', handle:'jab-dead', title:'JAB — Dead', productCount:0 };
+const hierarchyIndex = {
+  byHandle:new Map([[jabEmpty.handle,jabEmpty],[jabLive.handle,jabLive],
+                    [jabChivasso.handle,jabChivasso],[jabCarlucci.handle,jabCarlucci],
+                    [ignoredEmpty.handle,ignoredEmpty]]),
+  byTitle:new Map([['jab',jabEmpty],['jab — chivasso',jabChivasso],['jab — carlucci',jabCarlucci]])
+};
+assert.deepStrictEqual(
+  discoverSubBrandNames(['JAB'],hierarchyIndex),
+  ['JAB','Chivasso','Carlucci']
+);
+const expandedPlan=planVendorNavigationSync(['JAB'],hierarchyIndex,{storeHost:'ruefour.myshopify.com'});
+assert.deepStrictEqual(
+  expandedPlan.vendorSpecs.map(x=>x.title),
+  ['Carlucci','Chivasso','JAB']
+);
+assert.strictEqual(expandedPlan.designersChildren.find(x=>x.title==='Chivasso').resourceId,jabChivasso.id);
+assert.strictEqual(expandedPlan.designersChildren.find(x=>x.title==='Carlucci').resourceId,jabCarlucci.id);
+assert.ok(!expandedPlan.designersChildren.some(x=>x.title==='Dead'));
 
 runFixtureDryRunProof();
 

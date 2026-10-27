@@ -4,6 +4,11 @@ on:
   pull_request:
     paths:
       - 'theme/**'
+      - 'scripts/create_mega_menus.js'
+      - 'scripts/fix_vendors.js'
+      - 'scripts/lib/category_nav_contract.js'
+      - 'scripts/verify_category_navigation.js'
+      - 'scripts/verify_dynamic_vendor_navigation.js'
       - '.theme-check.yml'
       - '.github/workflows/theme-check.yml'
   push:
@@ -28,3 +33,8 @@ jobs:
 
       - name: Run Theme Check
         run: npx shopify theme check --fail-level error
+
+      - name: Verify child brands and taxonomy collection navigation
+        run: |
+          node scripts/verify_dynamic_vendor_navigation.js
+          node scripts/verify_category_navigation.js

@@ -21,7 +21,10 @@ const TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
 const VER = process.env.SHOPIFY_API_VERSION || '2026-04';
 const GQL = `https://${STORE}/admin/api/${VER}/graphql.json`;
 const REST = `https://${STORE}/admin/api/${VER}`;
-const DRY_RUN = process.argv.includes('--dry-run');
+// Production menu/product changes require explicit owner-approved apply.
+// The default is a safe read-only preview even when credentials are present.
+const APPLY = process.argv.includes('--apply') && process.env.RUEIV_MENU_APPLY_APPROVED === '1';
+const DRY_RUN = !APPLY;
 const FIXTURE_MODE = process.argv.includes('--fixture');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -176,7 +179,7 @@ async function fetchCollectionIndex() {
     const data = await gql(
       `query CollectionIndex($after: String) {
         collections(first: 250, after: $after) {
-          edges { cursor node { id handle title } }
+          edges { cursor node { id handle title productsCount { count } } }
           pageInfo { hasNextPage }
         }
       }`,
@@ -186,8 +189,13 @@ async function fetchCollectionIndex() {
     const edges = data.collections.edges || [];
     for (const edge of edges) {
       const node = edge.node;
-      byHandle.set(node.handle, node);
-      byTitle.set(String(node.title || '').trim().toLowerCase(), node);
+      const candidate = { ...node, productCount: Number(node.productsCount?.count || 0) };
+      byHandle.set(candidate.handle, candidate);
+      const titleKey = String(candidate.title || '').trim().toLowerCase();
+      const previous = byTitle.get(titleKey);
+      // Numbered duplicate handles can contain the current products;
+      // never let an empty namesake override a populated collection.
+      if (!previous || candidate.productCount > previous.productCount) byTitle.set(titleKey, candidate);
     }
     if (!data.collections.pageInfo.hasNextPage || edges.length === 0) break;
     cursor = edges[edges.length - 1].cursor;
@@ -196,12 +204,53 @@ async function fetchCollectionIndex() {
   return { byHandle, byTitle };
 }
 
+/**
+ * Collect only verified named child-brand collections, not arbitrary vendor
+ * strings or product-type labels. The Hub emits parent-child collection names
+ * of the form "Parent — Child"; the handle must confirm both identities.
+ * These child brands are first-class Designers entries even if historical
+ * Shopify product.vendor still contains the parent name.
+ */
+function discoverSubBrandNames(vendorNames, collectionIndex) {
+  const parents = new Set(buildVendorSpecs(vendorNames).map((spec) => spec.handle));
+  const discovered = [...vendorNames];
+  for (const collection of collectionIndex.byHandle.values()) {
+    if (Number(collection.productCount || 0) < 1) continue;
+    const parts = String(collection.title || '').split(/\s+[—–]\s+/);
+    if (parts.length !== 2) continue;
+    const parent = parts[0].trim();
+    const child = parts[1].trim();
+    const parentHandle = require('./lib/vendor_navigation').handleize(parent);
+    const childHandle = require('./lib/vendor_navigation').handleize(child);
+    if (!parents.has(parentHandle) || !childHandle || childHandle === parentHandle) continue;
+    if (collection.handle !== `${parentHandle}-${childHandle}`) continue;
+    discovered.push(child);
+  }
+  return discovered;
+}
+
 function collectionForVendor(spec, index) {
-  return (
-    index.byTitle.get(spec.title.toLowerCase()) ||
-    index.byHandle.get(spec.handle) ||
-    null
+  const candidates = [
+    index.byTitle.get(spec.title.toLowerCase()),
+    index.byHandle.get(spec.handle),
+    ...[...index.byHandle.values()].filter((collection) =>
+      (collection.handle.startsWith(spec.handle + '-') &&
+       /^\d+$/.test(collection.handle.slice(spec.handle.length + 1))) ||
+      // The Hub's child-brand collection: "JAB — Chivasso" → jab-chivasso.
+      (collection.handle.endsWith('-' + spec.handle) &&
+       /\s[—–]\s/.test(collection.title || '') &&
+       require('./lib/vendor_navigation').handleize(
+         String(collection.title).split(/\s+[—–]\s+/).at(-1)
+       ) === spec.handle)
+    ),
+  ].filter((collection) =>
+    collection && Number(collection.productCount === undefined ? 1 : collection.productCount) > 0
   );
+  candidates.sort((a, b) =>
+    Number(b.productCount || 0) - Number(a.productCount || 0) ||
+    Number(a.handle !== spec.handle) - Number(b.handle !== spec.handle)
+  );
+  return candidates[0] || null;
 }
 
 async function ensureVendorCollections(vendorSpecs) {
@@ -209,8 +258,9 @@ async function ensureVendorCollections(vendorSpecs) {
   let index = await fetchCollectionIndex();
 
   for (const spec of vendorSpecs) {
-    if (collectionForVendor(spec, index)) {
-      console.log(`  · ${spec.title} — collection exists`);
+    if (collectionForVendor(spec, index) || index.byHandle.has(spec.handle) ||
+        index.byTitle.has(spec.title.toLowerCase())) {
+      console.log(`  · ${spec.title} — collection exists or requires membership repair`);
       continue;
     }
 
@@ -275,7 +325,7 @@ function buildDesignersSubmenuChildren(vendorSpecs, collectionIndex, options = {
         : {
             title: spec.title,
             type: 'HTTP',
-            url: `https://${storeHost}/collections/${spec.handle}`,
+            url: `https://${storeHost}/collections/vendors?q=${encodeURIComponent(spec.vendor)}`,
           };
     }),
   ];
@@ -297,9 +347,11 @@ function assertValidMenuItemInput(item, path = 'item') {
 }
 
 function planVendorNavigationSync(vendorNames, collectionIndex, options = {}) {
-  const vendorSpecs = buildVendorSpecs(vendorNames);
+  const vendorSpecs = buildVendorSpecs(discoverSubBrandNames(vendorNames, collectionIndex));
   const collectionsToCreate = vendorSpecs.filter(
-    (spec) => !collectionForVendor(spec, collectionIndex)
+    (spec) => !collectionForVendor(spec, collectionIndex) &&
+      !collectionIndex.byHandle.has(spec.handle) &&
+      !collectionIndex.byTitle.has(spec.title.toLowerCase())
   );
   const designersChildren = buildDesignersSubmenuChildren(
     vendorSpecs,
@@ -382,8 +434,8 @@ function runFixtureDryRunProof() {
   if (!artisticMenuItem) {
     throw new Error('Artistic Frame missing from planned Designers submenu');
   }
-  if (artisticMenuItem.type !== 'HTTP' || !artisticMenuItem.url.includes('/collections/artistic-frame')) {
-    throw new Error('Artistic Frame menu item is not the expected HTTP collection link');
+  if (artisticMenuItem.type !== 'HTTP' || !artisticMenuItem.url.includes('/collections/vendors?q=Artistic%20Frame')) {
+    throw new Error('Artistic Frame must use Shopify vendor fallback without a verified collection');
   }
 
   console.log('\n✅ Fixture dry-run proof complete — Artistic Frame appears without hardcoding');
@@ -459,13 +511,15 @@ async function main() {
   console.log('╔════════════════════════════════════════════════════════╗');
   console.log('║ Dynamic Vendor Navigation — Collections + Designers  ║');
   console.log('╚════════════════════════════════════════════════════════╝');
-  if (DRY_RUN) console.log('DRY RUN — no Shopify mutation\n');
+  if (DRY_RUN) console.log('DRY RUN — no Shopify mutation; --apply and RUEIV_MENU_APPLY_APPROVED=1 required\n');
 
   await fixVendorNames();
 
   const vendorNames = await fetchVendorNames();
-  const vendorSpecs = buildVendorSpecs(vendorNames);
-  console.log(`\nVendor census: ${vendorNames.length} product rows → ${vendorSpecs.length} unique vendors`);
+  const initialIndex = await fetchCollectionIndex();
+  const expandedNames = discoverSubBrandNames(vendorNames, initialIndex);
+  const vendorSpecs = buildVendorSpecs(expandedNames);
+  console.log(`\nVendor census: ${vendorNames.length} product rows + ${expandedNames.length - vendorNames.length} verified child brands → ${vendorSpecs.length} unique designer entries`);
 
   const collectionIndex = await ensureVendorCollections(vendorSpecs);
   await updateDesignersMenu(vendorSpecs, collectionIndex);
@@ -486,6 +540,7 @@ module.exports = {
   ensureVendorCollections,
   updateDesignersMenu,
   collectionForVendor,
+  discoverSubBrandNames,
   buildDesignersSubmenuChildren,
   planVendorNavigationSync,
   runFixtureDryRunProof,

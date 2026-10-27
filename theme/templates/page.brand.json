@@ -24,6 +24,13 @@
         "padding_bottom": 0
       }
     },
+    "designer_directory": {
+      "type": "rueiv-designers-grid",
+      "settings": {
+        "heading": "Our Designers",
+        "subtitle": "Explore every designer and sub-brand represented by our curated collection."
+      }
+    },
     "collections": {
       "type": "collection-list",
       "blocks": {
@@ -91,6 +98,7 @@
   },
   "order": [
     "brand_hero",
+    "designer_directory",
     "collections",
     "featured_products",
     "showroom"
