@@ -21,7 +21,10 @@ const TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
 const VER = process.env.SHOPIFY_API_VERSION || '2026-04';
 const GQL = `https://${STORE}/admin/api/${VER}/graphql.json`;
 const REST = `https://${STORE}/admin/api/${VER}`;
-const DRY_RUN = process.argv.includes('--dry-run');
+// Production menu/product changes require explicit owner-approved apply.
+// The default is a safe read-only preview even when credentials are present.
+const APPLY = process.argv.includes('--apply') && process.env.RUEIV_MENU_APPLY_APPROVED === '1';
+const DRY_RUN = !APPLY;
 const FIXTURE_MODE = process.argv.includes('--fixture');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -508,7 +511,7 @@ async function main() {
   console.log('╔════════════════════════════════════════════════════════╗');
   console.log('║ Dynamic Vendor Navigation — Collections + Designers  ║');
   console.log('╚════════════════════════════════════════════════════════╝');
-  if (DRY_RUN) console.log('DRY RUN — no Shopify mutation\n');
+  if (DRY_RUN) console.log('DRY RUN — no Shopify mutation; --apply and RUEIV_MENU_APPLY_APPROVED=1 required\n');
 
   await fixVendorNames();
 
