@@ -63,6 +63,26 @@ plan.designersChildren.forEach((item) => {
   if (item.type === 'HTTP') assert.ok(item.url);
 });
 
+// Regression: JAB's canonical handle exists but is empty; a numbered
+// Shopify collection contains the actual product assortment.
+const jab = { title: 'JAB', vendor: 'JAB', handle: 'jab' };
+const jabEmpty = { id: 'gid://shopify/Collection/101', handle: 'jab', title: 'JAB', productCount: 0 };
+const jabLive = { id: 'gid://shopify/Collection/172', handle: 'jab-172', title: 'JAB', productCount: 180 };
+const jabIndex = {
+  byHandle: new Map([['jab', jabEmpty], ['jab-172', jabLive]]),
+  byTitle: new Map([['jab', jabLive]]),
+};
+assert.strictEqual(collectionForVendor(jab, jabIndex).handle, 'jab-172');
+assert.strictEqual(
+  planVendorNavigationSync(['JAB'], jabIndex, { storeHost: 'ruefour.myshopify.com' })
+    .designersChildren.find((x) => x.title === 'JAB').resourceId,
+  jabLive.id
+);
+const staleIndex = { byHandle: new Map([['jab', jabEmpty]]), byTitle: new Map([['jab', jabEmpty]]) };
+const fallback = planVendorNavigationSync(['JAB'], staleIndex, { storeHost: 'ruefour.myshopify.com' });
+assert.strictEqual(fallback.collectionsToCreate.length, 0);
+assert.ok(fallback.designersChildren.find((x) => x.title === 'JAB').url.includes('/collections/vendors?q=JAB'));
+
 runFixtureDryRunProof();
 
 console.log('VERIFY OK — vendor navigation is data-driven and deterministic');
