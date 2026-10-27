@@ -93,6 +93,9 @@
     {%- break -%}
   {%- endif -%}
 {%- endfor -%}
+{%- if designer_menu == blank -%}
+  {%- assign designer_menu = linklists['designers-all'].links -%}
+{%- endif -%}
 
 <section class="rv-designers">
   <div class="rv-designers__header">
