@@ -28,3 +28,8 @@ jobs:
 
       - name: Run Theme Check
         run: npx shopify theme check --fail-level error
+
+      - name: Verify child brands and taxonomy collection navigation
+        run: |
+          node scripts/verify_dynamic_vendor_navigation.js
+          node scripts/verify_category_navigation.js
