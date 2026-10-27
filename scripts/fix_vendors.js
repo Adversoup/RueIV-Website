@@ -176,7 +176,7 @@ async function fetchCollectionIndex() {
     const data = await gql(
       `query CollectionIndex($after: String) {
         collections(first: 250, after: $after) {
-          edges { cursor node { id handle title } }
+          edges { cursor node { id handle title productsCount { count } } }
           pageInfo { hasNextPage }
         }
       }`,
@@ -186,8 +186,13 @@ async function fetchCollectionIndex() {
     const edges = data.collections.edges || [];
     for (const edge of edges) {
       const node = edge.node;
-      byHandle.set(node.handle, node);
-      byTitle.set(String(node.title || '').trim().toLowerCase(), node);
+      const candidate = { ...node, productCount: Number(node.productsCount?.count || 0) };
+      byHandle.set(candidate.handle, candidate);
+      const titleKey = String(candidate.title || '').trim().toLowerCase();
+      const previous = byTitle.get(titleKey);
+      // Numbered duplicate handles can contain the current products;
+      // never let an empty namesake override a populated collection.
+      if (!previous || candidate.productCount > previous.productCount) byTitle.set(titleKey, candidate);
     }
     if (!data.collections.pageInfo.hasNextPage || edges.length === 0) break;
     cursor = edges[edges.length - 1].cursor;
@@ -197,11 +202,21 @@ async function fetchCollectionIndex() {
 }
 
 function collectionForVendor(spec, index) {
-  return (
-    index.byTitle.get(spec.title.toLowerCase()) ||
-    index.byHandle.get(spec.handle) ||
-    null
+  const candidates = [
+    index.byTitle.get(spec.title.toLowerCase()),
+    index.byHandle.get(spec.handle),
+    ...[...index.byHandle.values()].filter((collection) =>
+      collection.handle.startsWith(spec.handle + '-') &&
+      /^\\d+$/.test(collection.handle.slice(spec.handle.length + 1))
+    ),
+  ].filter((collection) =>
+    collection && Number(collection.productCount === undefined ? 1 : collection.productCount) > 0
   );
+  candidates.sort((a, b) =>
+    Number(b.productCount || 0) - Number(a.productCount || 0) ||
+    Number(a.handle !== spec.handle) - Number(b.handle !== spec.handle)
+  );
+  return candidates[0] || null;
 }
 
 async function ensureVendorCollections(vendorSpecs) {
@@ -209,8 +224,9 @@ async function ensureVendorCollections(vendorSpecs) {
   let index = await fetchCollectionIndex();
 
   for (const spec of vendorSpecs) {
-    if (collectionForVendor(spec, index)) {
-      console.log(`  · ${spec.title} — collection exists`);
+    if (collectionForVendor(spec, index) || index.byHandle.has(spec.handle) ||
+        index.byTitle.has(spec.title.toLowerCase())) {
+      console.log(`  · ${spec.title} — collection exists or requires membership repair`);
       continue;
     }
 
@@ -275,7 +291,7 @@ function buildDesignersSubmenuChildren(vendorSpecs, collectionIndex, options = {
         : {
             title: spec.title,
             type: 'HTTP',
-            url: `https://${storeHost}/collections/${spec.handle}`,
+            url: `https://${storeHost}/collections/vendors?q=${encodeURIComponent(spec.vendor)}`,
           };
     }),
   ];
@@ -299,7 +315,9 @@ function assertValidMenuItemInput(item, path = 'item') {
 function planVendorNavigationSync(vendorNames, collectionIndex, options = {}) {
   const vendorSpecs = buildVendorSpecs(vendorNames);
   const collectionsToCreate = vendorSpecs.filter(
-    (spec) => !collectionForVendor(spec, collectionIndex)
+    (spec) => !collectionForVendor(spec, collectionIndex) &&
+      !collectionIndex.byHandle.has(spec.handle) &&
+      !collectionIndex.byTitle.has(spec.title.toLowerCase())
   );
   const designersChildren = buildDesignersSubmenuChildren(
     vendorSpecs,
