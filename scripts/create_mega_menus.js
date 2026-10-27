@@ -19,12 +19,15 @@
  */
 require('dotenv').config();
 
-const { buildVendorSpecs, buildDesignerHttpItems } = require('./lib/vendor_navigation');
-const { fetchVendorNames } = require('./fix_vendors');
+const { buildVendorSpecs } = require('./lib/vendor_navigation');
+const { fetchVendorNames, fetchCollectionIndex, discoverSubBrandNames, buildDesignersSubmenuChildren } = require('./fix_vendors');
+const { planCategoryNavigation } = require('./lib/category_nav_contract');
 
 const STORE = process.env.SHOPIFY_STORE;
 const TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
 const API_V = process.env.SHOPIFY_API_VERSION || '2026-04';
+// Never mutate live Shopify menus on an accidental script invocation.
+const APPLY = process.argv.includes('--apply') && process.env.RUEIV_MENU_APPLY_APPROVED === '1';
 const GQL   = `https://${STORE}/admin/api/${API_V}/graphql.json`;
 
 async function gql(query, variables = {}) {
@@ -311,6 +314,7 @@ const MAIN_MENU = [
   item('Lighting',       '/collections/lighting'),
   item('Furniture',      '/collections/furniture'),
   item('Rugs',           '/collections/rugs'),
+  item('Accessories',    '/collections/accessories'),
   {
     ...item('Shop The Vibe', '/pages/vibe-studio'),
     items: [
@@ -421,16 +425,37 @@ async function updateMainMenu(existing) {
 async function main() {
   console.log('═══ Creating / Updating Navigation Menus ═══\n');
 
-  // Designers menus are generated from the current Shopify vendor universe.
-  // This prevents onboarding a new vendor from requiring source edits.
-  const vendorSpecs = buildVendorSpecs(await fetchVendorNames());
-  const dynamicDesignerItems = buildDesignerHttpItems(vendorSpecs, item);
+  // A verified collection is the unit of navigation, never a guessed handle.
+  const vendorNames = await fetchVendorNames();
+  const collectionIndex = await fetchCollectionIndex();
+  const vendorSpecs = buildVendorSpecs(discoverSubBrandNames(vendorNames, collectionIndex));
+  const dynamicDesignerItems = buildDesignersSubmenuChildren(
+    vendorSpecs, collectionIndex, { storeHost: STORE }
+  );
+  const blocked = [];
   for (const menuDef of MENUS) {
     if (menuDef.handle === 'designers-featured' || menuDef.handle === 'designers-all') {
       menuDef.items = dynamicDesignerItems.map((entry) => ({ ...entry }));
+      continue;
     }
+    const plan = planCategoryNavigation(menuDef, collectionIndex);
+    blocked.push(...plan.blocked);
+    menuDef.items = plan.menu.items;
   }
-  console.log(`Discovered ${vendorSpecs.length} vendors for Designers menus\n`);
+  MAIN_MENU.find((entry) => entry.title === 'Designers').items = dynamicDesignerItems.map((entry) => ({ ...entry }));
+  console.log(`Discovered ${vendorSpecs.length} Designers entries (including published child-brand collections)`);
+  console.log(`Taxonomy navigation blockers: ${blocked.length}`);
+  for (const entry of blocked) {
+    console.log(`  BLOCKED ${entry.menu}/${entry.label} → ${entry.expectedHandle || 'unmapped'} (${entry.reason})`);
+  }
+  if (!APPLY) {
+    console.log('DRY RUN ONLY: no collection or menu mutations. --apply and RUEIV_MENU_APPLY_APPROVED=1 are both required.');
+    return;
+  }
+  // Do not silently publish a menu with zero resolved links.
+  if (MENUS.some((entry) => entry.items.length === 0)) {
+    throw new Error('Empty navigation submenu after membership readback; refusing Shopify mutations');
+  }
 
   const existing = await getExistingMenus();
   console.log(`Found ${existing.length} existing menus\n`);
