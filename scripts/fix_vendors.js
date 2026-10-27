@@ -201,13 +201,44 @@ async function fetchCollectionIndex() {
   return { byHandle, byTitle };
 }
 
+/**
+ * Collect only verified named child-brand collections, not arbitrary vendor
+ * strings or product-type labels. The Hub emits parent-child collection names
+ * of the form "Parent — Child"; the handle must confirm both identities.
+ * These child brands are first-class Designers entries even if historical
+ * Shopify product.vendor still contains the parent name.
+ */
+function discoverSubBrandNames(vendorNames, collectionIndex) {
+  const parents = new Set(buildVendorSpecs(vendorNames).map((spec) => spec.handle));
+  const discovered = [...vendorNames];
+  for (const collection of collectionIndex.byHandle.values()) {
+    if (Number(collection.productCount || 0) < 1) continue;
+    const parts = String(collection.title || '').split(/\s+[—–]\s+/);
+    if (parts.length !== 2) continue;
+    const parent = parts[0].trim();
+    const child = parts[1].trim();
+    const parentHandle = require('./lib/vendor_navigation').handleize(parent);
+    const childHandle = require('./lib/vendor_navigation').handleize(child);
+    if (!parents.has(parentHandle) || !childHandle || childHandle === parentHandle) continue;
+    if (collection.handle !== `${parentHandle}-${childHandle}`) continue;
+    discovered.push(child);
+  }
+  return discovered;
+}
+
 function collectionForVendor(spec, index) {
   const candidates = [
     index.byTitle.get(spec.title.toLowerCase()),
     index.byHandle.get(spec.handle),
     ...[...index.byHandle.values()].filter((collection) =>
-      collection.handle.startsWith(spec.handle + '-') &&
-      /^\d+$/.test(collection.handle.slice(spec.handle.length + 1))
+      (collection.handle.startsWith(spec.handle + '-') &&
+       /^\d+$/.test(collection.handle.slice(spec.handle.length + 1))) ||
+      // The Hub's child-brand collection: "JAB — Chivasso" → jab-chivasso.
+      (collection.handle.endsWith('-' + spec.handle) &&
+       /\s[—–]\s/.test(collection.title || '') &&
+       require('./lib/vendor_navigation').handleize(
+         String(collection.title).split(/\s+[—–]\s+/).at(-1)
+       ) === spec.handle)
     ),
   ].filter((collection) =>
     collection && Number(collection.productCount === undefined ? 1 : collection.productCount) > 0
@@ -313,7 +344,7 @@ function assertValidMenuItemInput(item, path = 'item') {
 }
 
 function planVendorNavigationSync(vendorNames, collectionIndex, options = {}) {
-  const vendorSpecs = buildVendorSpecs(vendorNames);
+  const vendorSpecs = buildVendorSpecs(discoverSubBrandNames(vendorNames, collectionIndex));
   const collectionsToCreate = vendorSpecs.filter(
     (spec) => !collectionForVendor(spec, collectionIndex) &&
       !collectionIndex.byHandle.has(spec.handle) &&
@@ -482,8 +513,10 @@ async function main() {
   await fixVendorNames();
 
   const vendorNames = await fetchVendorNames();
-  const vendorSpecs = buildVendorSpecs(vendorNames);
-  console.log(`\nVendor census: ${vendorNames.length} product rows → ${vendorSpecs.length} unique vendors`);
+  const initialIndex = await fetchCollectionIndex();
+  const expandedNames = discoverSubBrandNames(vendorNames, initialIndex);
+  const vendorSpecs = buildVendorSpecs(expandedNames);
+  console.log(`\nVendor census: ${vendorNames.length} product rows + ${expandedNames.length - vendorNames.length} verified child brands → ${vendorSpecs.length} unique designer entries`);
 
   const collectionIndex = await ensureVendorCollections(vendorSpecs);
   await updateDesignersMenu(vendorSpecs, collectionIndex);
@@ -504,6 +537,7 @@ module.exports = {
   ensureVendorCollections,
   updateDesignersMenu,
   collectionForVendor,
+  discoverSubBrandNames,
   buildDesignersSubmenuChildren,
   planVendorNavigationSync,
   runFixtureDryRunProof,
