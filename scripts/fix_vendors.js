@@ -207,7 +207,7 @@ function collectionForVendor(spec, index) {
     index.byHandle.get(spec.handle),
     ...[...index.byHandle.values()].filter((collection) =>
       collection.handle.startsWith(spec.handle + '-') &&
-      /^\\d+$/.test(collection.handle.slice(spec.handle.length + 1))
+      /^\d+$/.test(collection.handle.slice(spec.handle.length + 1))
     ),
   ].filter((collection) =>
     collection && Number(collection.productCount === undefined ? 1 : collection.productCount) > 0
@@ -400,8 +400,8 @@ function runFixtureDryRunProof() {
   if (!artisticMenuItem) {
     throw new Error('Artistic Frame missing from planned Designers submenu');
   }
-  if (artisticMenuItem.type !== 'HTTP' || !artisticMenuItem.url.includes('/collections/artistic-frame')) {
-    throw new Error('Artistic Frame menu item is not the expected HTTP collection link');
+  if (artisticMenuItem.type !== 'HTTP' || !artisticMenuItem.url.includes('/collections/vendors?q=Artistic%20Frame')) {
+    throw new Error('Artistic Frame must use Shopify vendor fallback without a verified collection');
   }
 
   console.log('\n✅ Fixture dry-run proof complete — Artistic Frame appears without hardcoding');
