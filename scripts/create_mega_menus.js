@@ -424,17 +424,45 @@ async function createOrUpdateMenu(menuDef, existing) {
   }
 }
 
-async function updateMainMenu(existing) {
+function preserveMenuItem(row) {
+  if (!row?.title || !row.type) throw new Error('Cannot preserve malformed existing menu item');
+  const item={title:row.title,type:row.type};
+  if (row.resourceId) item.resourceId=row.resourceId;
+  else if (row.url) item.url=row.url;
+  else throw new Error('Cannot preserve existing menu item without target: '+row.title);
+  if (row.items?.length) item.items=row.items.map(preserveMenuItem);
+  return item;
+}
+
+async function updateMainMenu(existing,designerItems) {
   const mainMenu = existing.find(m => m.handle === 'main-menu');
-  if (!mainMenu) {
-    console.error('✗ main-menu not found!');
-    return;
-  }
-  console.log(`\n▸ Updating main-menu (${mainMenu.id})`);
+  if (!mainMenu) throw new Error('main-menu not found; no menu writes authorized');
+  const current=await gql(`
+    query RueIVExistingMainMenu($id:ID!) {
+      menu(id:$id) {
+        id title items {
+          title type url resourceId
+          items { title type url resourceId
+            items { title type url resourceId }
+          }
+        }
+      }
+    }`,{id:mainMenu.id});
+  const previous=current.menu?.items||[];
+  const designers=previous.filter(x=>x.title==='Designers');
+  if (designers.length!==1 || !designerItems.length)
+    throw new Error('Expected exactly one existing Designers menu; refusing rewrite');
+  const items=previous.map(row=>{
+    if(row.title!=='Designers') return preserveMenuItem(row);
+    const preserved=preserveMenuItem(row);
+    preserved.items=designerItems.map(preserveMenuItem);
+    return preserved;
+  });
+  console.log(`\n▸ Updating only Designers children on existing main-menu (${mainMenu.id})`);
   const data = await gql(UPDATE_MENU, {
     id: mainMenu.id,
-    title: mainMenu.title,
-    items: MAIN_MENU
+    title: current.menu.title,
+    items
   });
   if (data.menuUpdate.userErrors.length) {
     console.error('  ✗ Errors:', data.menuUpdate.userErrors);
@@ -501,7 +529,7 @@ async function main() {
   }
 
   // Update main menu
-  await updateMainMenu(existing);
+  await updateMainMenu(existing,dynamicDesignerItems);
 
   console.log('\n═══ Done ═══');
 }
