@@ -75,9 +75,36 @@
 {%- endif -%}
 
 {%- comment -%}
-  Show other color variants if the product has multiple variants with images
+  Distinct RueIV colorways are independent authoritative SKUs/products.
+  This list.product_reference metafield is written only after Hub confirms
+  each sibling's exact-SKU Shopify G6 readback. Reference actual Shopify
+  products rather than guessing /products/<title> handles.
+  Existing within-product variant swatches remain the fallback.
 {%- endcomment -%}
-{%- if product.variants.size > 1 -%}
+{%- assign _colorway_siblings = product.metafields.rueiv.colorway_siblings.value -%}
+{%- if _colorway_siblings != blank -%}
+  <div class="pdp-color-variants" aria-label="Available colorways">
+    {%- if product.featured_image != blank -%}
+      {%- assign _current_colorway = product.metafields.rueiv.color_name.value | default: product.title -%}
+      <a href="{{ product.url }}" class="pdp-color-variants__swatch is-active"
+         title="{{ _current_colorway | escape }}" aria-label="{{ _current_colorway | escape }} (current color)"
+         aria-current="page">
+        <img src="{{ product.featured_image | image_url: width: 96 }}"
+             alt="{{ _current_colorway | escape }}" width="40" height="40" loading="lazy">
+      </a>
+    {%- endif -%}
+    {%- for _sibling in _colorway_siblings limit: 24 -%}
+      {%- if _sibling.id != product.id and _sibling.url != blank and _sibling.featured_image != blank -%}
+        {%- assign _sibling_colorway = _sibling.metafields.rueiv.color_name.value | default: _sibling.title -%}
+        <a href="{{ _sibling.url }}" class="pdp-color-variants__swatch"
+           title="{{ _sibling_colorway | escape }}" aria-label="{{ _sibling_colorway | escape }}">
+          <img src="{{ _sibling.featured_image | image_url: width: 96 }}"
+               alt="{{ _sibling_colorway | escape }}" width="40" height="40" loading="lazy">
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- elsif product.variants.size > 1 -%}
   {%- assign _has_variant_images = false -%}
   {%- for variant in product.variants -%}
     {%- if variant.image != blank -%}
