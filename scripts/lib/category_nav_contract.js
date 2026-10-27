@@ -11,19 +11,19 @@
  */
 const DESTINATIONS = Object.freeze({
   'textiles-quality': {
-    'All Textiles':'fabric', 'Upholstery':'textiles-upholstery',
-    'Drapery':'textiles-drapery', 'Sheers':'textiles-sheer',
+    'All Textiles':'textiles', 'Upholstery':'textiles-upholstery',
+    'Drapery':'textiles-drapery', 'Sheers':'textiles-sheers',
     'Decorative':'textiles-decorative', 'Performance':'textiles-performance',
     'Outdoor':'textiles-outdoor',
   },
   'wallcovering-materials': {
-    'All Wallcovering':'wallpaper', 'Wallpapers':'wallcovering-wallpapers',
+    'All Wallcovering':'wallcovering', 'Wallpapers':'wallcovering-wallpapers',
     'Naturals':'wallcovering-naturals', 'Hand Painted':'wallcovering-hand-painted',
     'Vinyl':'wallcovering-vinyl', 'Murals':'wallcovering-murals',
     'Leather':'wallcovering-leather', 'Metallic':'wallcovering-metallic'
   },
   'wallcovering-design': {
-    'All':'wallpaper', 'Textures':'wallcovering-textures',
+    'All':'wallcovering', 'Textures':'wallcovering-textures',
     'Florals':'wallcovering-florals', 'Geometric':'wallcovering-geometric',
     'Animal/Skin':'wallcovering-animal'
   },
@@ -63,21 +63,21 @@ const DESTINATIONS = Object.freeze({
 // Values are candidate Hub-normalized labels, not guessed from product titles.
 const FACET_DESTINATIONS=Object.freeze({
   'textiles-quality':{
-    'Upholstery':{root:'fabric',key:'application',tag:'application:upholstery'},
-    'Drapery':{root:'fabric',key:'application',tag:'application:drapery'},
-    'Sheers':{root:'fabric',key:'application',tag:'application:sheer'},
-    'Decorative':{root:'fabric',key:'application',tag:'application:decorative'},
-    'Performance':{root:'fabric',key:'application',tag:'application:performance'},
-    'Outdoor':{root:'fabric',key:'application',tag:'application:outdoor'},
+    'Upholstery':{root:'textiles',key:'application',tag:'application:upholstery'},
+    'Drapery':{root:'textiles',key:'application',tag:'application:drapery'},
+    'Sheers':{root:'textiles',key:'application',tag:'application:sheer'},
+    'Decorative':{root:'textiles',key:'application',tag:'application:decorative'},
+    'Performance':{root:'textiles',key:'application',tag:'application:performance'},
+    'Outdoor':{root:'textiles',key:'application',tag:'application:outdoor'},
   },
   'wallcovering-materials':{
-    'Wallpapers':{root:'wallpaper',key:'material_type',tag:'material:paper'},
-    'Vinyl':{root:'wallpaper',key:'material_type',tag:'material:vinyl'},
-    'Leather':{root:'wallpaper',key:'material_type',tag:'material:leather'},
+    'Wallpapers':{root:'wallcovering',key:'material_type',tag:'material:paper'},
+    'Vinyl':{root:'wallcovering',key:'material_type',tag:'material:vinyl'},
+    'Leather':{root:'wallcovering',key:'material_type',tag:'material:leather'},
   },
   'wallcovering-design':{
-    'Florals':{root:'wallpaper',key:'design',tag:'design:floral'},
-    'Geometric':{root:'wallpaper',key:'design',tag:'design:geometric'},
+    'Florals':{root:'wallcovering',key:'design',tag:'design:floral'},
+    'Geometric':{root:'wallcovering',key:'design',tag:'design:geometric'},
   },
   'lighting-type':{
     'Table Lamps':{root:'lighting',key:'subcategory',tag:'subcat:table-lamp'},
@@ -109,7 +109,7 @@ const NATIVE_METAFIELDS=Object.freeze({
   room:'filter.p.m.taxonomy.room',
 });
 const CANONICAL_PRODUCT_TYPES=Object.freeze({
-  fabric:'Textiles',wallpaper:'Wallcovering',furniture:'Furniture',
+  textiles:'Textiles',wallcovering:'Wallcovering',furniture:'Furniture',
   lighting:'Lighting',rugs:'Rugs',accessories:'Accessories',
 });
 
@@ -154,7 +154,7 @@ function buildVerifiedFacetLink(candidate,value,storeHost) {
     '?'+NATIVE_METAFIELDS[candidate.key]+'='+encodeURIComponent(value)};
 }
 
-const ACTIVE_CATEGORIES = new Set(['fabric','wallpaper','furniture','lighting','rugs','accessories']);
+const ACTIVE_CATEGORIES = new Set(['textiles','wallcovering','furniture','lighting','rugs','accessories']);
 
 function usableCollection(index,handle) {
   if (!handle || !index?.byHandle) return null;
@@ -193,6 +193,10 @@ function planCategoryNavigation(menuDef, index, options={}) {
     }
     mapped.push({title:item.title,type:'COLLECTION',resourceId:collection.id});
   }
+  // Never truncate owner-fixed submenu labels to whichever categories happen
+  // to have Shopify membership today.  Incomplete materialization is a Hub
+  // G3/G6 blocker, not authorization to redesign the menu.
+  if (blocked.length) return {menu:menuDef,blocked};
   return {menu:{...menuDef,items:mapped},blocked};
 }
 
