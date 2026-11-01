@@ -318,6 +318,12 @@
       <h3 class="product-card__title text-pcard-title">
         <a class="reversed-link" href="{{ product.url }}">{{- product.title -}}</a>
       </h3>
+      {%- assign rueiv_card_color = product.metafields.rueiv.color_name.value -%}
+      {%- if rueiv_card_color != blank and product.metafields.rueiv.colorway_group_key.value != blank -%}
+        <p class="product-card__colorway-label text-xs text-subtext m-0" aria-label="Color">
+          {{ rueiv_card_color | escape }}
+        </p>
+      {%- endif -%}
       {% render 'price', product: product, alignment: settings.pcard_content_alignment %}
       {%- if show_color_swatches -%}
         {%- render 'pcard-color-swatch', product: product -%}
