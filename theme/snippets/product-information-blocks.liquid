@@ -41,6 +41,9 @@
               </h2>
             </a>
           </div>
+          {%- if context == 'main-product' -%}
+            {%- render 'rueiv-colorway-swatches', product: product -%}
+          {%- endif -%}
         {%- when 'price' -%}
           <div
             class="product__block product__block--{{ block.type }}"
