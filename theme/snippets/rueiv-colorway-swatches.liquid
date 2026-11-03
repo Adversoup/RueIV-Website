@@ -1,51 +1,69 @@
-{%- comment -%}
-  RueIV cross-product colorways. Authoritative relationships are written only
-  by Hub as rueiv.colorway_products (list.product_reference) after G0–G6.
-  This snippet is read-only; no SKU-prefix, product-title or color inference.
-  Shopify linked product references only surface customer-visible products.
-{%- endcomment -%}
+{% doc %}
+  One PDP colorway selector. Renders square swatches for the current product
+  and Hub-published sibling products in rueiv.colorway_products.
+
+  @param {product} product - The product whose authoritative colorway metafields are shown.
+{% enddoc %}
 {%- liquid
   assign current_group = product.metafields.rueiv.colorway_group_key.value
   assign current_color = product.metafields.rueiv.color_name.value
   assign siblings = product.metafields.rueiv.colorway_products.value
 -%}
-{%- if current_group != blank and siblings != blank and siblings.size > 0 -%}
+{%- if current_group != blank and current_color != blank and siblings != blank and siblings.size > 0 -%}
   <div class="rueiv-colorways product__block" role="group" aria-label="Available colors">
     <div class="rueiv-colorways__heading">
       <span>Available colors</span>
-      {%- if current_color != blank -%}
-        <strong>{{ current_color | escape }}</strong>
-      {%- endif -%}
+      <strong>{{ current_color | escape }}</strong>
     </div>
-    <div class="rueiv-colorways__links">
-      <span class="rueiv-colorways__option rueiv-colorways__option--current"
-        aria-label="{{ current_color | default: product.title | escape }} (current color)"
-        aria-current="page" title="{{ current_color | default: product.title | escape }}">
-        {{ current_color | default: product.selected_or_first_available_variant.sku | escape }}
-      </span>
+    <div class="rueiv-colorways__swatches">
+      <a class="rueiv-colorways__swatch is-current"
+         href="{{ product.url }}"
+         aria-current="page"
+         title="{{ current_color | escape }}"
+         aria-label="{{ current_color | escape }}, current color">
+        {%- if product.featured_image != blank -%}
+          <img src="{{ product.featured_image | image_url: width: 96 }}"
+               alt=""
+               width="44"
+               height="44"
+               loading="lazy">
+        {%- endif -%}
+      </a>
+      {%- assign seen_ids = product.id | prepend: '|' | append: '|' -%}
       {%- for sibling in siblings -%}
         {%- assign sibling_group = sibling.metafields.rueiv.colorway_group_key.value -%}
         {%- assign sibling_color = sibling.metafields.rueiv.color_name.value -%}
-        {%- if sibling.id != product.id and sibling.vendor == product.vendor and sibling_group == current_group and sibling_color != blank -%}
-          <a class="rueiv-colorways__option"
-             href="{{ sibling.url }}"
-             title="{{ sibling_color | escape }}"
-             aria-label="View {{ sibling_color | escape }} color"
-             data-colorway-product-id="{{ sibling.id }}">
-            {{ sibling_color | escape }}
-          </a>
+        {%- assign sibling_token = sibling.id | prepend: '|' | append: '|' -%}
+        {%- if sibling.id != product.id and sibling.vendor == product.vendor and sibling_group == current_group and sibling_color != blank and sibling.url != blank -%}
+          {%- unless seen_ids contains sibling_token -%}
+            {%- assign seen_ids = seen_ids | append: sibling_token -%}
+            <a class="rueiv-colorways__swatch"
+               href="{{ sibling.url }}"
+               title="{{ sibling_color | escape }}"
+               aria-label="View {{ sibling_color | escape }}"
+               data-colorway-product-id="{{ sibling.id }}">
+              {%- if sibling.featured_image != blank -%}
+                <img src="{{ sibling.featured_image | image_url: width: 96 }}"
+                     alt=""
+                     width="44"
+                     height="44"
+                     loading="lazy">
+              {%- endif -%}
+            </a>
+          {%- endunless -%}
         {%- endif -%}
       {%- endfor -%}
     </div>
   </div>
-  <style>
-    .rueiv-colorways{margin:1.25rem 0}
-    .rueiv-colorways__heading{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;font-size:.85rem;margin-bottom:.7rem}
-    .rueiv-colorways__heading>span{text-transform:uppercase;letter-spacing:.07em}
-    .rueiv-colorways__heading>strong{font-weight:500}
-    .rueiv-colorways__links{display:flex;flex-wrap:wrap;gap:.5rem}
-    .rueiv-colorways__option{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:.45rem .7rem;border:1px solid #d3d3d3;border-radius:2px;font-size:.83rem;line-height:1.2;text-align:center;text-decoration:none;color:inherit;background:transparent;transition:border-color .12s ease}
-    .rueiv-colorways__option:hover,.rueiv-colorways__option:focus-visible{border-color:#111;outline-offset:2px}
-    .rueiv-colorways__option--current{border:2px solid #111;font-weight:600;cursor:default}
-  </style>
 {%- endif -%}
+{% stylesheet %}
+  .rueiv-colorways{margin:1rem 0 1.25rem}
+  .rueiv-colorways__heading{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;font-size:.85rem;margin-bottom:.7rem}
+  .rueiv-colorways__heading>span{text-transform:uppercase;letter-spacing:.07em}
+  .rueiv-colorways__heading>strong{font-weight:500}
+  .rueiv-colorways__swatches{display:flex;flex-wrap:wrap;gap:.5rem}
+  .rueiv-colorways__swatch{display:block;width:44px;height:44px;padding:0;border:1px solid #d3d3d3;border-radius:0;overflow:hidden;background:#f4f4f4;line-height:0}
+  .rueiv-colorways__swatch img{width:44px;height:44px;object-fit:cover;border-radius:0;display:block}
+  .rueiv-colorways__swatch:hover,.rueiv-colorways__swatch:focus-visible{border-color:#111;outline-offset:2px}
+  .rueiv-colorways__swatch.is-current{border:2px solid #111}
+{% endstylesheet %}
