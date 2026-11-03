@@ -1,3 +1,10 @@
+{% doc %}
+  Resolves PDP display values and keeps variant image swatches only when
+  rueiv.colorway_products is absent. Linked colorways render from
+  rueiv-colorway-swatches.
+
+  @param {product} product - Product whose override, taxonomy, and specs metafields are read.
+{% enddoc %}
 {%- comment -%}
   snippets/pdp-override-resolver.liquid
   ──────────────────────────────────────
@@ -63,21 +70,12 @@
 </div>
 
 {%- comment -%}
-  Render the color chip inline using product image as indicator
+  Cross-product colorways render once, from rueiv-colorway-swatches.
+  This resolver keeps in-product variant images only when Hub has not
+  published rueiv.colorway_products.
 {%- endcomment -%}
-{%- if _color != blank -%}
-  <div class="pdp-color-chip">
-    {%- if product.featured_image != blank -%}
-      <img class="pdp-color-chip__dot" src="{{ product.featured_image | image_url: width: 64 }}" alt="{{ _color | escape }}" width="32" height="32" loading="lazy">
-    {%- endif -%}
-    <span class="pdp-color-chip__label">{{ _color }}</span>
-  </div>
-{%- endif -%}
-
-{%- comment -%}
-  Show other color variants if the product has multiple variants with images
-{%- endcomment -%}
-{%- if product.variants.size > 1 -%}
+{%- assign _linked_colorways = product.metafields.rueiv.colorway_products.value -%}
+{%- if _linked_colorways == blank and product.variants.size > 1 -%}
   {%- assign _has_variant_images = false -%}
   {%- for variant in product.variants -%}
     {%- if variant.image != blank -%}
